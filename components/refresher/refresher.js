@@ -169,7 +169,7 @@ var Refresher = (function () {
          */
         this.ionStart = new EventEmitter();
         this._events = new UIEventManager(_plt);
-        _content._hasRefresher = true;
+        _content.setElementClass('has-refresher', true);
         this._gesture = gestureCtrl.createGesture({
             name: GESTURE_REFRESHER,
             priority: GESTURE_PRIORITY_REFRESHER

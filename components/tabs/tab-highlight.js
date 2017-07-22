@@ -18,12 +18,9 @@ var TabHighlight = (function () {
      */
     TabHighlight.prototype.select = function (tab) {
         var _this = this;
-        if (!tab) {
-            return;
-        }
         var /** @type {?} */ dom = this._dom;
         dom.read(function () {
-            var /** @type {?} */ btnEle = tab.btn.getNativeElement();
+            var /** @type {?} */ btnEle = tab.btn.getElementRef().nativeElement;
             var /** @type {?} */ transform = "translate3d(" + btnEle.offsetLeft + "px,0,0) scaleX(" + btnEle.offsetWidth + ")";
             dom.write(function () {
                 var /** @type {?} */ ele = _this._elementRef.nativeElement;

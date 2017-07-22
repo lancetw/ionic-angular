@@ -26,7 +26,6 @@ export declare class ItemReorderGesture {
     destroy(): void;
 }
 export interface ItemReorderGestureDelegate {
-    _isStart: boolean;
     getNativeElement: () => any;
     _reorderPrepare: () => void;
     _scrollContent: (scrollPosition: number) => number;

@@ -40,7 +40,7 @@ export declare class Searchbar extends BaseInput<string> {
      */
     cancelButtonText: string;
     /**
-     * @input {boolean} If true, show the cancel button. Default `false`.
+     * @input {boolean} If true, show the cancel button.
      */
     showCancelButton: boolean;
     /**
@@ -68,7 +68,7 @@ export declare class Searchbar extends BaseInput<string> {
      */
     type: string;
     /**
-     * @input {boolean} If true, enable searchbar animation. Default `false`.
+     * @input {boolean} If true, enable searchbar animation.
      */
     animated: boolean;
     /**

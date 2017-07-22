@@ -11,28 +11,26 @@
   pointer-events: none;
 }
 
-[icon-left] ion-icon, // deprecated
-[icon-start] ion-icon {
+[icon-left] ion-icon {
   @include button-icon;
 
-  @include padding-horizontal(null, .3em);
+  padding-right: .3em;
 }
 
-[icon-right] ion-icon, // deprecated
-[icon-end] ion-icon {
+[icon-right] ion-icon {
   @include button-icon;
 
-  @include padding-horizontal(.4em, null);
+  padding-left: .4em;
 }
 
 .button[icon-only] {
-  @include padding(0);
+  padding: 0;
 
   min-width: .9em;
 }
 
 [icon-only] ion-icon {
-  @include padding(0, .5em);
+  padding: 0 .5em;
 
   font-size: 1.8em;
   line-height: .67;

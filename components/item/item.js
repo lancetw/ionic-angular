@@ -300,7 +300,6 @@ var Item = (function (_super) {
         _this._setName(elementRef);
         _this._hasReorder = !!reorder;
         _this.id = form.nextId().toString();
-        _this.labelId = 'lbl-' + _this.id;
         // auto add "tappable" attribute to ion-item components that have a click listener
         if (!renderer.orgListen) {
             renderer.orgListen = renderer.listen;
@@ -372,7 +371,7 @@ var Item = (function (_super) {
         set: function (label) {
             if (label) {
                 this._label = label;
-                label.id = this.labelId;
+                this.labelId = label.id = ('lbl-' + this.id);
                 if (label.type) {
                     this.setElementClass('item-label-' + label.type, true);
                 }

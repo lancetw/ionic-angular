@@ -138,6 +138,7 @@ export class PickerCmp {
      * @return {?}
      */
     ionViewDidEnter() {
+        this._plt.focusOutActiveElement();
         let /** @type {?} */ focusableEle = this._elementRef.nativeElement.querySelector('button');
         if (focusableEle) {
             focusableEle.focus();

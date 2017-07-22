@@ -4,7 +4,7 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "@angular/core", "../../config/config", "../../gestures/gesture-controller", "../../util/util", "../../platform/key", "../../navigation/nav-params", "../../platform/platform", "../../navigation/view-controller"], factory);
+        define(["require", "exports", "@angular/core", "../../config/config", "../../gestures/gesture-controller", "../../util/util", "../../navigation/nav-params", "../../platform/platform", "../../navigation/view-controller"], factory);
     }
 })(function (require, exports) {
     "use strict";
@@ -13,7 +13,6 @@
     var config_1 = require("../../config/config");
     var gesture_controller_1 = require("../../gestures/gesture-controller");
     var util_1 = require("../../util/util");
-    var key_1 = require("../../platform/key");
     var nav_params_1 = require("../../navigation/nav-params");
     var platform_1 = require("../../platform/platform");
     var view_controller_1 = require("../../navigation/view-controller");
@@ -77,26 +76,10 @@
          */
         LoadingCmp.prototype.ionViewDidEnter = function () {
             var _this = this;
+            this._plt.focusOutActiveElement();
             // If there is a duration, dismiss after that amount of time
             if (this.d && this.d.duration) {
                 this.durationTimeout = setTimeout(function () { return _this.dismiss('backdrop'); }, this.d.duration);
-            }
-        };
-        /**
-         * @param {?} ev
-         * @return {?}
-         */
-        LoadingCmp.prototype.keyUp = function (ev) {
-            if (this._viewCtrl.isLast() && ev.keyCode === key_1.KEY_ESCAPE) {
-                this.bdClick();
-            }
-        };
-        /**
-         * @return {?}
-         */
-        LoadingCmp.prototype.bdClick = function () {
-            if (this.d.enableBackdropDismiss) {
-                this.dismiss('backdrop');
             }
         };
         /**
@@ -121,7 +104,7 @@
     LoadingCmp.decorators = [
         { type: core_1.Component, args: [{
                     selector: 'ion-loading',
-                    template: '<ion-backdrop [hidden]="!d.showBackdrop" (click)="bdClick()" [class.backdrop-no-tappable]="!d.enableBackdropDismiss"></ion-backdrop>' +
+                    template: '<ion-backdrop [hidden]="!d.showBackdrop"></ion-backdrop>' +
                         '<div class="loading-wrapper">' +
                         '<div *ngIf="showSpinner" class="loading-spinner">' +
                         '<ion-spinner [name]="d.spinner"></ion-spinner>' +
@@ -146,9 +129,6 @@
         { type: nav_params_1.NavParams, },
         { type: core_1.Renderer, },
     ]; };
-    LoadingCmp.propDecorators = {
-        'keyUp': [{ type: core_1.HostListener, args: ['body:keyup', ['$event'],] },],
-    };
     exports.LoadingCmp = LoadingCmp;
     function LoadingCmp_tsickle_Closure_declarations() {
         /** @type {?} */
@@ -158,8 +138,6 @@
          * @type {?}
          */
         LoadingCmp.ctorParameters;
-        /** @type {?} */
-        LoadingCmp.propDecorators;
         /** @type {?} */
         LoadingCmp.prototype.d;
         /** @type {?} */

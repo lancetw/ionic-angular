@@ -308,7 +308,6 @@ export class DateTime extends BaseInput {
      * @return {?}
      */
     _inputUpdated() {
-        super._inputUpdated();
         this.updateText();
     }
     /**
@@ -338,6 +337,10 @@ export class DateTime extends BaseInput {
      * @return {?}
      */
     _click(ev) {
+        // do not continue if the click event came from a form submit
+        if (ev.detail === 0) {
+            return;
+        }
         ev.preventDefault();
         ev.stopPropagation();
         this.open();

@@ -83,7 +83,7 @@ export function isTextInput(ele) {
             (ele.tagName === 'INPUT' && !(NON_TEXT_INPUT_REGEX.test(ele.type))));
 }
 export const /** @type {?} */ NON_TEXT_INPUT_REGEX = /^(radio|checkbox|range|file|submit|reset|color|image|button)$/i;
-const /** @type {?} */ SKIP_INPUT_ATTR = ['value', 'checked', 'disabled', 'readonly', 'placeholder', 'type', 'class', 'style', 'id', 'autofocus', 'autocomplete', 'autocorrect'];
+const /** @type {?} */ skipInputAttrsReg = /^(value|checked|disabled|type|class|style|id|autofocus|autocomplete|autocorrect)$/i;
 /**
  * @param {?} srcElement
  * @param {?} destElement
@@ -93,10 +93,10 @@ export function copyInputAttributes(srcElement, destElement) {
     // copy attributes from one element to another
     // however, skip over a few of them as they're already
     // handled in the angular world
-    const /** @type {?} */ attrs = srcElement.attributes;
+    var /** @type {?} */ attrs = srcElement.attributes;
     for (var /** @type {?} */ i = 0; i < attrs.length; i++) {
         var /** @type {?} */ attr = attrs[i];
-        if (SKIP_INPUT_ATTR.indexOf(attr.name) === -1) {
+        if (!skipInputAttrsReg.test(attr.name)) {
             destElement.setAttribute(attr.name, attr.value);
         }
     }

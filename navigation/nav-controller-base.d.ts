@@ -7,6 +7,7 @@ import { DomController } from '../platform/dom-controller';
 import { GestureController } from '../gestures/gesture-controller';
 import { ViewController } from './view-controller';
 import { Ion } from '../components/ion';
+import { Keyboard } from '../platform/keyboard';
 import { NavController } from './nav-controller';
 import { Platform } from '../platform/platform';
 import { SwipeBackGesture } from './swipe-back';
@@ -21,6 +22,7 @@ export declare class NavControllerBase extends Ion implements NavController {
     _app: App;
     config: Config;
     plt: Platform;
+    _keyboard: Keyboard;
     _zone: NgZone;
     _cfr: ComponentFactoryResolver;
     _gestureCtrl: GestureController;
@@ -49,7 +51,7 @@ export declare class NavControllerBase extends Ion implements NavController {
     viewWillUnload: EventEmitter<any>;
     id: string;
     swipeBackEnabled: boolean;
-    constructor(parent: any, _app: App, config: Config, plt: Platform, elementRef: ElementRef, _zone: NgZone, renderer: Renderer, _cfr: ComponentFactoryResolver, _gestureCtrl: GestureController, _trnsCtrl: TransitionController, _linker: DeepLinker, _domCtrl: DomController, _errHandler: ErrorHandler);
+    constructor(parent: any, _app: App, config: Config, plt: Platform, _keyboard: Keyboard, elementRef: ElementRef, _zone: NgZone, renderer: Renderer, _cfr: ComponentFactoryResolver, _gestureCtrl: GestureController, _trnsCtrl: TransitionController, _linker: DeepLinker, _domCtrl: DomController, _errHandler: ErrorHandler);
     push(page: any, params?: any, opts?: NavOptions, done?: () => void): Promise<any>;
     insert(insertIndex: number, page: any, params?: any, opts?: NavOptions, done?: () => void): Promise<any>;
     insertPages(insertIndex: number, insertPages: any[], opts?: NavOptions, done?: () => void): Promise<any>;

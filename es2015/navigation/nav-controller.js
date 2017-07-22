@@ -84,7 +84,7 @@
  * })
  * export class MyApp {
  *    \@ViewChild('myNav') nav: NavController
- *    public rootPage: any = TabsPage;
+ *    public rootPage = TabsPage;
  *
  *    // Wait for the components in MyApp's template to be initialized
  *    // In this case, we are waiting for the Nav with reference variable of "#myNav"
@@ -262,7 +262,7 @@
  * ## Nav Guards
  *
  * In some cases, a developer should be able to control views leaving and entering. To allow for this, NavController has the `ionViewCanEnter` and `ionViewCanLeave` methods.
- * Similar to Angular route guards, but are more integrated with NavController. For example, if you wanted to prevent a user from leaving a view:
+ * Similar to Angular 2 route guards, but are more integrated with NavController. For example, if you wanted to prevent a user from leaving a view:
  *
  * ```ts
  * export class MyClass{

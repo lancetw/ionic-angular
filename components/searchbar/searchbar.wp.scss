@@ -3,20 +3,8 @@
 // Windows Searchbar
 // --------------------------------------------------
 
-// deprecated
-$searchbar-wp-padding:                   null !default;
-
-/// @prop - Padding top of the searchbar
-$searchbar-wp-padding-top:               8px !default;
-
-/// @prop - Padding end of the searchbar
-$searchbar-wp-padding-end:               $searchbar-wp-padding-top !default;
-
-/// @prop - Padding bottom of the searchbar
-$searchbar-wp-padding-bottom:            $searchbar-wp-padding-top !default;
-
-/// @prop - Padding start of the searchbar
-$searchbar-wp-padding-start:             $searchbar-wp-padding-end !default;
+/// @prop - Padding of the searchbar
+$searchbar-wp-padding:                   8px !default;
 
 /// @prop - Background of the searchbar
 $searchbar-wp-background-color:          transparent !default;
@@ -42,7 +30,7 @@ $searchbar-wp-input-search-icon-size:    20px !default;
 /// @prop - Padding top/bottom of the searchbar input
 $searchbar-wp-input-padding-vertical:    0 !default;
 
-/// @prop - Padding start/end of the searchbar input
+/// @prop - Padding left/right of the searchbar input
 $searchbar-wp-input-padding-horizontal:  8px !default;
 
 /// @prop - Height of the searchbar input
@@ -83,11 +71,9 @@ $searchbar-wp-input-clear-icon-size:     22px !default;
 // -----------------------------------------
 
 .searchbar-wp {
-  background: $searchbar-wp-background-color;
+  padding: $searchbar-wp-padding;
 
-  @include deprecated-variable(padding, $searchbar-wp-padding) {
-    @include padding($searchbar-wp-padding-top, $searchbar-wp-padding-end, $searchbar-wp-padding-bottom, $searchbar-wp-padding-start);
-  }
+  background: $searchbar-wp-background-color;
 }
 
 .searchbar-wp .searchbar-input-container {
@@ -98,10 +84,11 @@ $searchbar-wp-input-clear-icon-size:     22px !default;
 // -----------------------------------------
 
 .searchbar-wp .searchbar-search-icon {
-  @include position(5px, $searchbar-wp-input-padding-horizontal, null, null);
-  @include svg-background-image($searchbar-wp-input-search-icon-svg, true);
+  @include svg-background-image($searchbar-wp-input-search-icon-svg);
 
   position: absolute;
+  top: 5px;
+  right: $searchbar-wp-input-padding-horizontal;
 
   width: $searchbar-wp-input-search-icon-size + 1;
   height: $searchbar-wp-input-search-icon-size + 1;
@@ -120,12 +107,12 @@ $searchbar-wp-input-clear-icon-size:     22px !default;
 
 .searchbar-wp .searchbar-input {
   @include placeholder($searchbar-wp-input-placeholder-color);
-  @include padding($searchbar-wp-input-padding-vertical, $searchbar-wp-input-padding-horizontal);
-  @include border-radius($searchbar-wp-input-border-radius);
-  @include background-position(start, $searchbar-wp-input-padding-horizontal, center);
+
+  padding: $searchbar-wp-input-padding-vertical $searchbar-wp-input-padding-horizontal;
 
   height: $searchbar-wp-input-height;
 
+  border-radius: $searchbar-wp-input-border-radius;
   font-size: $searchbar-wp-input-font-size;
   font-weight: $searchbar-wp-input-font-weight;
 
@@ -133,6 +120,7 @@ $searchbar-wp-input-clear-icon-size:     22px !default;
   color: $searchbar-wp-input-text-color;
 
   background-color: $searchbar-wp-input-background-color;
+  background-position: $searchbar-wp-input-padding-horizontal center;
 }
 
 
@@ -140,17 +128,19 @@ $searchbar-wp-input-clear-icon-size:     22px !default;
 // -----------------------------------------
 
 .searchbar-wp .searchbar-clear-icon {
-  @include position(0, $searchbar-wp-input-padding-horizontal, null, null);
   @include svg-background-image($searchbar-wp-input-clear-icon-svg);
-  @include padding(0);
-  @include background-position(center);
 
   position: absolute;
+  top: 0;
+  right: $searchbar-wp-input-padding-horizontal;
+
+  padding: 0;
 
   width: $searchbar-wp-input-clear-icon-size;
   height: 100%;
 
   background-repeat: no-repeat;
+  background-position: center;
   background-size: $searchbar-wp-input-clear-icon-size;
 }
 
@@ -194,7 +184,7 @@ $searchbar-wp-input-clear-icon-size:     22px !default;
 // -----------------------------------------
 
 .toolbar .searchbar-wp {
-  @include padding(2px);
+  padding: 2px;
 }
 
 

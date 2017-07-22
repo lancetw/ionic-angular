@@ -38,7 +38,6 @@ var __extends = (this && this.__extends) || (function () {
             if (opts === void 0) { opts = {}; }
             var _this = this;
             opts.showBackdrop = util_1.isPresent(opts.showBackdrop) ? !!opts.showBackdrop : true;
-            opts.enableBackdropDismiss = util_1.isPresent(opts.enableBackdropDismiss) ? !!opts.enableBackdropDismiss : false;
             opts.dismissOnPageChange = util_1.isPresent(opts.dismissOnPageChange) ? !!opts.dismissOnPageChange : false;
             _this = _super.call(this, loading_component_1.LoadingCmp, opts, null) || this;
             _this._app = app;

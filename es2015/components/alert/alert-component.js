@@ -29,7 +29,6 @@ export class AlertCmp {
         this.gestureBlocker = gestureCtrl.createBlocker(BLOCK_ALL);
         this.d = params.data;
         this.mode = this.d.mode || config.get('mode');
-        this.keyboardResizes = config.getBoolean('keyboardResizes', false);
         _renderer.setElementClass(_elementRef.nativeElement, `alert-${this.mode}`, true);
         if (this.d.cssClass) {
             this.d.cssClass.split(' ').forEach(cssClass => {
@@ -100,7 +99,7 @@ export class AlertCmp {
             this.activeId = checkedInput.id;
         }
         const /** @type {?} */ hasTextInput = (this.d.inputs.length && this.d.inputs.some(i => !(NON_TEXT_INPUT_REGEX.test(i.type))));
-        if (!this.keyboardResizes && hasTextInput && this._plt.is('mobile')) {
+        if (hasTextInput && this._plt.is('mobile')) {
             // this alert has a text input and it's on a mobile device so we should align
             // the alert up high because we need to leave space for the virtual keboard
             // this also helps prevent the layout getting all messed up from
@@ -118,12 +117,21 @@ export class AlertCmp {
      * @return {?}
      */
     ionViewDidLeave() {
+        this._plt.focusOutActiveElement();
         this.gestureBlocker.unblock();
     }
     /**
      * @return {?}
      */
+    ionViewWillLeave() {
+        this._plt.focusOutActiveElement();
+    }
+    /**
+     * @return {?}
+     */
     ionViewDidEnter() {
+        // focus out of the active element
+        this._plt.focusOutActiveElement();
         // set focus on the first input or button in the alert
         // note that this does not always work and bring up the keyboard on
         // devices since the focus command must come from the user's touch event
@@ -246,10 +254,6 @@ export class AlertCmp {
             // return an array of all the checked values
             return this.d.inputs.filter(i => i.checked).map(i => i.value);
         }
-        if (this.d.inputs.length === 0) {
-            // this is an alert without any options/inputs at all
-            return undefined;
-        }
         // this is an alert with text inputs
         // return an object of all the values with the input name as the key
         const /** @type {?} */ values = {};
@@ -366,8 +370,6 @@ function AlertCmp_tsickle_Closure_declarations() {
     AlertCmp.prototype.subHdrId;
     /** @type {?} */
     AlertCmp.prototype.mode;
-    /** @type {?} */
-    AlertCmp.prototype.keyboardResizes;
     /** @type {?} */
     AlertCmp.prototype.gestureBlocker;
     /** @type {?} */

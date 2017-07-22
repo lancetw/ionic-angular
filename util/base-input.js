@@ -9,7 +9,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import { EventEmitter, Input, Output } from '@angular/core';
-import { isPresent, isString, isUndefined, isArray, isTrueProperty, deepCopy } from './util';
+import { isPresent, isUndefined, isArray, isTrueProperty, deepCopy } from './util';
 import { Ion } from '../components/ion';
 import { TimeoutDebouncer } from './debouncer';
 var BaseInput = (function (_super) {
@@ -22,14 +22,13 @@ var BaseInput = (function (_super) {
      * @param {?} _defaultValue
      * @param {?} _form
      * @param {?} _item
-     * @param {?} _ngControl
+     * @param {?} ngControl
      */
-    function BaseInput(config, elementRef, renderer, name, _defaultValue, _form, _item, _ngControl) {
+    function BaseInput(config, elementRef, renderer, name, _defaultValue, _form, _item, ngControl) {
         var _this = _super.call(this, config, elementRef, renderer, name) || this;
         _this._defaultValue = _defaultValue;
         _this._form = _form;
         _this._item = _item;
-        _this._ngControl = _ngControl;
         _this._isFocus = false;
         _this._disabled = false;
         _this._debouncer = new TimeoutDebouncer(0);
@@ -50,14 +49,13 @@ var BaseInput = (function (_super) {
         _form && _form.register(_this);
         _this._value = deepCopy(_this._defaultValue);
         if (_item) {
-            (void 0) /* assert */;
             _this.id = name + '-' + _item.registerInput(name);
-            _this._labelId = _item.labelId;
+            _this._labelId = 'lbl-' + _item.id;
             _this._item.setElementClass('item-' + name, true);
         }
         // If the user passed a ngControl we need to set the valueAccessor
-        if (_ngControl) {
-            _ngControl.valueAccessor = _this;
+        if (ngControl) {
+            ngControl.valueAccessor = _this;
         }
         return _this;
     }
@@ -141,15 +139,20 @@ var BaseInput = (function (_super) {
         if (isUndefined(val)) {
             return false;
         }
-        var /** @type {?} */ normalized = (val === null)
-            ? deepCopy(this._defaultValue)
-            : this._inputNormalize(val);
+        var /** @type {?} */ normalized;
+        if (val === null) {
+            normalized = deepCopy(this._defaultValue);
+        }
+        else {
+            normalized = this._inputNormalize(val);
+        }
         var /** @type {?} */ notUpdate = isUndefined(normalized) || !this._inputShouldChange(normalized);
         if (notUpdate) {
             return false;
         }
         (void 0) /* console.debug */;
         this._value = normalized;
+        this._inputCheckHasValue(normalized);
         if (this._init) {
             this._inputUpdated();
         }
@@ -207,10 +210,11 @@ var BaseInput = (function (_super) {
         if (this._isFocus) {
             return;
         }
-        (void 0) /* console.debug */;
-        this._form && this._form.setAsFocused(this);
-        this._setFocus(true);
+        (void 0) /* assert */;
+        (void 0) /* assert */;
+        this._isFocus = true;
         this.ionFocus.emit(this);
+        this._inputUpdated();
     };
     /**
      * @hidden
@@ -220,26 +224,10 @@ var BaseInput = (function (_super) {
         if (!this._isFocus) {
             return;
         }
-        (void 0) /* console.debug */;
-        this._form && this._form.unsetAsFocused(this);
-        this._setFocus(false);
+        (void 0) /* assert */;
+        (void 0) /* assert */;
+        this._isFocus = false;
         this.ionBlur.emit(this);
-    };
-    /**
-     * @hidden
-     * @param {?} isFocused
-     * @return {?}
-     */
-    BaseInput.prototype._setFocus = function (isFocused) {
-        (void 0) /* assert */;
-        (void 0) /* assert */;
-        (void 0) /* assert */;
-        this._isFocus = isFocused;
-        var /** @type {?} */ item = this._item;
-        if (item) {
-            item.setElementClass('input-has-focus', isFocused);
-            item.setElementClass('item-input-has-focus', isFocused);
-        }
         this._inputUpdated();
     };
     /**
@@ -263,29 +251,16 @@ var BaseInput = (function (_super) {
      */
     BaseInput.prototype.hasValue = function () {
         var /** @type {?} */ val = this._value;
-        if (!isPresent(val)) {
-            return false;
-        }
-        if (isArray(val) || isString(val)) {
-            return val.length > 0;
-        }
-        return true;
-    };
-    /**
-     * @hidden
-     * @return {?}
-     */
-    BaseInput.prototype.focusNext = function () {
-        this._form && this._form.tabFocus(this);
+        return isArray(val)
+            ? val.length > 0
+            : isPresent(val);
     };
     /**
      * @hidden
      * @return {?}
      */
     BaseInput.prototype.ngOnDestroy = function () {
-        (void 0) /* assert */;
-        var /** @type {?} */ form = this._form;
-        form && form.deregister(this);
+        this._form && this._form.deregister(this);
         this._init = false;
     };
     /**
@@ -297,12 +272,20 @@ var BaseInput = (function (_super) {
     };
     /**
      * @hidden
+     * @param {?} val
      * @return {?}
      */
-    BaseInput.prototype.initFocus = function () {
-        var /** @type {?} */ ele = this._elementRef.nativeElement.querySelector('button');
-        ele && ele.focus();
+    BaseInput.prototype._inputCheckHasValue = function (val) {
+        if (!this._item) {
+            return;
+        }
+        this._item.setElementClass('input-has-value', this.hasValue());
     };
+    /**
+     * @hidden
+     * @return {?}
+     */
+    BaseInput.prototype.initFocus = function () { };
     /**
      * @hidden
      * @param {?} val
@@ -339,14 +322,6 @@ var BaseInput = (function (_super) {
      */
     BaseInput.prototype._inputUpdated = function () {
         (void 0) /* assert */;
-        var /** @type {?} */ item = this._item;
-        if (item) {
-            setControlCss(item, this._ngControl);
-            // TODO remove all uses of input-has-value in v4
-            var /** @type {?} */ hasValue = this.hasValue();
-            item.setElementClass('input-has-value', hasValue);
-            item.setElementClass('item-input-has-value', hasValue);
-        }
     };
     return BaseInput;
 }(Ion));
@@ -401,23 +376,5 @@ function BaseInput_tsickle_Closure_declarations() {
     BaseInput.prototype._form;
     /** @type {?} */
     BaseInput.prototype._item;
-    /** @type {?} */
-    BaseInput.prototype._ngControl;
-}
-/**
- * @param {?} element
- * @param {?} control
- * @return {?}
- */
-function setControlCss(element, control) {
-    if (!control) {
-        return;
-    }
-    element.setElementClass('ng-untouched', control.untouched);
-    element.setElementClass('ng-touched', control.touched);
-    element.setElementClass('ng-pristine', control.pristine);
-    element.setElementClass('ng-dirty', control.dirty);
-    element.setElementClass('ng-valid', control.valid);
-    element.setElementClass('ng-invalid', !control.valid);
 }
 //# sourceMappingURL=base-input.js.map

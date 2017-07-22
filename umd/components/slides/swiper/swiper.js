@@ -923,10 +923,8 @@
             return;
         }
         // Container
-        if (s.container) {
-            swiper_utils_1.removeClass(s.container, s._classNames);
-            s.container.removeAttribute('style');
-        }
+        swiper_utils_1.removeClass(s.container, s._classNames);
+        s.container.removeAttribute('style');
         // Wrapper
         s._wrapper.removeAttribute('style');
         // Slides

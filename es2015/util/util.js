@@ -64,8 +64,7 @@ export function debounce(fn, wait, immediate = false) {
     };
 }
 /**
- * @hidden
- * Rewrites an absolute URL so it works across file and http based engines
+ * Rewrites an absolute URL so it works across file and http based engines.
  * @param {?} url
  * @return {?}
  */

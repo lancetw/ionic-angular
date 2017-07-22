@@ -39,7 +39,6 @@
             this._title = '';
             this._titleSrv = new platform_browser_1.Title(platform_browser_1.DOCUMENT);
             this._rootNav = null;
-            this._didScroll = false;
             /**
              * Observable that emits whenever a view loads in the app.
              */
@@ -68,10 +67,6 @@
             // register this back button action with a default priority
             _plt.registerBackButtonAction(this.goBack.bind(this));
             this._disableScrollAssist = _config.getBoolean('disableScrollAssist', false);
-            var blurring = _config.getBoolean('inputBlurring', false);
-            if (blurring) {
-                this._enableInputBlurring();
-            }
             (void 0) /* runInDev */;
             _config.setTransition('ios-transition', transition_ios_1.IOSTransition);
             _config.setTransition('md-transition', transition_md_1.MDTransition);
@@ -156,7 +151,6 @@
          */
         App.prototype.setScrolling = function () {
             this._scrollTime = Date.now() + ACTIVE_SCROLLING_TIME;
-            this._didScroll = true;
         };
         /**
          * Boolean if the app is actively scrolling or not.
@@ -210,12 +204,13 @@
             // Set Nav must be set here in order to dimiss() work synchnously.
             // TODO: move _setNav() to the earlier stages of NavController. _queueTrns()
             enteringView._setNav(portal);
+            opts.keyboardClose = false;
             opts.direction = nav_util_1.DIRECTION_FORWARD;
             if (!opts.animation) {
                 opts.animation = enteringView.getTransitionName(nav_util_1.DIRECTION_FORWARD);
             }
             enteringView.setLeavingOpts({
-                keyboardClose: opts.keyboardClose,
+                keyboardClose: false,
                 direction: nav_util_1.DIRECTION_BACK,
                 animation: enteringView.getTransitionName(nav_util_1.DIRECTION_BACK),
                 ev: opts.ev
@@ -258,63 +253,6 @@
             // of its parent navs until it finds a nav that can pop
             return recursivePop(this.getActiveNav());
         };
-        /**
-         * @hidden
-         * @return {?}
-         */
-        App.prototype._enableInputBlurring = function () {
-            (void 0) /* console.debug */;
-            var /** @type {?} */ focused = true;
-            var /** @type {?} */ self = this;
-            var /** @type {?} */ platform = this._plt;
-            platform.registerListener(platform.doc(), 'focusin', onFocusin, { capture: true, zone: false, passive: true });
-            platform.registerListener(platform.doc(), 'touchend', onTouchend, { capture: false, zone: false, passive: true });
-            /**
-             * @param {?} ev
-             * @return {?}
-             */
-            function onFocusin(ev) {
-                focused = true;
-            }
-            /**
-             * @param {?} ev
-             * @return {?}
-             */
-            function onTouchend(ev) {
-                // if app did scroll return early
-                if (self._didScroll) {
-                    self._didScroll = false;
-                    return;
-                }
-                var /** @type {?} */ active = (self._plt.getActiveElement());
-                if (!active) {
-                    return;
-                }
-                // only blur if the active element is a text-input or a textarea
-                if (SKIP_BLURRING.indexOf(active.tagName) === -1) {
-                    return;
-                }
-                // if the selected target is the active element, do not blur
-                var /** @type {?} */ tapped = ev.target;
-                if (tapped === active) {
-                    return;
-                }
-                if (SKIP_BLURRING.indexOf(tapped.tagName) >= 0) {
-                    return;
-                }
-                // skip if div is a cover
-                if (tapped.classList.contains('input-cover')) {
-                    return;
-                }
-                focused = false;
-                // TODO: find a better way, why 50ms?
-                platform.timeout(function () {
-                    if (!focused) {
-                        active.blur();
-                    }
-                }, 50);
-            }
-        };
         return App;
     }());
     App.decorators = [
@@ -349,8 +287,6 @@
         App.prototype._rootNav;
         /** @type {?} */
         App.prototype._disableScrollAssist;
-        /** @type {?} */
-        App.prototype._didScroll;
         /**
          * @hidden
          * @type {?}
@@ -433,7 +369,6 @@
         }
         return nav;
     }
-    var /** @type {?} */ SKIP_BLURRING = ['INPUT', 'TEXTAREA', 'ION-INPUT', 'ION-TEXTAREA'];
     var /** @type {?} */ ACTIVE_SCROLLING_TIME = 100;
     var /** @type {?} */ CLICK_BLOCK_BUFFER_IN_MILLIS = 64;
 });

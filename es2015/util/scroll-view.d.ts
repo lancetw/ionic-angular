@@ -21,7 +21,6 @@ export declare class ScrollView {
     constructor(_app: App, _plt: Platform, _dom: DomController);
     init(ele: HTMLElement, contentTop: number, contentBottom: number): void;
     enableEvents(): void;
-    setScrolling(isScrolling: boolean, ev: ScrollEvent): void;
     private enableNativeScrolling();
     /**
      * @hidden

@@ -180,7 +180,7 @@
              */
             this.ionStart = new core_1.EventEmitter();
             this._events = new ui_event_manager_1.UIEventManager(_plt);
-            _content._hasRefresher = true;
+            _content.setElementClass('has-refresher', true);
             this._gesture = gestureCtrl.createGesture({
                 name: gesture_controller_1.GESTURE_REFRESHER,
                 priority: gesture_controller_1.GESTURE_PRIORITY_REFRESHER

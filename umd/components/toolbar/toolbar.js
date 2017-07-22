@@ -26,7 +26,7 @@ var __extends = (this && this.__extends) || (function () {
      * \@name Toolbar
      * \@description
      * A Toolbar is a generic bar that is positioned above or below content.
-     * Unlike a [Navbar](../Navbar/), a toolbar can be used as a subheader.
+     * Unlike a [Navbar](../../navbar/Navbar), a toolbar can be used as a subheader.
      * When toolbars are placed within an `<ion-header>` or `<ion-footer>`,
      * the toolbars stay fixed in their respective location. When placed within
      * `<ion-content>`, toolbars will scroll with the content.
@@ -108,7 +108,7 @@ var __extends = (this && this.__extends) || (function () {
      *  ```
      *
      * \@demo /docs/demos/src/toolbar/
-     * @see {\@link ../Navbar/ Navbar API Docs}
+     * @see {\@link ../../navbar/Navbar/ Navbar API Docs}
      */
     var Toolbar = (function (_super) {
         __extends(Toolbar, _super);

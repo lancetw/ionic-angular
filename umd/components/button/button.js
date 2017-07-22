@@ -60,12 +60,12 @@ var __extends = (this && this.__extends) || (function () {
      *  <button ion-button round outline>Outline + Round</button>
      *
      *  <!-- Icons -->
-     *  <button ion-button icon-start>
+     *  <button ion-button icon-left>
      *    <ion-icon name="star"></ion-icon>
      *    Left Icon
      *  </button>
      *
-     *  <button ion-button icon-end>
+     *  <button ion-button icon-right>
      *    Right Icon
      *    <ion-icon name="star"></ion-icon>
      *  </button>

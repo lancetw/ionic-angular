@@ -5,6 +5,7 @@ import { DeepLinker } from '../../navigation/deep-linker';
 import { DomController } from '../../platform/dom-controller';
 import { GestureController } from '../../gestures/gesture-controller';
 import { isTrueProperty } from '../../util/util';
+import { Keyboard } from '../../platform/keyboard';
 import { NavControllerBase } from '../../navigation/nav-controller-base';
 import { Platform } from '../../platform/platform';
 import { Tabs } from './tabs';
@@ -64,8 +65,8 @@ import { TransitionController } from '../../transitions/transition-controller';
  *
  *   // set some user information on chatParams
  *   chatParams = {
- *     user1: 'admin',
- *     user2: 'ionic'
+ *     user1: "admin",
+ *     user2: "ionic"
  *   };
  *
  *   constructor() {
@@ -79,7 +80,7 @@ import { TransitionController } from '../../transitions/transition-controller';
  * ```ts
  * export class ChatPage {
  *   constructor(navParams: NavParams) {
- *     console.log('Passed params', navParams.data);
+ *     console.log("Passed params", navParams.data);
  *   }
  * }
  * ```
@@ -121,6 +122,7 @@ export class Tab extends NavControllerBase {
      * @param {?} app
      * @param {?} config
      * @param {?} plt
+     * @param {?} keyboard
      * @param {?} elementRef
      * @param {?} zone
      * @param {?} renderer
@@ -132,9 +134,9 @@ export class Tab extends NavControllerBase {
      * @param {?} _dom
      * @param {?} errHandler
      */
-    constructor(parent, app, config, plt, elementRef, zone, renderer, cfr, _cd, gestureCtrl, transCtrl, linker, _dom, errHandler) {
+    constructor(parent, app, config, plt, keyboard, elementRef, zone, renderer, cfr, _cd, gestureCtrl, transCtrl, linker, _dom, errHandler) {
         // A Tab is a NavController for its child pages
-        super(parent, app, config, plt, elementRef, zone, renderer, cfr, gestureCtrl, transCtrl, linker, _dom, errHandler);
+        super(parent, app, config, plt, keyboard, elementRef, zone, renderer, cfr, gestureCtrl, transCtrl, linker, _dom, errHandler);
         this._cd = _cd;
         this.linker = linker;
         this._dom = _dom;
@@ -335,6 +337,7 @@ Tab.ctorParameters = () => [
     { type: App, },
     { type: Config, },
     { type: Platform, },
+    { type: Keyboard, },
     { type: ElementRef, },
     { type: NgZone, },
     { type: Renderer, },

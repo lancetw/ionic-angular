@@ -139,7 +139,6 @@ export declare class ItemReorder implements ItemReorderGestureDelegate {
     private _content;
     _enableReorder: boolean;
     _visibleReorder: boolean;
-    _isStart: boolean;
     _reorderGesture: ItemReorderGesture;
     _lastToIndex: number;
     _element: HTMLElement;
@@ -148,10 +147,6 @@ export declare class ItemReorder implements ItemReorderGestureDelegate {
      * with `from` and `to` properties.
      */
     ionItemReorder: EventEmitter<ReorderIndexes>;
-    /**
-     * @input {string} Which side of the view the ion-reorder should be placed. Default `"end"`.
-     */
-    side: 'start' | 'end';
     constructor(_plt: Platform, _dom: DomController, elementRef: ElementRef, _rendered: Renderer, _zone: NgZone, _content: Content);
     /**
      * @hidden

@@ -91,44 +91,7 @@ var __extends = (this && this.__extends) || (function () {
      *
      * \@advanced
      *
-     * ### Sroll Events
-     *
-     * Scroll events happen outside of Angular's Zones. This is for performance reasons. So
-     * if you're trying to bind a value to any scroll event, it will need to be wrapped in
-     * a `zone.run()`
-     *
-     * ```ts
-     * import { Component, NgZone } from '\@angular/core';
-     * \@Component({
-     *   template: `
-     *     <ion-header>
-     *       <ion-navbar>
-     *         <ion-title>{{scrollAmount}}</ion-title>
-     *       </ion-navbar>
-     *     </ion-header>
-     *     <ion-content (ionScroll)="scrollHandler($event)">
-     *        <p> Some realllllllly long content </p>
-     *     </ion-content>
-     * `})
-     * class E2EPage {
-     *  public scrollAmount = 0;
-     *  constructor( public zone: NgZone){}
-     *  scrollHandler(event) {
-     *    console.log(`ScrollEvent: ${event}`)
-     *    this.zone.run(()=>{
-     *      // since scrollAmount is data-binded,
-     *      // the update needs to happen in zone
-     *      this.scrollAmount++
-     *    })
-     *  }
-     * }
-     * ```
-     *
-     * This goes for any scroll event, not just `ionScroll`.
-     *
-     * ### Resizing the content
-     *
-     * If the height of `ion-header`, `ion-footer` or `ion-tabbar`
+     * Resizing the content. If the height of `ion-header`, `ion-footer` or `ion-tabbar`
      * changes dynamically, `content.resize()` has to be called in order to update the
      * layout of `Content`.
      *
@@ -213,10 +176,6 @@ var __extends = (this && this.__extends) || (function () {
              * \@internal
              */
             _this._inputPolling = false;
-            /**
-             * \@internal
-             */
-            _this._hasRefresher = false;
             /**
              * \@internal
              */
@@ -747,10 +706,6 @@ var __extends = (this && this.__extends) || (function () {
             else if (this._tabsPlacement === 'bottom') {
                 this._cBottom += this._tabbarHeight;
             }
-            // Refresher uses a border which should be hidden unless pulled
-            if (this._hasRefresher) {
-                this._cTop -= 1;
-            }
             // Fixed content shouldn't include content padding
             this._fTop = this._cTop;
             this._fBottom = this._cBottom;
@@ -895,8 +850,7 @@ var __extends = (this && this.__extends) || (function () {
                         '</div>' +
                         '<ng-content select="ion-refresher"></ng-content>',
                     host: {
-                        '[class.statusbar-padding]': 'statusbarPadding',
-                        '[class.has-refresher]': '_hasRefresher'
+                        '[class.statusbar-padding]': 'statusbarPadding'
                     },
                     changeDetection: core_1.ChangeDetectionStrategy.OnPush,
                     encapsulation: core_1.ViewEncapsulation.None
@@ -1032,11 +986,6 @@ var __extends = (this && this.__extends) || (function () {
          * @type {?}
          */
         Content.prototype._fullscreen;
-        /**
-         * \@internal
-         * @type {?}
-         */
-        Content.prototype._hasRefresher;
         /**
          * \@internal
          * @type {?}

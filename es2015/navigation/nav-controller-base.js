@@ -17,6 +17,7 @@ export class NavControllerBase extends Ion {
      * @param {?} _app
      * @param {?} config
      * @param {?} plt
+     * @param {?} _keyboard
      * @param {?} elementRef
      * @param {?} _zone
      * @param {?} renderer
@@ -27,12 +28,13 @@ export class NavControllerBase extends Ion {
      * @param {?} _domCtrl
      * @param {?} _errHandler
      */
-    constructor(parent, _app, config, plt, elementRef, _zone, renderer, _cfr, _gestureCtrl, _trnsCtrl, _linker, _domCtrl, _errHandler) {
+    constructor(parent, _app, config, plt, _keyboard, elementRef, _zone, renderer, _cfr, _gestureCtrl, _trnsCtrl, _linker, _domCtrl, _errHandler) {
         super(config, elementRef, renderer);
         this.parent = parent;
         this._app = _app;
         this.config = config;
         this.plt = plt;
+        this._keyboard = _keyboard;
         this._zone = _zone;
         this._cfr = _cfr;
         this._gestureCtrl = _gestureCtrl;
@@ -776,7 +778,7 @@ export class NavControllerBase extends Ion {
             if (opts.keyboardClose !== false) {
                 // the keyboard is still open!
                 // no problem, let's just close for them
-                this.plt.focusOutActiveElement();
+                this._keyboard.close();
             }
         }
         return {
@@ -1296,6 +1298,8 @@ function NavControllerBase_tsickle_Closure_declarations() {
     NavControllerBase.prototype.config;
     /** @type {?} */
     NavControllerBase.prototype.plt;
+    /** @type {?} */
+    NavControllerBase.prototype._keyboard;
     /** @type {?} */
     NavControllerBase.prototype._zone;
     /** @type {?} */

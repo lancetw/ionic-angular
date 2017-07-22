@@ -1,4 +1,4 @@
-import { Injectable, NgZone, EventEmitter } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Config } from '../config/config';
 import { DomController } from './dom-controller';
 import { isTextInput } from '../util/dom';
@@ -27,85 +27,27 @@ var Keyboard = (function () {
      * @param {?} _dom
      */
     function Keyboard(config, _plt, _zone, _dom) {
+        var _this = this;
         this._plt = _plt;
         this._zone = _zone;
         this._dom = _dom;
-        this.willShow = new EventEmitter();
-        this.willHide = new EventEmitter();
-        this.didShow = new EventEmitter();
-        this.didHide = new EventEmitter();
-        this.eventsAvailable = false;
         this.focusOutline(config.get('focusOutline'));
         var win = _plt.win();
-        if (config.getBoolean('keyboardResizes', false)) {
-            this.listenV2(win);
-        }
-        else {
-            this.listenV1(win);
-        }
-    }
-    /**
-     * @param {?} win
-     * @return {?}
-     */
-    Keyboard.prototype.listenV2 = function (win) {
-        var _this = this;
-        var /** @type {?} */ platform = this._plt;
-        platform.registerListener(win, 'keyboardWillShow', function () {
-            _this._zone.run(function () {
-                _this.willShow.emit();
-            });
-        }, { zone: false, passive: true });
-        platform.registerListener(win, 'keyboardWillHide', function () {
-            _this._zone.run(function () {
-                _this.willHide.emit();
-            });
-        }, { zone: false, passive: true });
-        platform.registerListener(win, 'keyboardDidShow', function () {
-            _this._zone.run(function () {
-                _this.didShow.emit();
-            });
-        }, { zone: false, passive: true });
-        platform.registerListener(win, 'keyboardDidHide', function () {
-            _this._zone.run(function () {
-                _this.didHide.emit();
-            });
-        }, { zone: false, passive: true });
-        this.eventsAvailable = true;
-    };
-    /**
-     * @param {?} win
-     * @return {?}
-     */
-    Keyboard.prototype.listenV1 = function (win) {
-        var _this = this;
-        var /** @type {?} */ platform = this._plt;
-        platform.registerListener(win, 'native.keyboardhide', function () {
-            _this.blurActiveInput(true);
-        }, { zone: false, passive: true });
-        platform.registerListener(win, 'native.keyboardshow', function () {
-            _this.blurActiveInput(false);
-        }, { zone: false, passive: true });
-    };
-    /**
-     * @param {?} shouldBlur
-     * @return {?}
-     */
-    Keyboard.prototype.blurActiveInput = function (shouldBlur) {
-        var _this = this;
-        var /** @type {?} */ platform = this._plt;
-        platform.cancelTimeout(this._tmr);
-        if (shouldBlur) {
-            this._tmr = platform.timeout(function () {
+        _plt.registerListener(win, 'native.keyboardhide', function () {
+            _plt.cancelTimeout(_this._tmr);
+            _this._tmr = _plt.timeout(function () {
                 // this custom cordova plugin event fires when the keyboard will hide
                 // useful when the virtual keyboard is closed natively
-                // https://github.com/ionic-team/ionic-plugin-keyboard
+                // https://github.com/driftyco/ionic-plugin-keyboard
                 if (_this.isOpen()) {
-                    platform.focusOutActiveElement();
+                    _this._plt.focusOutActiveElement();
                 }
             }, 80);
-        }
-    };
+        }, { zone: false, passive: true });
+        _plt.registerListener(win, 'native.keyboardshow', function () {
+            _plt.cancelTimeout(_this._tmr);
+        }, { zone: false, passive: true });
+    }
     /**
      * Check to see if the keyboard is open or not.
      *
@@ -301,16 +243,6 @@ function Keyboard_tsickle_Closure_declarations() {
     Keyboard.ctorParameters;
     /** @type {?} */
     Keyboard.prototype._tmr;
-    /** @type {?} */
-    Keyboard.prototype.willShow;
-    /** @type {?} */
-    Keyboard.prototype.willHide;
-    /** @type {?} */
-    Keyboard.prototype.didShow;
-    /** @type {?} */
-    Keyboard.prototype.didHide;
-    /** @type {?} */
-    Keyboard.prototype.eventsAvailable;
     /** @type {?} */
     Keyboard.prototype._plt;
     /** @type {?} */

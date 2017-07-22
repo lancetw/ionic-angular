@@ -16,6 +16,8 @@ var /** @type {?} */ EASING = 'cubic-bezier(0.36,0.66,0.04,1)';
 var /** @type {?} */ OPACITY = 'opacity';
 var /** @type {?} */ TRANSFORM = 'transform';
 var /** @type {?} */ TRANSLATEX = 'translateX';
+var /** @type {?} */ OFF_RIGHT = '99.5%';
+var /** @type {?} */ OFF_LEFT = '-33%';
 var /** @type {?} */ CENTER = '0%';
 var /** @type {?} */ OFF_OPACITY = 0.8;
 var /** @type {?} */ SHOW_BACK_BTN_CSS = 'show-back-button';
@@ -30,8 +32,6 @@ var IOSTransition = (function (_super) {
     IOSTransition.prototype.init = function () {
         _super.prototype.init.call(this);
         var /** @type {?} */ plt = this.plt;
-        var /** @type {?} */ OFF_RIGHT = plt.isRTL ? '-99.5%' : '99.5%';
-        var /** @type {?} */ OFF_LEFT = plt.isRTL ? '33%' : '-33%';
         var /** @type {?} */ enteringView = this.enteringView;
         var /** @type {?} */ leavingView = this.leavingView;
         var /** @type {?} */ opts = this.opts;
@@ -98,7 +98,7 @@ var IOSTransition = (function (_super) {
                             .beforeAddClass(SHOW_BACK_BTN_CSS)
                             .fromTo(OPACITY, 0.01, 1, true);
                         var /** @type {?} */ enteringBackBtnText = new Animation(plt, enteringNavbarEle.querySelector('.back-button-text'));
-                        enteringBackBtnText.fromTo(TRANSLATEX, (plt.isRTL ? '-100px' : '100px'), '0px');
+                        enteringBackBtnText.fromTo(TRANSLATEX, '100px', '0px');
                         enteringNavBar.add(enteringBackBtnText);
                     }
                     else {
@@ -118,7 +118,7 @@ var IOSTransition = (function (_super) {
                 // leaving content, back direction
                 leavingContent
                     .beforeClearStyles([OPACITY])
-                    .fromTo(TRANSLATEX, CENTER, (plt.isRTL ? '-100%' : '100%'));
+                    .fromTo(TRANSLATEX, CENTER, '100%');
             }
             else {
                 // leaving content, forward direction
@@ -147,14 +147,14 @@ var IOSTransition = (function (_super) {
                 leavingNavbarItems.fromTo(OPACITY, 0.99, 0);
                 if (backDirection) {
                     // leaving navbar, back direction
-                    leavingTitle.fromTo(TRANSLATEX, CENTER, (plt.isRTL ? '-100%' : '100%'));
+                    leavingTitle.fromTo(TRANSLATEX, CENTER, '100%');
                     // leaving navbar, back direction, and there's no entering navbar
                     // should just slide out, no fading out
                     leavingNavbarBg
                         .beforeClearStyles([OPACITY])
-                        .fromTo(TRANSLATEX, CENTER, (plt.isRTL ? '-100%' : '100%'));
+                        .fromTo(TRANSLATEX, CENTER, '100%');
                     var /** @type {?} */ leavingBackBtnText = new Animation(plt, leavingNavbarEle.querySelector('.back-button-text'));
-                    leavingBackBtnText.fromTo(TRANSLATEX, CENTER, (plt.isRTL ? -300 : 300) + 'px');
+                    leavingBackBtnText.fromTo(TRANSLATEX, CENTER, (300) + 'px');
                     leavingNavBar.add(leavingBackBtnText);
                 }
                 else {

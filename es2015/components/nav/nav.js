@@ -4,6 +4,7 @@ import { Config } from '../../config/config';
 import { DeepLinker } from '../../navigation/deep-linker';
 import { DomController } from '../../platform/dom-controller';
 import { GestureController } from '../../gestures/gesture-controller';
+import { Keyboard } from '../../platform/keyboard';
 import { NavController } from '../../navigation/nav-controller';
 import { NavControllerBase } from '../../navigation/nav-controller-base';
 import { Platform } from '../../platform/platform';
@@ -49,6 +50,7 @@ export class Nav extends NavControllerBase {
      * @param {?} app
      * @param {?} config
      * @param {?} plt
+     * @param {?} keyboard
      * @param {?} elementRef
      * @param {?} zone
      * @param {?} renderer
@@ -59,8 +61,8 @@ export class Nav extends NavControllerBase {
      * @param {?} domCtrl
      * @param {?} errHandler
      */
-    constructor(viewCtrl, parent, app, config, plt, elementRef, zone, renderer, cfr, gestureCtrl, transCtrl, linker, domCtrl, errHandler) {
-        super(parent, app, config, plt, elementRef, zone, renderer, cfr, gestureCtrl, transCtrl, linker, domCtrl, errHandler);
+    constructor(viewCtrl, parent, app, config, plt, keyboard, elementRef, zone, renderer, cfr, gestureCtrl, transCtrl, linker, domCtrl, errHandler) {
+        super(parent, app, config, plt, keyboard, elementRef, zone, renderer, cfr, gestureCtrl, transCtrl, linker, domCtrl, errHandler);
         this._hasInit = false;
         if (viewCtrl) {
             // an ion-nav can also act as an ion-page within a parent ion-nav
@@ -175,6 +177,7 @@ Nav.ctorParameters = () => [
     { type: App, },
     { type: Config, },
     { type: Platform, },
+    { type: Keyboard, },
     { type: ElementRef, },
     { type: NgZone, },
     { type: Renderer, },

@@ -518,7 +518,7 @@
          * @return {?}
          */
         VirtualScroll.prototype._updateDiffer = function () {
-            if (util_1.isPresent(this._records)) {
+            if (util_1.isBlank(this._differ) && util_1.isPresent(this._records)) {
                 this._differ = this._iterableDiffers.find(this._records).create(this._virtualTrackBy);
             }
         };

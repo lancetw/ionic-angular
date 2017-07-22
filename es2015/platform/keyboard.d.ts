@@ -1,4 +1,4 @@
-import { NgZone, EventEmitter } from '@angular/core';
+import { NgZone } from '@angular/core';
 import { Config } from '../config/config';
 import { DomController } from './dom-controller';
 import { Platform } from './platform';
@@ -21,16 +21,8 @@ export declare class Keyboard {
     private _plt;
     private _zone;
     private _dom;
-    _tmr: number;
-    willShow: EventEmitter<void>;
-    willHide: EventEmitter<void>;
-    didShow: EventEmitter<void>;
-    didHide: EventEmitter<void>;
-    eventsAvailable: boolean;
+    private _tmr;
     constructor(config: Config, _plt: Platform, _zone: NgZone, _dom: DomController);
-    private listenV2(win);
-    private listenV1(win);
-    private blurActiveInput(shouldBlur);
     /**
      * Check to see if the keyboard is open or not.
      *

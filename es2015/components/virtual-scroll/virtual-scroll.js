@@ -3,7 +3,7 @@ import { adjustRendered, calcDimensions, estimateHeight, initReadNodes, processR
 import { Config } from '../../config/config';
 import { Content } from '../content/content';
 import { DomController } from '../../platform/dom-controller';
-import { isFunction, isPresent } from '../../util/util';
+import { isBlank, isFunction, isPresent } from '../../util/util';
 import { Platform } from '../../platform/platform';
 import { ViewController } from '../../navigation/view-controller';
 import { VirtualItem } from './virtual-item';
@@ -490,7 +490,7 @@ export class VirtualScroll {
      * @return {?}
      */
     _updateDiffer() {
-        if (isPresent(this._records)) {
+        if (isBlank(this._differ) && isPresent(this._records)) {
             this._differ = this._iterableDiffers.find(this._records).create(this._virtualTrackBy);
         }
     }

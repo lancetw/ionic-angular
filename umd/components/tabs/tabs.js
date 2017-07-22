@@ -14,20 +14,17 @@ var __extends = (this && this.__extends) || (function () {
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "@angular/core", "rxjs/Subject", "rxjs/add/operator/takeUntil", "../app/app", "../../config/config", "../../navigation/deep-linker", "../ion", "../../util/util", "../../platform/keyboard", "../../navigation/nav-controller", "../../navigation/nav-util", "../split-pane/split-pane", "../../platform/platform", "./tab-highlight", "../../navigation/view-controller"], factory);
+        define(["require", "exports", "@angular/core", "../app/app", "../../config/config", "../../navigation/deep-linker", "../ion", "../../util/util", "../../navigation/nav-controller", "../../navigation/nav-util", "../split-pane/split-pane", "../../platform/platform", "./tab-highlight", "../../navigation/view-controller"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var core_1 = require("@angular/core");
-    var Subject_1 = require("rxjs/Subject");
-    require("rxjs/add/operator/takeUntil");
     var app_1 = require("../app/app");
     var config_1 = require("../../config/config");
     var deep_linker_1 = require("../../navigation/deep-linker");
     var ion_1 = require("../ion");
     var util_1 = require("../../util/util");
-    var keyboard_1 = require("../../platform/keyboard");
     var nav_controller_1 = require("../../navigation/nav-controller");
     var nav_util_1 = require("../../navigation/nav-util");
     var split_pane_1 = require("../split-pane/split-pane");
@@ -177,9 +174,8 @@ var __extends = (this && this.__extends) || (function () {
          * @param {?} _plt
          * @param {?} renderer
          * @param {?} _linker
-         * @param {?=} keyboard
          */
-        function Tabs(parent, viewCtrl, _app, config, elementRef, _plt, renderer, _linker, keyboard) {
+        function Tabs(parent, viewCtrl, _app, config, elementRef, _plt, renderer, _linker) {
             var _this = _super.call(this, config, elementRef, renderer, 'tabs') || this;
             _this.viewCtrl = viewCtrl;
             _this._app = _app;
@@ -197,10 +193,6 @@ var __extends = (this && this.__extends) || (function () {
              * \@internal
              */
             _this._selectHistory = [];
-            /**
-             * \@internal
-             */
-            _this._onDestroy = new Subject_1.Subject();
             /**
              * \@output {any} Emitted when the tab changes.
              */
@@ -229,34 +221,13 @@ var __extends = (this && this.__extends) || (function () {
                 viewCtrl._setContent(_this);
                 viewCtrl._setContentRef(elementRef);
             }
-            var keyboardResizes = config.getBoolean('keyboardResizes', false);
-            if (keyboard && keyboardResizes) {
-                keyboard.willHide
-                    .takeUntil(_this._onDestroy)
-                    .subscribe(function () {
-                    _this._plt.timeout(function () { return _this.setTabbarHidden(false); }, 50);
-                });
-                keyboard.willShow
-                    .takeUntil(_this._onDestroy)
-                    .subscribe(function () { return _this.setTabbarHidden(true); });
-            }
             return _this;
         }
         /**
-         * \@internal
-         * @param {?} tabbarHidden
-         * @return {?}
-         */
-        Tabs.prototype.setTabbarHidden = function (tabbarHidden) {
-            this.setElementClass('tabbar-hidden', tabbarHidden);
-            this.resize();
-        };
-        /**
-         * \@internal
          * @return {?}
          */
         Tabs.prototype.ngOnDestroy = function () {
-            this._onDestroy.next();
+            this._resizeObs && this._resizeObs.unsubscribe();
             this.parent.unregisterChildNav(this);
         };
         /**
@@ -269,9 +240,9 @@ var __extends = (this && this.__extends) || (function () {
             this._setConfig('tabsLayout', 'icon-top');
             this._setConfig('tabsHighlight', this.tabsHighlight);
             if (this.tabsHighlight) {
-                this._plt.resize
-                    .takeUntil(this._onDestroy)
-                    .subscribe(function () { return _this._highlight.select(_this.getSelected()); });
+                this._resizeObs = this._plt.resize.subscribe(function () {
+                    _this._highlight.select(_this.getSelected());
+                });
             }
             this.initTabs();
         };
@@ -585,7 +556,6 @@ var __extends = (this && this.__extends) || (function () {
         { type: platform_1.Platform, },
         { type: core_1.Renderer, },
         { type: deep_linker_1.DeepLinker, },
-        { type: keyboard_1.Keyboard, },
     ]; };
     Tabs.propDecorators = {
         'selectedIndex': [{ type: core_1.Input },],
@@ -647,14 +617,14 @@ var __extends = (this && this.__extends) || (function () {
          * \@internal
          * @type {?}
          */
-        Tabs.prototype._onDestroy;
+        Tabs.prototype._resizeObs;
         /**
          * \@input {number} The default selected tab index when first loaded. If a selected index isn't provided then it will use `0`, the first tab.
          * @type {?}
          */
         Tabs.prototype.selectedIndex;
         /**
-         * \@input {string} Set the tabbar layout: `icon-top`, `icon-start`, `icon-end`, `icon-bottom`, `icon-hide`, `title-hide`.
+         * \@input {string} Set the tabbar layout: `icon-top`, `icon-left`, `icon-right`, `icon-bottom`, `icon-hide`, `title-hide`.
          * @type {?}
          */
         Tabs.prototype.tabsLayout;

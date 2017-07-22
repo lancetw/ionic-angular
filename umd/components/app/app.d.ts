@@ -22,7 +22,6 @@ export declare class App {
     private _titleSrv;
     private _rootNav;
     private _disableScrollAssist;
-    private _didScroll;
     /**
      * @hidden
      */
@@ -130,8 +129,4 @@ export declare class App {
      * @hidden
      */
     navPop(): Promise<any>;
-    /**
-     * @hidden
-     */
-    _enableInputBlurring(): void;
 }

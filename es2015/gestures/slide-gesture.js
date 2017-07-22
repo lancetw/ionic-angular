@@ -70,12 +70,12 @@ export class SlideGesture extends PanGesture {
         let /** @type {?} */ coord = (pointerCoord(ev));
         let /** @type {?} */ newPos = coord[this.direction];
         let /** @type {?} */ newTimestamp = Date.now();
-        let /** @type {?} */ velocity = (this.plt.isRTL ? (slide.pos - newPos) : (newPos - slide.pos)) / (newTimestamp - slide.timestamp);
+        let /** @type {?} */ velocity = (newPos - slide.pos) / (newTimestamp - slide.timestamp);
         slide.pos = newPos;
         slide.timestamp = newTimestamp;
-        slide.distance = clamp(slide.min, (this.plt.isRTL ? slide.pointerStartPos - newPos : newPos - slide.pointerStartPos) + slide.elementStartPos, slide.max);
+        slide.distance = clamp(slide.min, newPos - slide.pointerStartPos + slide.elementStartPos, slide.max);
         slide.velocity = velocity;
-        slide.delta = (this.plt.isRTL ? slide.pointerStartPos - newPos : newPos - slide.pointerStartPos);
+        slide.delta = newPos - slide.pointerStartPos;
         this.onSlide(slide, ev);
     }
     /**

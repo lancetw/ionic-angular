@@ -123,7 +123,6 @@ export class Range extends BaseInput {
         val = Math.round(val);
         if (!isNaN(val)) {
             this._min = val;
-            this._inputUpdated();
         }
     }
     /**
@@ -141,7 +140,6 @@ export class Range extends BaseInput {
         val = Math.round(val);
         if (!isNaN(val)) {
             this._max = val;
-            this._inputUpdated();
         }
     }
     /**

@@ -28,7 +28,6 @@ export class App {
         this._title = '';
         this._titleSrv = new Title(DOCUMENT);
         this._rootNav = null;
-        this._didScroll = false;
         /**
          * Observable that emits whenever a view loads in the app.
          */
@@ -57,10 +56,6 @@ export class App {
         // register this back button action with a default priority
         _plt.registerBackButtonAction(this.goBack.bind(this));
         this._disableScrollAssist = _config.getBoolean('disableScrollAssist', false);
-        const blurring = _config.getBoolean('inputBlurring', false);
-        if (blurring) {
-            this._enableInputBlurring();
-        }
         (void 0) /* runInDev */;
         _config.setTransition('ios-transition', IOSTransition);
         _config.setTransition('md-transition', MDTransition);
@@ -143,7 +138,6 @@ export class App {
      */
     setScrolling() {
         this._scrollTime = Date.now() + ACTIVE_SCROLLING_TIME;
-        this._didScroll = true;
     }
     /**
      * Boolean if the app is actively scrolling or not.
@@ -197,12 +191,13 @@ export class App {
         // Set Nav must be set here in order to dimiss() work synchnously.
         // TODO: move _setNav() to the earlier stages of NavController. _queueTrns()
         enteringView._setNav(portal);
+        opts.keyboardClose = false;
         opts.direction = DIRECTION_FORWARD;
         if (!opts.animation) {
             opts.animation = enteringView.getTransitionName(DIRECTION_FORWARD);
         }
         enteringView.setLeavingOpts({
-            keyboardClose: opts.keyboardClose,
+            keyboardClose: false,
             direction: DIRECTION_BACK,
             animation: enteringView.getTransitionName(DIRECTION_BACK),
             ev: opts.ev
@@ -245,63 +240,6 @@ export class App {
         // of its parent navs until it finds a nav that can pop
         return recursivePop(this.getActiveNav());
     }
-    /**
-     * @hidden
-     * @return {?}
-     */
-    _enableInputBlurring() {
-        (void 0) /* console.debug */;
-        let /** @type {?} */ focused = true;
-        const /** @type {?} */ self = this;
-        const /** @type {?} */ platform = this._plt;
-        platform.registerListener(platform.doc(), 'focusin', onFocusin, { capture: true, zone: false, passive: true });
-        platform.registerListener(platform.doc(), 'touchend', onTouchend, { capture: false, zone: false, passive: true });
-        /**
-         * @param {?} ev
-         * @return {?}
-         */
-        function onFocusin(ev) {
-            focused = true;
-        }
-        /**
-         * @param {?} ev
-         * @return {?}
-         */
-        function onTouchend(ev) {
-            // if app did scroll return early
-            if (self._didScroll) {
-                self._didScroll = false;
-                return;
-            }
-            const /** @type {?} */ active = (self._plt.getActiveElement());
-            if (!active) {
-                return;
-            }
-            // only blur if the active element is a text-input or a textarea
-            if (SKIP_BLURRING.indexOf(active.tagName) === -1) {
-                return;
-            }
-            // if the selected target is the active element, do not blur
-            const /** @type {?} */ tapped = ev.target;
-            if (tapped === active) {
-                return;
-            }
-            if (SKIP_BLURRING.indexOf(tapped.tagName) >= 0) {
-                return;
-            }
-            // skip if div is a cover
-            if (tapped.classList.contains('input-cover')) {
-                return;
-            }
-            focused = false;
-            // TODO: find a better way, why 50ms?
-            platform.timeout(() => {
-                if (!focused) {
-                    active.blur();
-                }
-            }, 50);
-        }
-    }
 }
 App.decorators = [
     { type: Injectable },
@@ -334,8 +272,6 @@ function App_tsickle_Closure_declarations() {
     App.prototype._rootNav;
     /** @type {?} */
     App.prototype._disableScrollAssist;
-    /** @type {?} */
-    App.prototype._didScroll;
     /**
      * @hidden
      * @type {?}
@@ -418,7 +354,6 @@ function findTopNav(nav) {
     }
     return nav;
 }
-const /** @type {?} */ SKIP_BLURRING = ['INPUT', 'TEXTAREA', 'ION-INPUT', 'ION-TEXTAREA'];
 const /** @type {?} */ ACTIVE_SCROLLING_TIME = 100;
 const /** @type {?} */ CLICK_BLOCK_BUFFER_IN_MILLIS = 64;
 //# sourceMappingURL=app.js.map

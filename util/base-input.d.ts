@@ -1,13 +1,12 @@
 import { AfterContentInit, ElementRef, EventEmitter, Renderer } from '@angular/core';
 import { ControlValueAccessor } from '@angular/forms';
 import { NgControl } from '@angular/forms';
-import { IonicFormInput } from './form';
 import { Ion } from '../components/ion';
 import { Config } from '../config/config';
 import { Item } from '../components/item/item';
 import { Form } from './form';
 import { TimeoutDebouncer } from './debouncer';
-export interface CommonInput<T> extends ControlValueAccessor, AfterContentInit, IonicFormInput {
+export interface CommonInput<T> extends ControlValueAccessor, AfterContentInit {
     id: string;
     disabled: boolean;
     value: T;
@@ -24,7 +23,6 @@ export declare class BaseInput<T> extends Ion implements CommonInput<T> {
     private _defaultValue;
     _form: Form;
     _item: Item;
-    _ngControl: NgControl;
     _value: T;
     _onChanged: Function;
     _onTouched: Function;
@@ -51,7 +49,7 @@ export declare class BaseInput<T> extends Ion implements CommonInput<T> {
      * @input {boolean} If true, the user cannot interact with this element.
      */
     disabled: boolean;
-    constructor(config: Config, elementRef: ElementRef, renderer: Renderer, name: string, _defaultValue: T, _form: Form, _item: Item, _ngControl: NgControl);
+    constructor(config: Config, elementRef: ElementRef, renderer: Renderer, name: string, _defaultValue: T, _form: Form, _item: Item, ngControl: NgControl);
     value: T;
     setValue(val: any): void;
     /**
@@ -93,10 +91,6 @@ export declare class BaseInput<T> extends Ion implements CommonInput<T> {
     /**
      * @hidden
      */
-    private _setFocus(isFocused);
-    /**
-     * @hidden
-     */
     private onChange();
     /**
      * @hidden
@@ -109,15 +103,15 @@ export declare class BaseInput<T> extends Ion implements CommonInput<T> {
     /**
      * @hidden
      */
-    focusNext(): void;
-    /**
-     * @hidden
-     */
     ngOnDestroy(): void;
     /**
      * @hidden
      */
     ngAfterContentInit(): void;
+    /**
+     * @hidden
+     */
+    _inputCheckHasValue(val: T): void;
     /**
      * @hidden
      */

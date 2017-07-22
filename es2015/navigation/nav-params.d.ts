@@ -8,9 +8,9 @@
  * @usage
  * ```ts
  * export class MyClass{
- *  constructor(public navParams: NavParams){
+ *  constructor(public params: NavParams){
  *    // userParams is an object we have in our nav-parameters
- *    this.navParams.get('userParams');
+ *    this.params.get('userParams');
  *  }
  * }
  * ```
@@ -32,9 +32,9 @@ export declare class NavParams {
      *
      * ```ts
      * export class MyClass{
-     *  constructor(public navParams: NavParams){
+     *  constructor(public params: NavParams){
      *    // userParams is an object we have in our nav-parameters
-     *    this.navParams.get('userParams');
+     *    this.params.get('userParams');
      *  }
      * }
      * ```

@@ -86,11 +86,11 @@
      * ### Button Layout
      * If an icon is placed with text in the option button, by default it will
      * display the icon on top of the text. This can be changed to display the icon
-     * to the left of the text by setting `icon-start` as an attribute on the
+     * to the left of the text by setting `icon-left` as an attribute on the
      * `<ion-item-options>` element.
      *
      * ```html
-     * <ion-item-options icon-start>
+     * <ion-item-options icon-left>
      *    <button ion-button (click)="archive(item)">
      *      <ion-icon name="archive"></ion-icon>
      *      Archive
@@ -99,23 +99,6 @@
      *
      * ```
      *
-     * ### Expandable Options
-     *
-     * Options can be expanded to take up the full width of the item if you swipe past
-     * a certain point. This can be combined with the `ionSwipe` event to call methods
-     * on the class.
-     *
-     * ```html
-     *
-     * <ion-item-sliding (ionSwipe)="delete(item)">
-     *   <ion-item>Item</ion-item>
-     *   <ion-item-options>
-     *     <button ion-button expandable (click)="delete(item)">Delete</button>
-     *   </ion-item-options>
-     * </ion-item-sliding>
-     * ```
-     *
-     * We can call `delete` by either clicking the button, or by doing a full swipe on the item.
      *
      * \@demo /docs/demos/src/item-sliding/
      * @see {\@link /docs/components#lists List Component Docs}
@@ -339,20 +322,21 @@
             if (isFinal) {
                 this.item.setElementStyle(platform.Css.transition, '');
             }
-            if (openAmount > 0) {
-                var /** @type {?} */ state = (openAmount >= (this._optsWidthRightSide + SWIPE_MARGIN))
-                    ? 8 /* Right */ | 32 /* SwipeRight */
-                    : 8 /* Right */;
-                this._setState(state);
-            }
-            else if (openAmount < 0) {
-                var /** @type {?} */ state = (openAmount <= (-this._optsWidthLeftSide - SWIPE_MARGIN))
-                    ? 16 /* Left */ | 64 /* SwipeLeft */
-                    : 16 /* Left */;
-                this._setState(state);
-            }
             else {
-                (void 0) /* assert */;
+                if (openAmount > 0) {
+                    var /** @type {?} */ state = (openAmount >= (this._optsWidthRightSide + SWIPE_MARGIN))
+                        ? 8 /* Right */ | 32 /* SwipeRight */
+                        : 8 /* Right */;
+                    this._setState(state);
+                }
+                else if (openAmount < 0) {
+                    var /** @type {?} */ state = (openAmount <= (-this._optsWidthLeftSide - SWIPE_MARGIN))
+                        ? 16 /* Left */ | 64 /* SwipeLeft */
+                        : 16 /* Left */;
+                    this._setState(state);
+                }
+            }
+            if (openAmount === 0) {
                 this._tmr = platform.timeout(function () {
                     _this._setState(2 /* Disabled */);
                     _this._tmr = null;

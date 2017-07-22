@@ -40,7 +40,7 @@ export class ItemReorderGesture {
             return false;
         }
         this.reorderList._reorderPrepare();
-        const /** @type {?} */ item = reorderMark.getReorderNode();
+        let /** @type {?} */ item = reorderMark.getReorderNode();
         if (!item) {
             console.error('reorder node not found');
             return false;
@@ -64,23 +64,23 @@ export class ItemReorderGesture {
      * @return {?}
      */
     onDragMove(ev) {
-        const /** @type {?} */ selectedItem = this.selectedItemEle;
+        let /** @type {?} */ selectedItem = this.selectedItemEle;
         if (!selectedItem) {
             return;
         }
         ev.preventDefault();
         // Get coordinate
-        const /** @type {?} */ coord = pointerCoord(ev);
-        const /** @type {?} */ posY = coord.y;
+        let /** @type {?} */ coord = pointerCoord(ev);
+        let /** @type {?} */ posY = coord.y;
         // Scroll if we reach the scroll margins
-        const /** @type {?} */ scrollPosition = this.scroll(posY);
+        let /** @type {?} */ scrollPosition = this.scroll(posY);
         // Only perform hit test if we moved at least 30px from previous position
         if (Math.abs(posY - this.lastYcoord) > 30) {
-            var /** @type {?} */ overItem = this.itemForCoord(coord);
+            let /** @type {?} */ overItem = this.itemForCoord(coord);
             if (overItem) {
-                var /** @type {?} */ toIndex = indexForItem(overItem);
+                let /** @type {?} */ toIndex = indexForItem(overItem);
                 if (toIndex !== undefined && (toIndex !== this.lastToIndex || this.emptyZone)) {
-                    var /** @type {?} */ fromIndex = indexForItem(selectedItem);
+                    let /** @type {?} */ fromIndex = indexForItem(selectedItem);
                     this.lastToIndex = toIndex;
                     this.lastYcoord = posY;
                     this.emptyZone = false;
@@ -92,7 +92,7 @@ export class ItemReorderGesture {
             }
         }
         // Update selected item position
-        const /** @type {?} */ ydiff = Math.round(posY - this.offset.y + scrollPosition);
+        let /** @type {?} */ ydiff = Math.round(posY - this.offset.y + scrollPosition);
         ((selectedItem.style))[this.plt.Css.transform] = `translateY(${ydiff}px)`;
     }
     /**
@@ -100,7 +100,7 @@ export class ItemReorderGesture {
      * @return {?}
      */
     onDragEnd(ev) {
-        const /** @type {?} */ selectedItem = this.selectedItemEle;
+        let /** @type {?} */ selectedItem = this.selectedItemEle;
         if (!selectedItem) {
             return;
         }
@@ -108,9 +108,9 @@ export class ItemReorderGesture {
             ev.preventDefault();
             ev.stopPropagation();
         }
-        const /** @type {?} */ toIndex = this.lastToIndex;
-        const /** @type {?} */ fromIndex = indexForItem(selectedItem);
-        const /** @type {?} */ reorderInactive = () => {
+        let /** @type {?} */ toIndex = this.lastToIndex;
+        let /** @type {?} */ fromIndex = indexForItem(selectedItem);
+        let /** @type {?} */ reorderInactive = () => {
             this.selectedItemEle.style.transition = '';
             this.selectedItemEle.classList.remove(ITEM_REORDER_ACTIVE);
             this.selectedItemEle = null;
@@ -129,7 +129,7 @@ export class ItemReorderGesture {
      * @return {?}
      */
     itemForCoord(coord) {
-        const /** @type {?} */ sideOffset = this.reorderList._isStart === this.plt.isRTL ? -100 : 100;
+        const /** @type {?} */ sideOffset = this.plt.isRTL ? 100 : -100;
         const /** @type {?} */ x = this.offset.x + sideOffset;
         const /** @type {?} */ y = coord.y;
         const /** @type {?} */ element = this.plt.getElementFromPoint(x, y);

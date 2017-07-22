@@ -39,6 +39,7 @@ var __extends = (this && this.__extends) || (function () {
          * @param {?} _app
          * @param {?} config
          * @param {?} plt
+         * @param {?} _keyboard
          * @param {?} elementRef
          * @param {?} _zone
          * @param {?} renderer
@@ -49,12 +50,13 @@ var __extends = (this && this.__extends) || (function () {
          * @param {?} _domCtrl
          * @param {?} _errHandler
          */
-        function NavControllerBase(parent, _app, config, plt, elementRef, _zone, renderer, _cfr, _gestureCtrl, _trnsCtrl, _linker, _domCtrl, _errHandler) {
+        function NavControllerBase(parent, _app, config, plt, _keyboard, elementRef, _zone, renderer, _cfr, _gestureCtrl, _trnsCtrl, _linker, _domCtrl, _errHandler) {
             var _this = _super.call(this, config, elementRef, renderer) || this;
             _this.parent = parent;
             _this._app = _app;
             _this.config = config;
             _this.plt = plt;
+            _this._keyboard = _keyboard;
             _this._zone = _zone;
             _this._cfr = _cfr;
             _this._gestureCtrl = _gestureCtrl;
@@ -809,7 +811,7 @@ var __extends = (this && this.__extends) || (function () {
                 if (opts.keyboardClose !== false) {
                     // the keyboard is still open!
                     // no problem, let's just close for them
-                    this.plt.focusOutActiveElement();
+                    this._keyboard.close();
                 }
             }
             return {
@@ -1333,6 +1335,8 @@ var __extends = (this && this.__extends) || (function () {
         NavControllerBase.prototype.config;
         /** @type {?} */
         NavControllerBase.prototype.plt;
+        /** @type {?} */
+        NavControllerBase.prototype._keyboard;
         /** @type {?} */
         NavControllerBase.prototype._zone;
         /** @type {?} */

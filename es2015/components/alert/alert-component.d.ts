@@ -24,12 +24,12 @@ export declare class AlertCmp {
     msgId: string;
     subHdrId: string;
     mode: string;
-    keyboardResizes: boolean;
     gestureBlocker: BlockerDelegate;
     constructor(_viewCtrl: ViewController, _elementRef: ElementRef, config: Config, gestureCtrl: GestureController, params: NavParams, _renderer: Renderer, _plt: Platform);
     ionViewDidLoad(): void;
     ionViewWillEnter(): void;
     ionViewDidLeave(): void;
+    ionViewWillLeave(): void;
     ionViewDidEnter(): void;
     keyUp(ev: KeyboardEvent): void;
     btnClick(button: any): void;

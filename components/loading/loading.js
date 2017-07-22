@@ -27,7 +27,6 @@ var Loading = (function (_super) {
         if (opts === void 0) { opts = {}; }
         var _this = this;
         opts.showBackdrop = isPresent(opts.showBackdrop) ? !!opts.showBackdrop : true;
-        opts.enableBackdropDismiss = isPresent(opts.enableBackdropDismiss) ? !!opts.enableBackdropDismiss : false;
         opts.dismissOnPageChange = isPresent(opts.dismissOnPageChange) ? !!opts.dismissOnPageChange : false;
         _this = _super.call(this, LoadingCmp, opts, null) || this;
         _this._app = app;

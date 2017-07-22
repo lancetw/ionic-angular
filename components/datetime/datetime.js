@@ -321,7 +321,6 @@ var DateTime = (function (_super) {
      * @return {?}
      */
     DateTime.prototype._inputUpdated = function () {
-        _super.prototype._inputUpdated.call(this);
         this.updateText();
     };
     /**
@@ -351,6 +350,10 @@ var DateTime = (function (_super) {
      * @return {?}
      */
     DateTime.prototype._click = function (ev) {
+        // do not continue if the click event came from a form submit
+        if (ev.detail === 0) {
+            return;
+        }
         ev.preventDefault();
         ev.stopPropagation();
         this.open();

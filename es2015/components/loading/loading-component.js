@@ -1,8 +1,7 @@
-import { Component, ElementRef, HostListener, Renderer, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, Renderer, ViewEncapsulation } from '@angular/core';
 import { Config } from '../../config/config';
 import { GestureController, BLOCK_ALL } from '../../gestures/gesture-controller';
 import { isDefined, isUndefined } from '../../util/util';
-import { KEY_ESCAPE } from '../../platform/key';
 import { NavParams } from '../../navigation/nav-params';
 import { Platform } from '../../platform/platform';
 import { ViewController } from '../../navigation/view-controller';
@@ -65,26 +64,10 @@ export class LoadingCmp {
      * @return {?}
      */
     ionViewDidEnter() {
+        this._plt.focusOutActiveElement();
         // If there is a duration, dismiss after that amount of time
         if (this.d && this.d.duration) {
             this.durationTimeout = setTimeout(() => this.dismiss('backdrop'), this.d.duration);
-        }
-    }
-    /**
-     * @param {?} ev
-     * @return {?}
-     */
-    keyUp(ev) {
-        if (this._viewCtrl.isLast() && ev.keyCode === KEY_ESCAPE) {
-            this.bdClick();
-        }
-    }
-    /**
-     * @return {?}
-     */
-    bdClick() {
-        if (this.d.enableBackdropDismiss) {
-            this.dismiss('backdrop');
         }
     }
     /**
@@ -108,7 +91,7 @@ export class LoadingCmp {
 LoadingCmp.decorators = [
     { type: Component, args: [{
                 selector: 'ion-loading',
-                template: '<ion-backdrop [hidden]="!d.showBackdrop" (click)="bdClick()" [class.backdrop-no-tappable]="!d.enableBackdropDismiss"></ion-backdrop>' +
+                template: '<ion-backdrop [hidden]="!d.showBackdrop"></ion-backdrop>' +
                     '<div class="loading-wrapper">' +
                     '<div *ngIf="showSpinner" class="loading-spinner">' +
                     '<ion-spinner [name]="d.spinner"></ion-spinner>' +
@@ -133,9 +116,6 @@ LoadingCmp.ctorParameters = () => [
     { type: NavParams, },
     { type: Renderer, },
 ];
-LoadingCmp.propDecorators = {
-    'keyUp': [{ type: HostListener, args: ['body:keyup', ['$event'],] },],
-};
 function LoadingCmp_tsickle_Closure_declarations() {
     /** @type {?} */
     LoadingCmp.decorators;
@@ -144,8 +124,6 @@ function LoadingCmp_tsickle_Closure_declarations() {
      * @type {?}
      */
     LoadingCmp.ctorParameters;
-    /** @type {?} */
-    LoadingCmp.propDecorators;
     /** @type {?} */
     LoadingCmp.prototype.d;
     /** @type {?} */

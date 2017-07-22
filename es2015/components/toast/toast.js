@@ -93,7 +93,6 @@ export class Toast extends ViewController {
      */
     present(navOptions = {}) {
         navOptions.disableApp = false;
-        navOptions.keyboardClose = false;
         return this._app.present(this, navOptions, PORTAL_TOAST);
     }
     /**

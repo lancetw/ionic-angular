@@ -83,7 +83,7 @@ import { ViewController } from '../../navigation/view-controller';
  *
  *   slideChanged() {
  *     let currentIndex = this.slides.getActiveIndex();
- *     console.log('Current index is', currentIndex);
+ *     console.log("Current index is", currentIndex);
  *   }
  * }
  * ```
@@ -110,7 +110,7 @@ import { ViewController } from '../../navigation/view-controller';
  * ```
  *
  * To see all of the available options, take a look at the
- * [source for slides](https://github.com/ionic-team/ionic/blob/master/src/components/slides/slides.ts).
+ * [source for slides](https://github.com/driftyco/ionic/blob/master/src/components/slides/slides.ts).
  *
  * @demo /docs/demos/src/slides/
  * @see {@link /docs/components#slides Slides Component Docs}
@@ -238,11 +238,6 @@ export declare class Slides extends Ion {
     slidesPerView: any;
     private _slidesPerView;
     /**
-     * @input {boolean} Center a slide in the middle of the screen.
-     */
-    centeredSlides: boolean;
-    private _centeredSlides;
-    /**
      * @hidden
      */
     slidesPerColumn: number;
@@ -254,6 +249,10 @@ export declare class Slides extends Ion {
      * @hidden
      */
     slidesPerGroup: number;
+    /**
+     * @hidden
+     */
+    centeredSlides: boolean;
     /**
      * @hidden
      */

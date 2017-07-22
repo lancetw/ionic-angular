@@ -23,7 +23,7 @@ import { Item } from '../item/item';
  * The Checkbox is a simple component styled based on the mode. It can be
  * placed in an `ion-item` or used as a stand-alone checkbox.
  *
- * See the [Angular Docs](https://angular.io/docs/ts/latest/guide/forms.html)
+ * See the [Angular 2 Docs](https://angular.io/docs/ts/latest/guide/forms.html)
  * for more info on forms and inputs.
  *
  *
@@ -48,34 +48,6 @@ import { Item } from '../item/item';
  *    </ion-item>
  *
  *  </ion-list>
- * ```
- *
- * \@advanced
- *
- * ```html
- *
- * <!-- Call function when state changes -->
- *  <ion-list>
- *
- *    <ion-item>
- *      <ion-label>Cucumber</ion-label>
- *      <ion-checkbox [(ngModel)]="cucumber" (ionChange)="updateCucumber()"></ion-checkbox>
- *    </ion-item>
- *
- *  </ion-list>
- * ```
- *
- * ```ts
- * \@Component({
- *   templateUrl: 'main.html'
- * })
- * class SaladPage {
- *   cucumber: boolean;
- *
- *   updateCucumber() {
- *     console.log('Cucumbers new state:' + this.cucumber);
- *   }
- * }
  * ```
  *
  * \@demo /docs/demos/src/checkbox/
@@ -113,6 +85,13 @@ var Checkbox = (function (_super) {
     });
     /**
      * @hidden
+     * @return {?}
+     */
+    Checkbox.prototype.initFocus = function () {
+        this._elementRef.nativeElement.querySelector('button').focus();
+    };
+    /**
+     * @hidden
      * @param {?} ev
      * @return {?}
      */
@@ -131,10 +110,11 @@ var Checkbox = (function (_super) {
     };
     /**
      * @hidden
+     * @param {?} val
      * @return {?}
      */
-    Checkbox.prototype._inputUpdated = function () {
-        this._item && this._item.setElementClass('item-checkbox-checked', this._value);
+    Checkbox.prototype._inputCheckHasValue = function (val) {
+        this._item && this._item.setElementClass('item-checkbox-checked', val);
     };
     return Checkbox;
 }(BaseInput));

@@ -22841,8 +22841,7 @@ function deepEqual(a, b) {
  */
 
 /**
- * @hidden
- * Rewrites an absolute URL so it works across file and http based engines
+ * Rewrites an absolute URL so it works across file and http based engines.
  * @param {?} url
  * @return {?}
  */
@@ -23176,7 +23175,7 @@ function requestIonicCallback(functionToLazy) {
  * | `spinner`                | `string`            | The default spinner to use when a name is not defined.                                                                                           |
  * | `swipeBackEnabled`       | `boolean`           | Whether native iOS swipe to go back functionality is enabled.                                                                                    |
  * | `tabsHighlight`          | `boolean`           | Whether to show a highlight line under the tab when it is selected.                                                                              |
- * | `tabsLayout`             | `string`            | The layout to use for all tabs. Available options: `"icon-top"`, `"icon-start"`, `"icon-end"`, `"icon-bottom"`, `"icon-hide"`, `"title-hide"`.   |
+ * | `tabsLayout`             | `string`            | The layout to use for all tabs. Available options: `"icon-top"`, `"icon-left"`, `"icon-right"`, `"icon-bottom"`, `"icon-hide"`, `"title-hide"`.  |
  * | `tabsPlacement`          | `string`            | The position of the tabs relative to the content. Available options: `"top"`, `"bottom"`                                                         |
  * | `tabsHideOnSubPages`     | `boolean`           | Whether to hide the tabs on child pages or not. If `true` it will not show the tabs on child pages.                                              |
  * | `toastEnter`             | `string`            | The name of the transition to use while a toast is presented.                                                                                    |
@@ -23463,9 +23462,9 @@ var ConfigToken = new OpaqueToken('USERCONFIG');
  * \@usage
  * ```ts
  * export class MyClass{
- *  constructor(public navParams: NavParams){
+ *  constructor(public params: NavParams){
  *    // userParams is an object we have in our nav-parameters
- *    this.navParams.get('userParams');
+ *    this.params.get('userParams');
  *  }
  * }
  * ```
@@ -23489,9 +23488,9 @@ var NavParams = (function () {
      *
      * ```ts
      * export class MyClass{
-     *  constructor(public navParams: NavParams){
+     *  constructor(public params: NavParams){
      *    // userParams is an object we have in our nav-parameters
-     *    this.navParams.get('userParams');
+     *    this.params.get('userParams');
      *  }
      * }
      * ```
@@ -24220,7 +24219,7 @@ var DIRECTION_SWITCH = 'switch';
 /**
  * \@name MenuController
  * \@description
- * The MenuController is a provider which makes it easy to control a [Menu](../../Menu/Menu/).
+ * The MenuController is a provider which makes it easy to control a [Menu](../Menu).
  * Its methods can be used to display the menu, enable the menu, toggle the menu, and more.
  * The controller will grab a reference to the menu by the `side`, `id`, or, if neither
  * of these are passed to it, it will grab the first menu it finds.
@@ -24228,7 +24227,7 @@ var DIRECTION_SWITCH = 'switch';
  *
  * \@usage
  *
- * Add a basic menu component to start with. See the [Menu](../../Menu/Menu/) API docs
+ * Add a basic menu component to start with. See the [Menu](../Menu) API docs
  * for more information on adding menu components.
  *
  * ```html
@@ -24634,7 +24633,7 @@ function isTextInput(ele) {
             (ele.tagName === 'INPUT' && !(NON_TEXT_INPUT_REGEX.test(ele.type))));
 }
 var NON_TEXT_INPUT_REGEX = /^(radio|checkbox|range|file|submit|reset|color|image|button)$/i;
-var SKIP_INPUT_ATTR = ['value', 'checked', 'disabled', 'readonly', 'placeholder', 'type', 'class', 'style', 'id', 'autofocus', 'autocomplete', 'autocorrect'];
+var skipInputAttrsReg = /^(value|checked|disabled|type|class|style|id|autofocus|autocomplete|autocorrect)$/i;
 /**
  * @param {?} srcElement
  * @param {?} destElement
@@ -24647,7 +24646,7 @@ function copyInputAttributes(srcElement, destElement) {
     var /** @type {?} */ attrs = srcElement.attributes;
     for (var /** @type {?} */ i = 0; i < attrs.length; i++) {
         var /** @type {?} */ attr = attrs[i];
-        if (SKIP_INPUT_ATTR.indexOf(attr.name) === -1) {
+        if (!skipInputAttrsReg.test(attr.name)) {
             destElement.setAttribute(attr.name, attr.value);
         }
     }
@@ -24825,7 +24824,7 @@ var Platform = (function () {
      *   constructor(public plt: Platform) {
      *     if (this.plt.is('ios')) {
      *       // This will only print when on iOS
-     *       console.log('I am an iOS device!');
+     *       console.log("I'm an iOS device!");
      *     }
      *   }
      * }
@@ -24995,7 +24994,7 @@ var Platform = (function () {
      * @return {?}
      */
     Platform.prototype.setDir = function (dir, updateDocument) {
-        this._dir = dir;
+        this._dir = dir = (dir || '').toLowerCase();
         this.isRTL = (dir === 'rtl');
         if (updateDocument !== false) {
             this._doc['documentElement'].setAttribute('dir', dir);
@@ -25800,8 +25799,7 @@ function setupPlatform(doc, platformConfigs, zone) {
     // set values from "document"
     var /** @type {?} */ docElement = doc.documentElement;
     plt.setDocument(doc);
-    var /** @type {?} */ dir = docElement.dir;
-    plt.setDir(dir === 'rtl' ? 'rtl' : 'ltr', !dir);
+    plt.setDir(docElement.dir, false);
     plt.setLang(docElement.lang, false);
     // set css properties
     plt.setCssProps(docElement);
@@ -27153,6 +27151,8 @@ var EASING = 'cubic-bezier(0.36,0.66,0.04,1)';
 var OPACITY = 'opacity';
 var TRANSFORM = 'transform';
 var TRANSLATEX = 'translateX';
+var OFF_RIGHT = '99.5%';
+var OFF_LEFT = '-33%';
 var CENTER = '0%';
 var OFF_OPACITY = 0.8;
 var SHOW_BACK_BTN_CSS = 'show-back-button';
@@ -27167,8 +27167,6 @@ var IOSTransition = (function (_super) {
     IOSTransition.prototype.init = function () {
         _super.prototype.init.call(this);
         var /** @type {?} */ plt = this.plt;
-        var /** @type {?} */ OFF_RIGHT = plt.isRTL ? '-99.5%' : '99.5%';
-        var /** @type {?} */ OFF_LEFT = plt.isRTL ? '33%' : '-33%';
         var /** @type {?} */ enteringView = this.enteringView;
         var /** @type {?} */ leavingView = this.leavingView;
         var /** @type {?} */ opts = this.opts;
@@ -27235,7 +27233,7 @@ var IOSTransition = (function (_super) {
                             .beforeAddClass(SHOW_BACK_BTN_CSS)
                             .fromTo(OPACITY, 0.01, 1, true);
                         var /** @type {?} */ enteringBackBtnText = new Animation(plt, enteringNavbarEle.querySelector('.back-button-text'));
-                        enteringBackBtnText.fromTo(TRANSLATEX, (plt.isRTL ? '-100px' : '100px'), '0px');
+                        enteringBackBtnText.fromTo(TRANSLATEX, '100px', '0px');
                         enteringNavBar.add(enteringBackBtnText);
                     }
                     else {
@@ -27255,7 +27253,7 @@ var IOSTransition = (function (_super) {
                 // leaving content, back direction
                 leavingContent
                     .beforeClearStyles([OPACITY])
-                    .fromTo(TRANSLATEX, CENTER, (plt.isRTL ? '-100%' : '100%'));
+                    .fromTo(TRANSLATEX, CENTER, '100%');
             }
             else {
                 // leaving content, forward direction
@@ -27284,14 +27282,14 @@ var IOSTransition = (function (_super) {
                 leavingNavbarItems.fromTo(OPACITY, 0.99, 0);
                 if (backDirection) {
                     // leaving navbar, back direction
-                    leavingTitle.fromTo(TRANSLATEX, CENTER, (plt.isRTL ? '-100%' : '100%'));
+                    leavingTitle.fromTo(TRANSLATEX, CENTER, '100%');
                     // leaving navbar, back direction, and there's no entering navbar
                     // should just slide out, no fading out
                     leavingNavbarBg
                         .beforeClearStyles([OPACITY])
-                        .fromTo(TRANSLATEX, CENTER, (plt.isRTL ? '-100%' : '100%'));
+                        .fromTo(TRANSLATEX, CENTER, '100%');
                     var /** @type {?} */ leavingBackBtnText = new Animation(plt, leavingNavbarEle.querySelector('.back-button-text'));
-                    leavingBackBtnText.fromTo(TRANSLATEX, CENTER, (plt.isRTL ? -300 : 300) + 'px');
+                    leavingBackBtnText.fromTo(TRANSLATEX, CENTER, (300) + 'px');
                     leavingNavBar.add(leavingBackBtnText);
                 }
                 else {
@@ -27460,7 +27458,6 @@ var App = (function () {
         this._title = '';
         this._titleSrv = new Title(DOCUMENT);
         this._rootNav = null;
-        this._didScroll = false;
         /**
          * Observable that emits whenever a view loads in the app.
          */
@@ -27489,10 +27486,6 @@ var App = (function () {
         // register this back button action with a default priority
         _plt.registerBackButtonAction(this.goBack.bind(this));
         this._disableScrollAssist = _config.getBoolean('disableScrollAssist', false);
-        var blurring = _config.getBoolean('inputBlurring', false);
-        if (blurring) {
-            this._enableInputBlurring();
-        }
         (void 0) /* runInDev */;
         _config.setTransition('ios-transition', IOSTransition);
         _config.setTransition('md-transition', MDTransition);
@@ -27577,7 +27570,6 @@ var App = (function () {
      */
     App.prototype.setScrolling = function () {
         this._scrollTime = Date.now() + ACTIVE_SCROLLING_TIME;
-        this._didScroll = true;
     };
     /**
      * Boolean if the app is actively scrolling or not.
@@ -27631,12 +27623,13 @@ var App = (function () {
         // Set Nav must be set here in order to dimiss() work synchnously.
         // TODO: move _setNav() to the earlier stages of NavController. _queueTrns()
         enteringView._setNav(portal);
+        opts.keyboardClose = false;
         opts.direction = DIRECTION_FORWARD;
         if (!opts.animation) {
             opts.animation = enteringView.getTransitionName(DIRECTION_FORWARD);
         }
         enteringView.setLeavingOpts({
-            keyboardClose: opts.keyboardClose,
+            keyboardClose: false,
             direction: DIRECTION_BACK,
             animation: enteringView.getTransitionName(DIRECTION_BACK),
             ev: opts.ev
@@ -27678,63 +27671,6 @@ var App = (function () {
         // next get the active nav, check itself and climb up all
         // of its parent navs until it finds a nav that can pop
         return recursivePop(this.getActiveNav());
-    };
-    /**
-     * @hidden
-     * @return {?}
-     */
-    App.prototype._enableInputBlurring = function () {
-        (void 0) /* console.debug */;
-        var /** @type {?} */ focused = true;
-        var /** @type {?} */ self = this;
-        var /** @type {?} */ platform = this._plt;
-        platform.registerListener(platform.doc(), 'focusin', onFocusin, { capture: true, zone: false, passive: true });
-        platform.registerListener(platform.doc(), 'touchend', onTouchend, { capture: false, zone: false, passive: true });
-        /**
-         * @param {?} ev
-         * @return {?}
-         */
-        function onFocusin(ev) {
-            focused = true;
-        }
-        /**
-         * @param {?} ev
-         * @return {?}
-         */
-        function onTouchend(ev) {
-            // if app did scroll return early
-            if (self._didScroll) {
-                self._didScroll = false;
-                return;
-            }
-            var /** @type {?} */ active = (self._plt.getActiveElement());
-            if (!active) {
-                return;
-            }
-            // only blur if the active element is a text-input or a textarea
-            if (SKIP_BLURRING.indexOf(active.tagName) === -1) {
-                return;
-            }
-            // if the selected target is the active element, do not blur
-            var /** @type {?} */ tapped = ev.target;
-            if (tapped === active) {
-                return;
-            }
-            if (SKIP_BLURRING.indexOf(tapped.tagName) >= 0) {
-                return;
-            }
-            // skip if div is a cover
-            if (tapped.classList.contains('input-cover')) {
-                return;
-            }
-            focused = false;
-            // TODO: find a better way, why 50ms?
-            platform.timeout(function () {
-                if (!focused) {
-                    active.blur();
-                }
-            }, 50);
-        }
     };
     return App;
 }());
@@ -27784,7 +27720,6 @@ function findTopNav(nav) {
     }
     return nav;
 }
-var SKIP_BLURRING = ['INPUT', 'TEXTAREA', 'ION-INPUT', 'ION-TEXTAREA'];
 var ACTIVE_SCROLLING_TIME = 100;
 var CLICK_BLOCK_BUFFER_IN_MILLIS = 64;
 
@@ -28997,6 +28932,246 @@ var BlockerDelegate = (function () {
     return BlockerDelegate;
 }());
 
+var KEY_LEFT = 37;
+var KEY_UP = 38;
+var KEY_RIGHT = 39;
+var KEY_DOWN = 40;
+var KEY_ENTER = 13;
+var KEY_ESCAPE = 27;
+var KEY_SPACE = 32;
+var KEY_TAB = 9;
+
+/**
+ * \@name Keyboard
+ * \@description
+ * The `Keyboard` class allows you to work with the keyboard events provided
+ * by the Ionic keyboard plugin.
+ *
+ * \@usage
+ * ```ts
+ * export class MyClass {
+ *   constructor(public keyboard: Keyboard) {
+ *
+ *   }
+ * }
+ * ```
+ */
+var Keyboard = (function () {
+    /**
+     * @param {?} config
+     * @param {?} _plt
+     * @param {?} _zone
+     * @param {?} _dom
+     */
+    function Keyboard(config, _plt, _zone, _dom) {
+        var _this = this;
+        this._plt = _plt;
+        this._zone = _zone;
+        this._dom = _dom;
+        this.focusOutline(config.get('focusOutline'));
+        var win = _plt.win();
+        _plt.registerListener(win, 'native.keyboardhide', function () {
+            _plt.cancelTimeout(_this._tmr);
+            _this._tmr = _plt.timeout(function () {
+                // this custom cordova plugin event fires when the keyboard will hide
+                // useful when the virtual keyboard is closed natively
+                // https://github.com/driftyco/ionic-plugin-keyboard
+                if (_this.isOpen()) {
+                    _this._plt.focusOutActiveElement();
+                }
+            }, 80);
+        }, { zone: false, passive: true });
+        _plt.registerListener(win, 'native.keyboardshow', function () {
+            _plt.cancelTimeout(_this._tmr);
+        }, { zone: false, passive: true });
+    }
+    /**
+     * Check to see if the keyboard is open or not.
+     *
+     * ```ts
+     * export class MyClass {
+     *   constructor(public keyboard: Keyboard) {
+     *
+     *   }
+     *
+     *   keyboardCheck() {
+     *     console.log('The keyboard is open:', this.keyboard.isOpen());
+     *   }
+     * }
+     * ```
+     *
+     * @return {?}
+     */
+    Keyboard.prototype.isOpen = function () {
+        return this.hasFocusedTextInput();
+    };
+    /**
+     * When the keyboard is closed, call any methods you want.
+     *
+     * ```ts
+     * export class MyClass {
+     *   constructor(public keyboard: Keyboard) {
+     *     this.keyboard.onClose(this.closeCallback);
+     *   }
+     *   closeCallback() {
+     *     // call what ever functionality you want on keyboard close
+     *     console.log('Closing time');
+     *   }
+     * }
+     * ```
+     *
+     * @param {?} callback
+     * @param {?=} pollingInternval
+     * @param {?=} pollingChecksMax
+     * @return {?}
+     */
+    Keyboard.prototype.onClose = function (callback, pollingInternval, pollingChecksMax) {
+        if (pollingInternval === void 0) { pollingInternval = KEYBOARD_CLOSE_POLLING; }
+        if (pollingChecksMax === void 0) { pollingChecksMax = KEYBOARD_POLLING_CHECKS_MAX; }
+        (void 0) /* console.debug */;
+        var /** @type {?} */ self = this;
+        var /** @type {?} */ checks = 0;
+        var /** @type {?} */ promise = null;
+        if (!callback) {
+            // a callback wasn't provided, so let's return a promise instead
+            promise = new Promise(function (resolve) { callback = resolve; });
+        }
+        /**
+         * @return {?}
+         */
+        function checkKeyboard() {
+            (void 0) /* console.debug */;
+            if (!self.isOpen() || checks > pollingChecksMax) {
+                self._plt.timeout(function () {
+                    self._zone.run(function () {
+                        (void 0) /* console.debug */;
+                        callback();
+                    });
+                }, 400);
+            }
+            else {
+                self._plt.timeout(checkKeyboard, pollingInternval);
+            }
+            checks++;
+        }
+        self._plt.timeout(checkKeyboard, pollingInternval);
+        return promise;
+    };
+    /**
+     * Programmatically close the keyboard.
+     * @return {?}
+     */
+    Keyboard.prototype.close = function () {
+        var _this = this;
+        this._dom.read(function () {
+            if (_this.isOpen()) {
+                // only focus out when a text input has focus
+                (void 0) /* console.debug */;
+                _this._dom.write(function () {
+                    _this._plt.focusOutActiveElement();
+                });
+            }
+        });
+    };
+    /**
+     * @hidden
+     * @param {?} setting
+     * @return {?}
+     */
+    Keyboard.prototype.focusOutline = function (setting) {
+        /* Focus Outline
+         * --------------------------------------------------
+         * By default, when a keydown event happens from a tab key, then
+         * the 'focus-outline' css class is added to the body element
+         * so focusable elements have an outline. On a mousedown or
+         * touchstart event, then the 'focus-outline' css class is removed.
+         *
+         * Config default overrides:
+         * focusOutline: true     - Always add the focus-outline
+         * focusOutline: false    - Do not add the focus-outline
+         */
+        var /** @type {?} */ self = this;
+        var /** @type {?} */ platform = self._plt;
+        var /** @type {?} */ doc = platform.doc();
+        var /** @type {?} */ isKeyInputEnabled = false;
+        var /** @type {?} */ unRegMouse;
+        var /** @type {?} */ unRegTouch;
+        var /** @type {?} */ evOpts = { passive: true, zone: false };
+        /**
+         * @return {?}
+         */
+        function cssClass() {
+            self._dom.write(function () {
+                ((platform.doc().body.classList))[isKeyInputEnabled ? 'add' : 'remove']('focus-outline');
+            });
+        }
+        if (setting === true) {
+            isKeyInputEnabled = true;
+            return cssClass();
+        }
+        else if (setting === false) {
+            return;
+        }
+        /**
+         * @param {?} ev
+         * @return {?}
+         */
+        function keyDown(ev) {
+            if (!isKeyInputEnabled && ev.keyCode === KEY_TAB) {
+                isKeyInputEnabled = true;
+                enableKeyInput();
+            }
+        }
+        /**
+         * @return {?}
+         */
+        function pointerDown() {
+            isKeyInputEnabled = false;
+            enableKeyInput();
+        }
+        /**
+         * @return {?}
+         */
+        function enableKeyInput() {
+            cssClass();
+            unRegMouse && unRegMouse();
+            unRegTouch && unRegTouch();
+            if (isKeyInputEnabled) {
+                // listen for when a mousedown or touchstart event happens
+                unRegMouse = platform.registerListener(doc, 'mousedown', pointerDown, evOpts);
+                unRegTouch = platform.registerListener(doc, 'touchstart', pointerDown, evOpts);
+            }
+        }
+        // always listen for tab keydown events
+        platform.registerListener(platform.doc(), 'keydown', keyDown, evOpts);
+    };
+    /**
+     * @return {?}
+     */
+    Keyboard.prototype.hasFocusedTextInput = function () {
+        var /** @type {?} */ activeEle = this._plt.getActiveElement();
+        if (isTextInput(activeEle)) {
+            return (activeEle.parentElement.querySelector(':focus') === activeEle);
+        }
+        return false;
+    };
+    return Keyboard;
+}());
+Keyboard.decorators = [
+    { type: Injectable },
+];
+/**
+ * @nocollapse
+ */
+Keyboard.ctorParameters = function () { return [
+    { type: Config, },
+    { type: Platform, },
+    { type: NgZone, },
+    { type: DomController, },
+]; };
+var KEYBOARD_CLOSE_POLLING = 150;
+var KEYBOARD_POLLING_CHECKS_MAX = 100;
+
 /**
  * \@name NavController
  * \@description
@@ -29083,7 +29258,7 @@ var BlockerDelegate = (function () {
  * })
  * export class MyApp {
  *    \@ViewChild('myNav') nav: NavController
- *    public rootPage: any = TabsPage;
+ *    public rootPage = TabsPage;
  *
  *    // Wait for the components in MyApp's template to be initialized
  *    // In this case, we are waiting for the Nav with reference variable of "#myNav"
@@ -29261,7 +29436,7 @@ var BlockerDelegate = (function () {
  * ## Nav Guards
  *
  * In some cases, a developer should be able to control views leaving and entering. To allow for this, NavController has the `ionViewCanEnter` and `ionViewCanLeave` methods.
- * Similar to Angular route guards, but are more integrated with NavController. For example, if you wanted to prevent a user from leaving a view:
+ * Similar to Angular 2 route guards, but are more integrated with NavController. For example, if you wanted to prevent a user from leaving a view:
  *
  * ```ts
  * export class MyClass{
@@ -30124,12 +30299,12 @@ var SlideGesture = (function (_super) {
         var /** @type {?} */ coord = (pointerCoord(ev));
         var /** @type {?} */ newPos = coord[this.direction];
         var /** @type {?} */ newTimestamp = Date.now();
-        var /** @type {?} */ velocity = (this.plt.isRTL ? (slide.pos - newPos) : (newPos - slide.pos)) / (newTimestamp - slide.timestamp);
+        var /** @type {?} */ velocity = (newPos - slide.pos) / (newTimestamp - slide.timestamp);
         slide.pos = newPos;
         slide.timestamp = newTimestamp;
-        slide.distance = clamp(slide.min, (this.plt.isRTL ? slide.pointerStartPos - newPos : newPos - slide.pointerStartPos) + slide.elementStartPos, slide.max);
+        slide.distance = clamp(slide.min, newPos - slide.pointerStartPos + slide.elementStartPos, slide.max);
         slide.velocity = velocity;
-        slide.delta = (this.plt.isRTL ? slide.pointerStartPos - newPos : newPos - slide.pointerStartPos);
+        slide.delta = newPos - slide.pointerStartPos;
         this.onSlide(slide, ev);
     };
     /**
@@ -30359,6 +30534,7 @@ var NavControllerBase = (function (_super) {
      * @param {?} _app
      * @param {?} config
      * @param {?} plt
+     * @param {?} _keyboard
      * @param {?} elementRef
      * @param {?} _zone
      * @param {?} renderer
@@ -30369,12 +30545,13 @@ var NavControllerBase = (function (_super) {
      * @param {?} _domCtrl
      * @param {?} _errHandler
      */
-    function NavControllerBase(parent, _app, config, plt, elementRef, _zone, renderer, _cfr, _gestureCtrl, _trnsCtrl, _linker, _domCtrl, _errHandler) {
+    function NavControllerBase(parent, _app, config, plt, _keyboard, elementRef, _zone, renderer, _cfr, _gestureCtrl, _trnsCtrl, _linker, _domCtrl, _errHandler) {
         var _this = _super.call(this, config, elementRef, renderer) || this;
         _this.parent = parent;
         _this._app = _app;
         _this.config = config;
         _this.plt = plt;
+        _this._keyboard = _keyboard;
         _this._zone = _zone;
         _this._cfr = _cfr;
         _this._gestureCtrl = _gestureCtrl;
@@ -31129,7 +31306,7 @@ var NavControllerBase = (function (_super) {
             if (opts.keyboardClose !== false) {
                 // the keyboard is still open!
                 // no problem, let's just close for them
-                this.plt.focusOutActiveElement();
+                this._keyboard.close();
             }
         }
         return {
@@ -31709,6 +31886,7 @@ var OverlayPortal = (function (_super) {
      * @param {?} app
      * @param {?} config
      * @param {?} plt
+     * @param {?} keyboard
      * @param {?} elementRef
      * @param {?} zone
      * @param {?} renderer
@@ -31720,8 +31898,8 @@ var OverlayPortal = (function (_super) {
      * @param {?} domCtrl
      * @param {?} errHandler
      */
-    function OverlayPortal(app, config, plt, elementRef, zone, renderer, cfr, gestureCtrl, transCtrl, linker, viewPort, domCtrl, errHandler) {
-        var _this = _super.call(this, null, app, config, plt, elementRef, zone, renderer, cfr, gestureCtrl, transCtrl, linker, domCtrl, errHandler) || this;
+    function OverlayPortal(app, config, plt, keyboard, elementRef, zone, renderer, cfr, gestureCtrl, transCtrl, linker, viewPort, domCtrl, errHandler) {
+        var _this = _super.call(this, null, app, config, plt, keyboard, elementRef, zone, renderer, cfr, gestureCtrl, transCtrl, linker, domCtrl, errHandler) || this;
         _this._isPortal = true;
         _this._init = true;
         _this.setViewport(viewPort);
@@ -31765,6 +31943,7 @@ OverlayPortal.ctorParameters = function () { return [
     { type: App, decorators: [{ type: Inject, args: [forwardRef(function () { return App; }),] },] },
     { type: Config, },
     { type: Platform, },
+    { type: Keyboard, },
     { type: ElementRef, },
     { type: NgZone, },
     { type: Renderer, },
@@ -31973,15 +32152,6 @@ IonicApp.propDecorators = {
     '_toastPortal': [{ type: ViewChild, args: ['toastPortal', { read: OverlayPortal },] },],
 };
 
-var KEY_LEFT = 37;
-var KEY_UP = 38;
-var KEY_RIGHT = 39;
-var KEY_DOWN = 40;
-var KEY_ENTER = 13;
-var KEY_ESCAPE = 27;
-var KEY_SPACE = 32;
-var KEY_TAB = 9;
-
 /**
  * @hidden
  */
@@ -32061,6 +32231,7 @@ var ActionSheetCmp = (function () {
      * @return {?}
      */
     ActionSheetCmp.prototype.ionViewDidEnter = function () {
+        this._plt.focusOutActiveElement();
         var /** @type {?} */ focusableEle = this._elementRef.nativeElement.querySelector('button');
         if (focusableEle) {
             focusableEle.focus();
@@ -32139,13 +32310,13 @@ ActionSheetCmp.decorators = [
                     '<div class="action-sheet-group">' +
                     '<div class="action-sheet-title" id="{{hdrId}}" *ngIf="d.title">{{d.title}}</div>' +
                     '<div class="action-sheet-sub-title" id="{{descId}}" *ngIf="d.subTitle">{{d.subTitle}}</div>' +
-                    '<button ion-button="action-sheet-button" (click)="click(b)" *ngFor="let b of d.buttons" class="disable-hover" [attr.icon-start]="b.icon ? \'\' : null" [ngClass]="b.cssClass">' +
+                    '<button ion-button="action-sheet-button" (click)="click(b)" *ngFor="let b of d.buttons" class="disable-hover" [attr.icon-left]="b.icon ? \'\' : null" [ngClass]="b.cssClass">' +
                     '<ion-icon [name]="b.icon" *ngIf="b.icon" class="action-sheet-icon"></ion-icon>' +
                     '{{b.text}}' +
                     '</button>' +
                     '</div>' +
                     '<div class="action-sheet-group" *ngIf="cancelButton">' +
-                    '<button ion-button="action-sheet-button" (click)="click(cancelButton)" class="action-sheet-cancel disable-hover" [attr.icon-start]="cancelButton.icon ? \'\' : null" [ngClass]="cancelButton.cssClass">' +
+                    '<button ion-button="action-sheet-button" (click)="click(cancelButton)" class="action-sheet-cancel disable-hover" [attr.icon-left]="cancelButton.icon ? \'\' : null" [ngClass]="cancelButton.cssClass">' +
                     '<ion-icon [name]="cancelButton.icon" *ngIf="cancelButton.icon" class="action-sheet-icon"></ion-icon>' +
                     '{{cancelButton.text}}' +
                     '</button>' +
@@ -32580,7 +32751,6 @@ var AlertCmp = (function () {
         this.gestureBlocker = gestureCtrl.createBlocker(BLOCK_ALL);
         this.d = params.data;
         this.mode = this.d.mode || config.get('mode');
-        this.keyboardResizes = config.getBoolean('keyboardResizes', false);
         _renderer.setElementClass(_elementRef.nativeElement, "alert-" + this.mode, true);
         if (this.d.cssClass) {
             this.d.cssClass.split(' ').forEach(function (cssClass) {
@@ -32652,7 +32822,7 @@ var AlertCmp = (function () {
             this.activeId = checkedInput.id;
         }
         var /** @type {?} */ hasTextInput = (this.d.inputs.length && this.d.inputs.some(function (i) { return !(NON_TEXT_INPUT_REGEX.test(i.type)); }));
-        if (!this.keyboardResizes && hasTextInput && this._plt.is('mobile')) {
+        if (hasTextInput && this._plt.is('mobile')) {
             // this alert has a text input and it's on a mobile device so we should align
             // the alert up high because we need to leave space for the virtual keboard
             // this also helps prevent the layout getting all messed up from
@@ -32670,12 +32840,21 @@ var AlertCmp = (function () {
      * @return {?}
      */
     AlertCmp.prototype.ionViewDidLeave = function () {
+        this._plt.focusOutActiveElement();
         this.gestureBlocker.unblock();
     };
     /**
      * @return {?}
      */
+    AlertCmp.prototype.ionViewWillLeave = function () {
+        this._plt.focusOutActiveElement();
+    };
+    /**
+     * @return {?}
+     */
     AlertCmp.prototype.ionViewDidEnter = function () {
+        // focus out of the active element
+        this._plt.focusOutActiveElement();
         // set focus on the first input or button in the alert
         // note that this does not always work and bring up the keyboard on
         // devices since the focus command must come from the user's touch event
@@ -32797,10 +32976,6 @@ var AlertCmp = (function () {
             // this is an alert with checkboxes (multiple value select)
             // return an array of all the checked values
             return this.d.inputs.filter(function (i) { return i.checked; }).map(function (i) { return i.value; });
-        }
-        if (this.d.inputs.length === 0) {
-            // this is an alert without any options/inputs at all
-            return undefined;
         }
         // this is an alert with text inputs
         // return an object of all the values with the input name as the key
@@ -33554,12 +33729,12 @@ var __extends$31 = (undefined && undefined.__extends) || (function () {
  *  <button ion-button round outline>Outline + Round</button>
  *
  *  <!-- Icons -->
- *  <button ion-button icon-start>
+ *  <button ion-button icon-left>
  *    <ion-icon name="star"></ion-icon>
  *    Left Icon
  *  </button>
  *
- *  <button ion-button icon-end>
+ *  <button ion-button icon-right>
  *    Right Icon
  *    <ion-icon name="star"></ion-icon>
  *  </button>
@@ -40404,7 +40579,9 @@ var Form = (function () {
      */
     Form.prototype.deregister = function (input) {
         removeArrayItem(this._inputs, input);
-        this.unsetAsFocused(input);
+        if (input === this._focused) {
+            this._focused = null;
+        }
     };
     /**
      * @param {?} input
@@ -40414,32 +40591,22 @@ var Form = (function () {
         this._focused = input;
     };
     /**
-     * @param {?} input
-     * @return {?}
-     */
-    Form.prototype.unsetAsFocused = function (input) {
-        if (input === this._focused) {
-            this._focused = null;
-        }
-    };
-    /**
      * Focuses the next input element, if it exists.
      * @param {?} currentInput
      * @return {?}
      */
     Form.prototype.tabFocus = function (currentInput) {
-        var /** @type {?} */ inputs = this._inputs;
-        var /** @type {?} */ index = inputs.indexOf(currentInput) + 1;
-        if (index > 0 && index < inputs.length) {
-            var /** @type {?} */ nextInput = inputs[index];
+        var /** @type {?} */ index = this._inputs.indexOf(currentInput);
+        if (index > -1 && (index + 1) < this._inputs.length) {
+            var /** @type {?} */ nextInput = this._inputs[index + 1];
             if (nextInput !== this._focused) {
                 (void 0) /* console.debug */;
                 return nextInput.initFocus();
             }
         }
-        index = inputs.indexOf(this._focused);
+        index = this._inputs.indexOf(this._focused);
         if (index > 0) {
-            var /** @type {?} */ previousInput = inputs[index - 1];
+            var /** @type {?} */ previousInput = this._inputs[index - 1];
             if (previousInput) {
                 (void 0) /* console.debug */;
                 previousInput.initFocus();
@@ -40572,14 +40739,13 @@ var BaseInput = (function (_super) {
      * @param {?} _defaultValue
      * @param {?} _form
      * @param {?} _item
-     * @param {?} _ngControl
+     * @param {?} ngControl
      */
-    function BaseInput(config, elementRef, renderer, name, _defaultValue, _form, _item, _ngControl) {
+    function BaseInput(config, elementRef, renderer, name, _defaultValue, _form, _item, ngControl) {
         var _this = _super.call(this, config, elementRef, renderer, name) || this;
         _this._defaultValue = _defaultValue;
         _this._form = _form;
         _this._item = _item;
-        _this._ngControl = _ngControl;
         _this._isFocus = false;
         _this._disabled = false;
         _this._debouncer = new TimeoutDebouncer(0);
@@ -40600,14 +40766,13 @@ var BaseInput = (function (_super) {
         _form && _form.register(_this);
         _this._value = deepCopy(_this._defaultValue);
         if (_item) {
-            (void 0) /* assert */;
             _this.id = name + '-' + _item.registerInput(name);
-            _this._labelId = _item.labelId;
+            _this._labelId = 'lbl-' + _item.id;
             _this._item.setElementClass('item-' + name, true);
         }
         // If the user passed a ngControl we need to set the valueAccessor
-        if (_ngControl) {
-            _ngControl.valueAccessor = _this;
+        if (ngControl) {
+            ngControl.valueAccessor = _this;
         }
         return _this;
     }
@@ -40691,15 +40856,20 @@ var BaseInput = (function (_super) {
         if (isUndefined(val)) {
             return false;
         }
-        var /** @type {?} */ normalized = (val === null)
-            ? deepCopy(this._defaultValue)
-            : this._inputNormalize(val);
+        var /** @type {?} */ normalized;
+        if (val === null) {
+            normalized = deepCopy(this._defaultValue);
+        }
+        else {
+            normalized = this._inputNormalize(val);
+        }
         var /** @type {?} */ notUpdate = isUndefined(normalized) || !this._inputShouldChange(normalized);
         if (notUpdate) {
             return false;
         }
         (void 0) /* console.debug */;
         this._value = normalized;
+        this._inputCheckHasValue(normalized);
         if (this._init) {
             this._inputUpdated();
         }
@@ -40757,10 +40927,11 @@ var BaseInput = (function (_super) {
         if (this._isFocus) {
             return;
         }
-        (void 0) /* console.debug */;
-        this._form && this._form.setAsFocused(this);
-        this._setFocus(true);
+        (void 0) /* assert */;
+        (void 0) /* assert */;
+        this._isFocus = true;
         this.ionFocus.emit(this);
+        this._inputUpdated();
     };
     /**
      * @hidden
@@ -40770,26 +40941,10 @@ var BaseInput = (function (_super) {
         if (!this._isFocus) {
             return;
         }
-        (void 0) /* console.debug */;
-        this._form && this._form.unsetAsFocused(this);
-        this._setFocus(false);
+        (void 0) /* assert */;
+        (void 0) /* assert */;
+        this._isFocus = false;
         this.ionBlur.emit(this);
-    };
-    /**
-     * @hidden
-     * @param {?} isFocused
-     * @return {?}
-     */
-    BaseInput.prototype._setFocus = function (isFocused) {
-        (void 0) /* assert */;
-        (void 0) /* assert */;
-        (void 0) /* assert */;
-        this._isFocus = isFocused;
-        var /** @type {?} */ item = this._item;
-        if (item) {
-            item.setElementClass('input-has-focus', isFocused);
-            item.setElementClass('item-input-has-focus', isFocused);
-        }
         this._inputUpdated();
     };
     /**
@@ -40813,29 +40968,16 @@ var BaseInput = (function (_super) {
      */
     BaseInput.prototype.hasValue = function () {
         var /** @type {?} */ val = this._value;
-        if (!isPresent(val)) {
-            return false;
-        }
-        if (isArray$2(val) || isString(val)) {
-            return val.length > 0;
-        }
-        return true;
-    };
-    /**
-     * @hidden
-     * @return {?}
-     */
-    BaseInput.prototype.focusNext = function () {
-        this._form && this._form.tabFocus(this);
+        return isArray$2(val)
+            ? val.length > 0
+            : isPresent(val);
     };
     /**
      * @hidden
      * @return {?}
      */
     BaseInput.prototype.ngOnDestroy = function () {
-        (void 0) /* assert */;
-        var /** @type {?} */ form = this._form;
-        form && form.deregister(this);
+        this._form && this._form.deregister(this);
         this._init = false;
     };
     /**
@@ -40847,12 +40989,20 @@ var BaseInput = (function (_super) {
     };
     /**
      * @hidden
+     * @param {?} val
      * @return {?}
      */
-    BaseInput.prototype.initFocus = function () {
-        var /** @type {?} */ ele = this._elementRef.nativeElement.querySelector('button');
-        ele && ele.focus();
+    BaseInput.prototype._inputCheckHasValue = function (val) {
+        if (!this._item) {
+            return;
+        }
+        this._item.setElementClass('input-has-value', this.hasValue());
     };
+    /**
+     * @hidden
+     * @return {?}
+     */
+    BaseInput.prototype.initFocus = function () { };
     /**
      * @hidden
      * @param {?} val
@@ -40889,14 +41039,6 @@ var BaseInput = (function (_super) {
      */
     BaseInput.prototype._inputUpdated = function () {
         (void 0) /* assert */;
-        var /** @type {?} */ item = this._item;
-        if (item) {
-            setControlCss(item, this._ngControl);
-            // TODO remove all uses of input-has-value in v4
-            var /** @type {?} */ hasValue = this.hasValue();
-            item.setElementClass('input-has-value', hasValue);
-            item.setElementClass('item-input-has-value', hasValue);
-        }
     };
     return BaseInput;
 }(Ion));
@@ -40906,22 +41048,6 @@ BaseInput.propDecorators = {
     'ionBlur': [{ type: Output },],
     'disabled': [{ type: Input },],
 };
-/**
- * @param {?} element
- * @param {?} control
- * @return {?}
- */
-function setControlCss(element, control) {
-    if (!control) {
-        return;
-    }
-    element.setElementClass('ng-untouched', control.untouched);
-    element.setElementClass('ng-touched', control.touched);
-    element.setElementClass('ng-pristine', control.pristine);
-    element.setElementClass('ng-dirty', control.dirty);
-    element.setElementClass('ng-valid', control.valid);
-    element.setElementClass('ng-invalid', !control.valid);
-}
 
 var __extends$43 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -41291,295 +41417,6 @@ Label.propDecorators = {
     'id': [{ type: Input },],
 };
 
-/**
- * \@name Keyboard
- * \@description
- * The `Keyboard` class allows you to work with the keyboard events provided
- * by the Ionic keyboard plugin.
- *
- * \@usage
- * ```ts
- * export class MyClass {
- *   constructor(public keyboard: Keyboard) {
- *
- *   }
- * }
- * ```
- */
-var Keyboard = (function () {
-    /**
-     * @param {?} config
-     * @param {?} _plt
-     * @param {?} _zone
-     * @param {?} _dom
-     */
-    function Keyboard(config, _plt, _zone, _dom) {
-        this._plt = _plt;
-        this._zone = _zone;
-        this._dom = _dom;
-        this.willShow = new EventEmitter();
-        this.willHide = new EventEmitter();
-        this.didShow = new EventEmitter();
-        this.didHide = new EventEmitter();
-        this.eventsAvailable = false;
-        this.focusOutline(config.get('focusOutline'));
-        var win = _plt.win();
-        if (config.getBoolean('keyboardResizes', false)) {
-            this.listenV2(win);
-        }
-        else {
-            this.listenV1(win);
-        }
-    }
-    /**
-     * @param {?} win
-     * @return {?}
-     */
-    Keyboard.prototype.listenV2 = function (win) {
-        var _this = this;
-        var /** @type {?} */ platform = this._plt;
-        platform.registerListener(win, 'keyboardWillShow', function () {
-            _this._zone.run(function () {
-                _this.willShow.emit();
-            });
-        }, { zone: false, passive: true });
-        platform.registerListener(win, 'keyboardWillHide', function () {
-            _this._zone.run(function () {
-                _this.willHide.emit();
-            });
-        }, { zone: false, passive: true });
-        platform.registerListener(win, 'keyboardDidShow', function () {
-            _this._zone.run(function () {
-                _this.didShow.emit();
-            });
-        }, { zone: false, passive: true });
-        platform.registerListener(win, 'keyboardDidHide', function () {
-            _this._zone.run(function () {
-                _this.didHide.emit();
-            });
-        }, { zone: false, passive: true });
-        this.eventsAvailable = true;
-    };
-    /**
-     * @param {?} win
-     * @return {?}
-     */
-    Keyboard.prototype.listenV1 = function (win) {
-        var _this = this;
-        var /** @type {?} */ platform = this._plt;
-        platform.registerListener(win, 'native.keyboardhide', function () {
-            _this.blurActiveInput(true);
-        }, { zone: false, passive: true });
-        platform.registerListener(win, 'native.keyboardshow', function () {
-            _this.blurActiveInput(false);
-        }, { zone: false, passive: true });
-    };
-    /**
-     * @param {?} shouldBlur
-     * @return {?}
-     */
-    Keyboard.prototype.blurActiveInput = function (shouldBlur) {
-        var _this = this;
-        var /** @type {?} */ platform = this._plt;
-        platform.cancelTimeout(this._tmr);
-        if (shouldBlur) {
-            this._tmr = platform.timeout(function () {
-                // this custom cordova plugin event fires when the keyboard will hide
-                // useful when the virtual keyboard is closed natively
-                // https://github.com/ionic-team/ionic-plugin-keyboard
-                if (_this.isOpen()) {
-                    platform.focusOutActiveElement();
-                }
-            }, 80);
-        }
-    };
-    /**
-     * Check to see if the keyboard is open or not.
-     *
-     * ```ts
-     * export class MyClass {
-     *   constructor(public keyboard: Keyboard) {
-     *
-     *   }
-     *
-     *   keyboardCheck() {
-     *     console.log('The keyboard is open:', this.keyboard.isOpen());
-     *   }
-     * }
-     * ```
-     *
-     * @return {?}
-     */
-    Keyboard.prototype.isOpen = function () {
-        return this.hasFocusedTextInput();
-    };
-    /**
-     * When the keyboard is closed, call any methods you want.
-     *
-     * ```ts
-     * export class MyClass {
-     *   constructor(public keyboard: Keyboard) {
-     *     this.keyboard.onClose(this.closeCallback);
-     *   }
-     *   closeCallback() {
-     *     // call what ever functionality you want on keyboard close
-     *     console.log('Closing time');
-     *   }
-     * }
-     * ```
-     *
-     * @param {?} callback
-     * @param {?=} pollingInternval
-     * @param {?=} pollingChecksMax
-     * @return {?}
-     */
-    Keyboard.prototype.onClose = function (callback, pollingInternval, pollingChecksMax) {
-        if (pollingInternval === void 0) { pollingInternval = KEYBOARD_CLOSE_POLLING; }
-        if (pollingChecksMax === void 0) { pollingChecksMax = KEYBOARD_POLLING_CHECKS_MAX; }
-        (void 0) /* console.debug */;
-        var /** @type {?} */ self = this;
-        var /** @type {?} */ checks = 0;
-        var /** @type {?} */ promise = null;
-        if (!callback) {
-            // a callback wasn't provided, so let's return a promise instead
-            promise = new Promise(function (resolve) { callback = resolve; });
-        }
-        /**
-         * @return {?}
-         */
-        function checkKeyboard() {
-            (void 0) /* console.debug */;
-            if (!self.isOpen() || checks > pollingChecksMax) {
-                self._plt.timeout(function () {
-                    self._zone.run(function () {
-                        (void 0) /* console.debug */;
-                        callback();
-                    });
-                }, 400);
-            }
-            else {
-                self._plt.timeout(checkKeyboard, pollingInternval);
-            }
-            checks++;
-        }
-        self._plt.timeout(checkKeyboard, pollingInternval);
-        return promise;
-    };
-    /**
-     * Programmatically close the keyboard.
-     * @return {?}
-     */
-    Keyboard.prototype.close = function () {
-        var _this = this;
-        this._dom.read(function () {
-            if (_this.isOpen()) {
-                // only focus out when a text input has focus
-                (void 0) /* console.debug */;
-                _this._dom.write(function () {
-                    _this._plt.focusOutActiveElement();
-                });
-            }
-        });
-    };
-    /**
-     * @hidden
-     * @param {?} setting
-     * @return {?}
-     */
-    Keyboard.prototype.focusOutline = function (setting) {
-        /* Focus Outline
-         * --------------------------------------------------
-         * By default, when a keydown event happens from a tab key, then
-         * the 'focus-outline' css class is added to the body element
-         * so focusable elements have an outline. On a mousedown or
-         * touchstart event, then the 'focus-outline' css class is removed.
-         *
-         * Config default overrides:
-         * focusOutline: true     - Always add the focus-outline
-         * focusOutline: false    - Do not add the focus-outline
-         */
-        var /** @type {?} */ self = this;
-        var /** @type {?} */ platform = self._plt;
-        var /** @type {?} */ doc = platform.doc();
-        var /** @type {?} */ isKeyInputEnabled = false;
-        var /** @type {?} */ unRegMouse;
-        var /** @type {?} */ unRegTouch;
-        var /** @type {?} */ evOpts = { passive: true, zone: false };
-        /**
-         * @return {?}
-         */
-        function cssClass() {
-            self._dom.write(function () {
-                ((platform.doc().body.classList))[isKeyInputEnabled ? 'add' : 'remove']('focus-outline');
-            });
-        }
-        if (setting === true) {
-            isKeyInputEnabled = true;
-            return cssClass();
-        }
-        else if (setting === false) {
-            return;
-        }
-        /**
-         * @param {?} ev
-         * @return {?}
-         */
-        function keyDown(ev) {
-            if (!isKeyInputEnabled && ev.keyCode === KEY_TAB) {
-                isKeyInputEnabled = true;
-                enableKeyInput();
-            }
-        }
-        /**
-         * @return {?}
-         */
-        function pointerDown() {
-            isKeyInputEnabled = false;
-            enableKeyInput();
-        }
-        /**
-         * @return {?}
-         */
-        function enableKeyInput() {
-            cssClass();
-            unRegMouse && unRegMouse();
-            unRegTouch && unRegTouch();
-            if (isKeyInputEnabled) {
-                // listen for when a mousedown or touchstart event happens
-                unRegMouse = platform.registerListener(doc, 'mousedown', pointerDown, evOpts);
-                unRegTouch = platform.registerListener(doc, 'touchstart', pointerDown, evOpts);
-            }
-        }
-        // always listen for tab keydown events
-        platform.registerListener(platform.doc(), 'keydown', keyDown, evOpts);
-    };
-    /**
-     * @return {?}
-     */
-    Keyboard.prototype.hasFocusedTextInput = function () {
-        var /** @type {?} */ activeEle = this._plt.getActiveElement();
-        if (isTextInput(activeEle)) {
-            return (activeEle.parentElement.querySelector(':focus') === activeEle);
-        }
-        return false;
-    };
-    return Keyboard;
-}());
-Keyboard.decorators = [
-    { type: Injectable },
-];
-/**
- * @nocollapse
- */
-Keyboard.ctorParameters = function () { return [
-    { type: Config, },
-    { type: Platform, },
-    { type: NgZone, },
-    { type: DomController, },
-]; };
-var KEYBOARD_CLOSE_POLLING = 150;
-var KEYBOARD_POLLING_CHECKS_MAX = 100;
-
 var ScrollView = (function () {
     /**
      * @param {?} _app
@@ -41642,26 +41479,6 @@ var ScrollView = (function () {
         this._eventsEnabled = true;
     };
     /**
-     * @param {?} isScrolling
-     * @param {?} ev
-     * @return {?}
-     */
-    ScrollView.prototype.setScrolling = function (isScrolling, ev) {
-        if (this.isScrolling) {
-            if (isScrolling) {
-                this.onScroll && this.onScroll(ev);
-            }
-            else {
-                this.isScrolling = false;
-                this.onScrollEnd && this.onScrollEnd(ev);
-            }
-        }
-        else if (isScrolling) {
-            this.isScrolling = true;
-            this.onScrollStart && this.onScrollStart(ev);
-        }
-    };
-    /**
      * @return {?}
      */
     ScrollView.prototype.enableNativeScrolling = function () {
@@ -41699,6 +41516,8 @@ var ScrollView = (function () {
             // ******** DOM READ ****************
             ev.scrollLeft = self.getLeft();
             if (!self.isScrolling) {
+                // currently not scrolling, so this is a scroll start
+                self.isScrolling = true;
                 // remember the start positions
                 ev.startY = ev.scrollTop;
                 ev.startX = ev.scrollLeft;
@@ -41706,6 +41525,8 @@ var ScrollView = (function () {
                 ev.velocityY = ev.velocityX = 0;
                 ev.deltaY = ev.deltaX = 0;
                 positions.length = 0;
+                // emit only on the first scroll event
+                self.onScrollStart(ev);
             }
             // actively scrolling
             positions.push(ev.scrollTop, ev.scrollLeft, ev.timeStamp);
@@ -41737,14 +41558,16 @@ var ScrollView = (function () {
              * @return {?}
              */
             function scrollEnd() {
+                // haven't scrolled in a while, so it's a scrollend
+                self.isScrolling = false;
                 // reset velocity, do not reset the directions or deltas
                 ev.velocityY = ev.velocityX = 0;
                 // emit that the scroll has ended
-                self.setScrolling(false, ev);
+                self.onScrollEnd(ev);
                 self._endTmr = null;
             }
             // emit on each scroll event
-            self.setScrolling(true, ev);
+            self.onScroll(ev);
             // debounce for a moment after the last scroll event
             self._dom.cancel(self._endTmr);
             self._endTmr = self._dom.read(scrollEnd, SCROLL_END_DEBOUNCE_MS);
@@ -42020,7 +41843,7 @@ var ScrollView = (function () {
         function step(timeStamp) {
             attempts++;
             if (!self._el || stopScroll || attempts > maxAttempts) {
-                self.setScrolling(false, null);
+                self.isScrolling = false;
                 ((el.style))[transform] = '';
                 done();
                 return;
@@ -42042,13 +41865,12 @@ var ScrollView = (function () {
             }
             else {
                 stopScroll = true;
-                self.setScrolling(false, null);
+                self.isScrolling = false;
                 ((el.style))[transform] = '';
                 done();
             }
         }
         // start scroll loop
-        self.setScrolling(true, null);
         self.isScrolling = true;
         // chill out for a frame first
         self._dom.write(function (timeStamp) {
@@ -42079,7 +41901,7 @@ var ScrollView = (function () {
      * @return {?}
      */
     ScrollView.prototype.stop = function () {
-        this.setScrolling(false, null);
+        this.isScrolling = false;
     };
     /**
      * @hidden
@@ -42171,44 +41993,7 @@ var EventEmitterProxy = (function (_super) {
  *
  * \@advanced
  *
- * ### Sroll Events
- *
- * Scroll events happen outside of Angular's Zones. This is for performance reasons. So
- * if you're trying to bind a value to any scroll event, it will need to be wrapped in
- * a `zone.run()`
- *
- * ```ts
- * import { Component, NgZone } from '\@angular/core';
- * \@Component({
- *   template: `
- *     <ion-header>
- *       <ion-navbar>
- *         <ion-title>{{scrollAmount}}</ion-title>
- *       </ion-navbar>
- *     </ion-header>
- *     <ion-content (ionScroll)="scrollHandler($event)">
- *        <p> Some realllllllly long content </p>
- *     </ion-content>
- * `})
- * class E2EPage {
- *  public scrollAmount = 0;
- *  constructor( public zone: NgZone){}
- *  scrollHandler(event) {
- *    console.log(`ScrollEvent: ${event}`)
- *    this.zone.run(()=>{
- *      // since scrollAmount is data-binded,
- *      // the update needs to happen in zone
- *      this.scrollAmount++
- *    })
- *  }
- * }
- * ```
- *
- * This goes for any scroll event, not just `ionScroll`.
- *
- * ### Resizing the content
- *
- * If the height of `ion-header`, `ion-footer` or `ion-tabbar`
+ * Resizing the content. If the height of `ion-header`, `ion-footer` or `ion-tabbar`
  * changes dynamically, `content.resize()` has to be called in order to update the
  * layout of `Content`.
  *
@@ -42293,10 +42078,6 @@ var Content = (function (_super) {
          * \@internal
          */
         _this._inputPolling = false;
-        /**
-         * \@internal
-         */
-        _this._hasRefresher = false;
         /**
          * \@internal
          */
@@ -42827,10 +42608,6 @@ var Content = (function (_super) {
         else if (this._tabsPlacement === 'bottom') {
             this._cBottom += this._tabbarHeight;
         }
-        // Refresher uses a border which should be hidden unless pulled
-        if (this._hasRefresher) {
-            this._cTop -= 1;
-        }
         // Fixed content shouldn't include content padding
         this._fTop = this._cTop;
         this._fBottom = this._cBottom;
@@ -42975,8 +42752,7 @@ Content.decorators = [
                     '</div>' +
                     '<ng-content select="ion-refresher"></ng-content>',
                 host: {
-                    '[class.statusbar-padding]': 'statusbarPadding',
-                    '[class.has-refresher]': '_hasRefresher'
+                    '[class.statusbar-padding]': 'statusbarPadding'
                 },
                 changeDetection: ChangeDetectionStrategy.OnPush,
                 encapsulation: ViewEncapsulation.None
@@ -43284,7 +43060,7 @@ var ItemReorderGesture = (function () {
      * @return {?}
      */
     ItemReorderGesture.prototype.itemForCoord = function (coord) {
-        var /** @type {?} */ sideOffset = this.reorderList._isStart === this.plt.isRTL ? -100 : 100;
+        var /** @type {?} */ sideOffset = this.plt.isRTL ? 100 : -100;
         var /** @type {?} */ x = this.offset.x + sideOffset;
         var /** @type {?} */ y = coord.y;
         var /** @type {?} */ element = this.plt.getElementFromPoint(x, y);
@@ -43476,7 +43252,6 @@ var ItemReorder = (function () {
         this._content = _content;
         this._enableReorder = false;
         this._visibleReorder = false;
-        this._isStart = false;
         this._lastToIndex = -1;
         /**
          * \@output {object} Emitted when the item is reordered. Emits an object
@@ -43485,18 +43260,6 @@ var ItemReorder = (function () {
         this.ionItemReorder = new EventEmitter();
         this._element = elementRef.nativeElement;
     }
-    Object.defineProperty(ItemReorder.prototype, "side", {
-        /**
-         * \@input {string} Which side of the view the ion-reorder should be placed. Default `"end"`.
-         * @param {?} side
-         * @return {?}
-         */
-        set: function (side) {
-            this._isStart = side === 'start';
-        },
-        enumerable: true,
-        configurable: true
-    });
     /**
      * @hidden
      * @return {?}
@@ -43658,7 +43421,6 @@ ItemReorder.decorators = [
                 host: {
                     '[class.reorder-enabled]': '_enableReorder',
                     '[class.reorder-visible]': '_visibleReorder',
-                    '[class.reorder-side-start]': '_isStart'
                 }
             },] },
 ];
@@ -43675,7 +43437,6 @@ ItemReorder.ctorParameters = function () { return [
 ]; };
 ItemReorder.propDecorators = {
     'ionItemReorder': [{ type: Output },],
-    'side': [{ type: Input, args: ['side',] },],
     'reorder': [{ type: Input },],
 };
 
@@ -43973,7 +43734,6 @@ var Item = (function (_super) {
         _this._setName(elementRef);
         _this._hasReorder = !!reorder;
         _this.id = form.nextId().toString();
-        _this.labelId = 'lbl-' + _this.id;
         // auto add "tappable" attribute to ion-item components that have a click listener
         if (!renderer.orgListen) {
             renderer.orgListen = renderer.listen;
@@ -44045,7 +43805,7 @@ var Item = (function (_super) {
         set: function (label) {
             if (label) {
                 this._label = label;
-                label.id = this.labelId;
+                this.labelId = label.id = ('lbl-' + this.id);
                 if (label.type) {
                     this.setElementClass('item-label-' + label.type, true);
                 }
@@ -44159,7 +43919,7 @@ var __extends$36 = (undefined && undefined.__extends) || (function () {
  * The Checkbox is a simple component styled based on the mode. It can be
  * placed in an `ion-item` or used as a stand-alone checkbox.
  *
- * See the [Angular Docs](https://angular.io/docs/ts/latest/guide/forms.html)
+ * See the [Angular 2 Docs](https://angular.io/docs/ts/latest/guide/forms.html)
  * for more info on forms and inputs.
  *
  *
@@ -44184,34 +43944,6 @@ var __extends$36 = (undefined && undefined.__extends) || (function () {
  *    </ion-item>
  *
  *  </ion-list>
- * ```
- *
- * \@advanced
- *
- * ```html
- *
- * <!-- Call function when state changes -->
- *  <ion-list>
- *
- *    <ion-item>
- *      <ion-label>Cucumber</ion-label>
- *      <ion-checkbox [(ngModel)]="cucumber" (ionChange)="updateCucumber()"></ion-checkbox>
- *    </ion-item>
- *
- *  </ion-list>
- * ```
- *
- * ```ts
- * \@Component({
- *   templateUrl: 'main.html'
- * })
- * class SaladPage {
- *   cucumber: boolean;
- *
- *   updateCucumber() {
- *     console.log('Cucumbers new state:' + this.cucumber);
- *   }
- * }
  * ```
  *
  * \@demo /docs/demos/src/checkbox/
@@ -44249,6 +43981,13 @@ var Checkbox = (function (_super) {
     });
     /**
      * @hidden
+     * @return {?}
+     */
+    Checkbox.prototype.initFocus = function () {
+        this._elementRef.nativeElement.querySelector('button').focus();
+    };
+    /**
+     * @hidden
      * @param {?} ev
      * @return {?}
      */
@@ -44267,10 +44006,11 @@ var Checkbox = (function (_super) {
     };
     /**
      * @hidden
+     * @param {?} val
      * @return {?}
      */
-    Checkbox.prototype._inputUpdated = function () {
-        this._item && this._item.setElementClass('item-checkbox-checked', this._value);
+    Checkbox.prototype._inputCheckHasValue = function (val) {
+        this._item && this._item.setElementClass('item-checkbox-checked', val);
     };
     return Checkbox;
 }(BaseInput));
@@ -44359,7 +44099,7 @@ var __extends$46 = (undefined && undefined.__extends) || (function () {
  *
  * <ion-chip>
  *   <ion-avatar>
- *     <img src="assets/img/my-img.png">
+ *     <img src="img/my-img.png">
  *   </ion-avatar>
  *   <ion-label>Default</ion-label>
  * </ion-chip>
@@ -45080,6 +44820,7 @@ var PickerCmp = (function () {
      * @return {?}
      */
     PickerCmp.prototype.ionViewDidEnter = function () {
+        this._plt.focusOutActiveElement();
         var /** @type {?} */ focusableEle = this._elementRef.nativeElement.querySelector('button');
         if (focusableEle) {
             focusableEle.focus();
@@ -46190,7 +45931,6 @@ var DateTime = (function (_super) {
      * @return {?}
      */
     DateTime.prototype._inputUpdated = function () {
-        _super.prototype._inputUpdated.call(this);
         this.updateText();
     };
     /**
@@ -46220,6 +45960,10 @@ var DateTime = (function (_super) {
      * @return {?}
      */
     DateTime.prototype._click = function (ev) {
+        // do not continue if the click event came from a form submit
+        if (ev.detail === 0) {
+            return;
+        }
         ev.preventDefault();
         ev.stopPropagation();
         this.open();
@@ -47326,7 +47070,7 @@ Col.ctorParameters = function () { return []; };
  * ### Offsetting columns
  *
  * Move columns to the right by adding the `offset-*` attributes. These attributes
- * increase the margin start of the column by `*` columns. For example, in the following
+ * increase the margin left of the column by `*` columns. For example, in the following
  * grid the last column will be offset by 3 columns and take up 3 columns:
  *
  * ```
@@ -48577,85 +48321,325 @@ InfiniteScrollContent.propDecorators = {
     'loadingText': [{ type: Input },],
 };
 
-var __extends$52 = (commonjsGlobal && commonjsGlobal.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-
-
 /**
- * Emits the values emitted by the source Observable until a `notifier`
- * Observable emits a value.
- *
- * <span class="informal">Lets values pass until a second Observable,
- * `notifier`, emits something. Then, it completes.</span>
- *
- * <img src="./img/takeUntil.png" width="100%">
- *
- * `takeUntil` subscribes and begins mirroring the source Observable. It also
- * monitors a second Observable, `notifier` that you provide. If the `notifier`
- * emits a value or a complete notification, the output Observable stops
- * mirroring the source Observable and completes.
- *
- * @example <caption>Tick every second until the first click happens</caption>
- * var interval = Rx.Observable.interval(1000);
- * var clicks = Rx.Observable.fromEvent(document, 'click');
- * var result = interval.takeUntil(clicks);
- * result.subscribe(x => console.log(x));
- *
- * @see {@link take}
- * @see {@link takeLast}
- * @see {@link takeWhile}
- * @see {@link skip}
- *
- * @param {Observable} notifier The Observable whose first emitted value will
- * cause the output Observable of `takeUntil` to stop emitting values from the
- * source Observable.
- * @return {Observable<T>} An Observable that emits the values from the source
- * Observable until such time as `notifier` emits its first value.
- * @method takeUntil
- * @owner Observable
+ * @hidden
  */
-function takeUntil$2(notifier) {
-    return this.lift(new TakeUntilOperator(notifier));
-}
-var takeUntil_2 = takeUntil$2;
-var TakeUntilOperator = (function () {
-    function TakeUntilOperator(notifier) {
-        this.notifier = notifier;
+var NativeInput = (function () {
+    /**
+     * @param {?} _elementRef
+     * @param {?} _renderer
+     * @param {?} config
+     * @param {?} _plt
+     * @param {?} ngControl
+     */
+    function NativeInput(_elementRef, _renderer, config, _plt, ngControl) {
+        this._elementRef = _elementRef;
+        this._renderer = _renderer;
+        this._plt = _plt;
+        this.ngControl = ngControl;
+        this.focusChange = new EventEmitter();
+        this.valueChange = new EventEmitter();
+        this.keydown = new EventEmitter();
+        this._clone = config.getBoolean('inputCloning', false);
+        this._blurring = config.getBoolean('inputBlurring', false);
     }
-    TakeUntilOperator.prototype.call = function (subscriber, source) {
-        return source.subscribe(new TakeUntilSubscriber(subscriber, this.notifier));
+    /**
+     * @param {?} ev
+     * @return {?}
+     */
+    NativeInput.prototype._change = function (ev) {
+        this.valueChange.emit(ev.target.value);
     };
-    return TakeUntilOperator;
+    /**
+     * @param {?} ev
+     * @return {?}
+     */
+    NativeInput.prototype._keyDown = function (ev) {
+        if (ev) {
+            ev.target && this.keydown.emit(ev.target.value);
+        }
+    };
+    /**
+     * @return {?}
+     */
+    NativeInput.prototype._focus = function () {
+        var /** @type {?} */ self = this;
+        self.focusChange.emit(true);
+        if (self._blurring) {
+            // automatically blur input if:
+            // 1) this input has focus
+            // 2) the newly tapped document element is not an input
+            (void 0) /* console.debug */;
+            var /** @type {?} */ unregTouchEnd = this._plt.registerListener(this._plt.doc(), 'touchend', function (ev) {
+                var /** @type {?} */ tapped = (ev.target);
+                if (tapped && self.element()) {
+                    if (tapped.tagName !== 'INPUT' && tapped.tagName !== 'TEXTAREA' && !tapped.classList.contains('input-cover')) {
+                        self.element().blur();
+                    }
+                }
+            }, {
+                capture: true,
+                zone: false
+            });
+            self._unrefBlur = function () {
+                (void 0) /* console.debug */;
+                unregTouchEnd();
+            };
+        }
+    };
+    /**
+     * @return {?}
+     */
+    NativeInput.prototype._blur = function () {
+        this.focusChange.emit(false);
+        this.hideFocus(false);
+        this._unrefBlur && this._unrefBlur();
+        this._unrefBlur = null;
+    };
+    /**
+     * @param {?} val
+     * @return {?}
+     */
+    NativeInput.prototype.labelledBy = function (val) {
+        this._renderer.setElementAttribute(this._elementRef.nativeElement, 'aria-labelledby', val);
+    };
+    /**
+     * @param {?} val
+     * @return {?}
+     */
+    NativeInput.prototype.isDisabled = function (val) {
+        this._renderer.setElementAttribute(this._elementRef.nativeElement, 'disabled', val ? '' : null);
+    };
+    /**
+     * @return {?}
+     */
+    NativeInput.prototype.setFocus = function () {
+        // let's set focus to the element
+        // but only if it does not already have focus
+        if (this._plt.getActiveElement() !== this.element()) {
+            this.element().focus();
+        }
+    };
+    /**
+     * @param {?} shouldFocus
+     * @param {?} inputRelativeY
+     * @return {?}
+     */
+    NativeInput.prototype.beginFocus = function (shouldFocus, inputRelativeY) {
+        if (this._relocated !== shouldFocus) {
+            var /** @type {?} */ focusedInputEle = this.element();
+            if (shouldFocus) {
+                // we should focus into this element
+                if (this._clone) {
+                    // this platform needs the input to be cloned
+                    // this allows for the actual input to receive the focus from
+                    // the user's touch event, but before it receives focus, it
+                    // moves the actual input to a location that will not screw
+                    // up the app's layout, and does not allow the native browser
+                    // to attempt to scroll the input into place (messing up headers/footers)
+                    // the cloned input fills the area of where native input should be
+                    // while the native input fakes out the browser by relocating itself
+                    // before it receives the actual focus event
+                    cloneInputComponent(this._plt, focusedInputEle);
+                    // move the native input to a location safe to receive focus
+                    // according to the browser, the native input receives focus in an
+                    // area which doesn't require the browser to scroll the input into place
+                    ((focusedInputEle.style))[this._plt.Css.transform] = "translate3d(-9999px," + inputRelativeY + "px,0)";
+                    focusedInputEle.style.opacity = '0';
+                }
+                // let's now set focus to the actual native element
+                // at this point it is safe to assume the browser will not attempt
+                // to scroll the input into view itself (screwing up headers/footers)
+                this.setFocus();
+            }
+            else {
+                // should remove the focus
+                if (this._clone) {
+                    // should remove the cloned node
+                    removeClone(this._plt, focusedInputEle);
+                }
+            }
+            this._relocated = shouldFocus;
+        }
+    };
+    /**
+     * @param {?} shouldHideFocus
+     * @return {?}
+     */
+    NativeInput.prototype.hideFocus = function (shouldHideFocus) {
+        var /** @type {?} */ focusedInputEle = this.element();
+        (void 0) /* console.debug */;
+        if (shouldHideFocus) {
+            cloneInputComponent(this._plt, focusedInputEle);
+            ((focusedInputEle.style))[this._plt.Css.transform] = 'scale(0)';
+        }
+        else {
+            removeClone(this._plt, focusedInputEle);
+        }
+    };
+    /**
+     * @param {?} val
+     * @return {?}
+     */
+    NativeInput.prototype.setValue = function (val) {
+        this._elementRef.nativeElement['value'] = val;
+    };
+    /**
+     * @return {?}
+     */
+    NativeInput.prototype.getValue = function () {
+        return this.element().value;
+    };
+    /**
+     * @param {?} val
+     * @return {?}
+     */
+    NativeInput.prototype.setMin = function (val) {
+        this._elementRef.nativeElement['min'] = val;
+    };
+    /**
+     * @param {?} val
+     * @return {?}
+     */
+    NativeInput.prototype.setMax = function (val) {
+        this._elementRef.nativeElement['max'] = val;
+    };
+    /**
+     * @param {?} val
+     * @return {?}
+     */
+    NativeInput.prototype.setStep = function (val) {
+        this._elementRef.nativeElement['step'] = val;
+    };
+    /**
+     * @param {?} cssClass
+     * @param {?} shouldAdd
+     * @return {?}
+     */
+    NativeInput.prototype.setElementClass = function (cssClass, shouldAdd) {
+        this._renderer.setElementClass(this._elementRef.nativeElement, cssClass, shouldAdd);
+    };
+    /**
+     * @return {?}
+     */
+    NativeInput.prototype.element = function () {
+        return this._elementRef.nativeElement;
+    };
+    /**
+     * @return {?}
+     */
+    NativeInput.prototype.ngOnDestroy = function () {
+        this._unrefBlur && this._unrefBlur();
+    };
+    return NativeInput;
 }());
+NativeInput.decorators = [
+    { type: Directive, args: [{
+                selector: '.text-input'
+            },] },
+];
 /**
- * We need this JSDoc comment for affecting ESDoc.
- * @ignore
- * @extends {Ignored}
+ * @nocollapse
  */
-var TakeUntilSubscriber = (function (_super) {
-    __extends$52(TakeUntilSubscriber, _super);
-    function TakeUntilSubscriber(destination, notifier) {
-        _super.call(this, destination);
-        this.notifier = notifier;
-        this.add(subscribeToResult_1.subscribeToResult(this, notifier));
-    }
-    TakeUntilSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
-        this.complete();
-    };
-    TakeUntilSubscriber.prototype.notifyComplete = function () {
-        // noop
-    };
-    return TakeUntilSubscriber;
-}(OuterSubscriber_1.OuterSubscriber));
-
-var takeUntil_1 = {
-	takeUntil: takeUntil_2
+NativeInput.ctorParameters = function () { return [
+    { type: ElementRef, },
+    { type: Renderer, },
+    { type: Config, },
+    { type: Platform, },
+    { type: NgControl, },
+]; };
+NativeInput.propDecorators = {
+    'focusChange': [{ type: Output },],
+    'valueChange': [{ type: Output },],
+    'keydown': [{ type: Output },],
+    '_change': [{ type: HostListener, args: ['input', ['$event'],] },],
+    '_keyDown': [{ type: HostListener, args: ['keydown', ['$event'],] },],
+    '_focus': [{ type: HostListener, args: ['focus',] },],
+    '_blur': [{ type: HostListener, args: ['blur',] },],
 };
+/**
+ * @param {?} plt
+ * @param {?} srcNativeInputEle
+ * @return {?}
+ */
+function cloneInputComponent(plt, srcNativeInputEle) {
+    // given a native <input> or <textarea> element
+    // find its parent wrapping component like <ion-input> or <ion-textarea>
+    // then clone the entire component
+    var /** @type {?} */ srcComponentEle = (srcNativeInputEle.closest('ion-input,ion-textarea'));
+    if (srcComponentEle) {
+        // DOM READ
+        var /** @type {?} */ srcTop = srcComponentEle.offsetTop;
+        var /** @type {?} */ srcLeft = srcComponentEle.offsetLeft;
+        var /** @type {?} */ srcWidth = srcComponentEle.offsetWidth;
+        var /** @type {?} */ srcHeight = srcComponentEle.offsetHeight;
+        // DOM WRITE
+        // not using deep clone so we don't pull in unnecessary nodes
+        var /** @type {?} */ clonedComponentEle = (srcComponentEle.cloneNode(false));
+        clonedComponentEle.classList.add('cloned-input');
+        clonedComponentEle.setAttribute('aria-hidden', 'true');
+        clonedComponentEle.style.pointerEvents = 'none';
+        clonedComponentEle.style.position = 'absolute';
+        clonedComponentEle.style.top = srcTop + 'px';
+        clonedComponentEle.style.left = srcLeft + 'px';
+        clonedComponentEle.style.width = srcWidth + 'px';
+        clonedComponentEle.style.height = srcHeight + 'px';
+        var /** @type {?} */ clonedNativeInputEle = (srcNativeInputEle.cloneNode(false));
+        clonedNativeInputEle.value = srcNativeInputEle.value;
+        clonedNativeInputEle.tabIndex = -1;
+        clonedComponentEle.appendChild(clonedNativeInputEle);
+        srcComponentEle.parentNode.appendChild(clonedComponentEle);
+        srcComponentEle.style.pointerEvents = 'none';
+    }
+    ((srcNativeInputEle.style))[plt.Css.transform] = 'scale(0)';
+}
+/**
+ * @param {?} plt
+ * @param {?} srcNativeInputEle
+ * @return {?}
+ */
+function removeClone(plt, srcNativeInputEle) {
+    var /** @type {?} */ srcComponentEle = (srcNativeInputEle.closest('ion-input,ion-textarea'));
+    if (srcComponentEle && srcComponentEle.parentElement) {
+        var /** @type {?} */ clonedInputEles = srcComponentEle.parentElement.querySelectorAll('.cloned-input');
+        for (var /** @type {?} */ i = 0; i < clonedInputEles.length; i++) {
+            clonedInputEles[i].parentNode.removeChild(clonedInputEles[i]);
+        }
+        srcComponentEle.style.pointerEvents = '';
+    }
+    ((srcNativeInputEle.style))[plt.Css.transform] = '';
+    srcNativeInputEle.style.opacity = '';
+}
 
-Observable_1.Observable.prototype.takeUntil = takeUntil_1.takeUntil;
+/**
+ * @hidden
+ */
+var NextInput = (function () {
+    function NextInput() {
+        this.focused = new EventEmitter();
+    }
+    /**
+     * @return {?}
+     */
+    NextInput.prototype.receivedFocus = function () {
+        (void 0) /* console.debug */;
+        this.focused.emit(true);
+    };
+    return NextInput;
+}());
+NextInput.decorators = [
+    { type: Directive, args: [{
+                selector: '[next-input]'
+            },] },
+];
+/**
+ * @nocollapse
+ */
+NextInput.ctorParameters = function () { return []; };
+NextInput.propDecorators = {
+    'focused': [{ type: Output },],
+    'receivedFocus': [{ type: HostListener, args: ['focus',] },],
+};
 
 var __extends$51 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -48736,95 +48720,67 @@ var TextInput = (function (_super) {
     /**
      * @param {?} config
      * @param {?} _plt
-     * @param {?} form
+     * @param {?} _form
      * @param {?} _app
      * @param {?} elementRef
      * @param {?} renderer
      * @param {?} _content
-     * @param {?} item
+     * @param {?} _item
+     * @param {?} nav
      * @param {?} ngControl
      * @param {?} _dom
      */
-    function TextInput(config, _plt, form, _app, elementRef, renderer, _content, item, ngControl, _dom) {
-        var _this = _super.call(this, config, elementRef, renderer, 'input', '', form, item, ngControl) || this;
+    function TextInput(config, _plt, _form, _app, elementRef, renderer, _content, _item, nav, ngControl, _dom) {
+        var _this = _super.call(this, config, elementRef, renderer, 'input') || this;
         _this._plt = _plt;
-        _this.form = form;
+        _this._form = _form;
         _this._app = _app;
         _this._content = _content;
-        _this.item = item;
+        _this._item = _item;
         _this.ngControl = ngControl;
         _this._dom = _dom;
         _this._clearInput = false;
+        _this._disabled = false;
         _this._readonly = false;
         _this._type = 'text';
-        _this._isTextarea = false;
-        _this._onDestroy = new Subject_2();
-        _this._useAssist = false;
-        _this._relocated = false;
-        /**
-         * \@input {string} Instructional text that shows before the input has a value.
-         */
-        _this.autocomplete = '';
-        /**
-         * \@input {string} Instructional text that shows before the input has a value.
-         */
-        _this.autocorrect = '';
+        _this._value = '';
         /**
          * \@input {string} Instructional text that shows before the input has a value.
          */
         _this.placeholder = '';
         /**
-         * \@input {any} The minimum value, which must not be greater than its maximum (max attribute) value.
-         */
-        _this.min = null;
-        /**
-         * \@input {any} The maximum value, which must not be less than its minimum (min attribute) value.
-         */
-        _this.max = null;
-        /**
-         * \@input {any} Works with the min and max attributes to limit the increments at which a value can be set.
-         */
-        _this.step = null;
-        /**
-         * @hidden
-         */
-        _this.input = new EventEmitter();
-        /**
-         * @hidden
+         * \@output {event} Emitted when the input no longer has focus.
          */
         _this.blur = new EventEmitter();
         /**
-         * @hidden
+         * \@output {event} Emitted when the input has focus.
          */
         _this.focus = new EventEmitter();
-        _this.autocomplete = config.get('autocomplete', 'off');
-        _this.autocorrect = config.get('autocorrect', 'off');
+        _this._nav = nav;
         _this._autoFocusAssist = config.get('autoFocusAssist', 'delay');
+        _this._autoComplete = config.get('autocomplete', 'off');
+        _this._autoCorrect = config.get('autocorrect', 'off');
         _this._keyboardHeight = config.getNumber('keyboardHeight');
-        _this._isTextarea = !!(elementRef.nativeElement.tagName === 'ION-TEXTAREA');
-        if (_this._isTextarea && item) {
-            item.setElementClass('item-textarea', true);
+        _this._useAssist = config.getBoolean('scrollAssist', false);
+        _this._usePadding = config.getBoolean('scrollPadding', _this._useAssist);
+        if (elementRef.nativeElement.tagName === 'ION-TEXTAREA') {
+            _this._type = TEXTAREA;
         }
-        // If not inside content, let's disable all the hacks
-        if (!_content) {
-            return _this;
+        if (ngControl) {
+            ngControl.valueAccessor = _this;
+            _this.inputControl = ngControl;
         }
-        var blurOnScroll = config.getBoolean('hideCaretOnScroll', false);
-        if (blurOnScroll) {
-            _this._enableHideCaretOnScroll();
+        _form.register(_this);
+        // only listen to content scroll events if there is content
+        if (_content) {
+            _this._scrollStart = _content.ionScrollStart.subscribe(function (ev) {
+                _this.scrollHideFocus(ev, true);
+            });
+            _this._scrollEnd = _content.ionScrollEnd.subscribe(function (ev) {
+                _this.scrollHideFocus(ev, false);
+            });
         }
-        var resizeAssist = config.getBoolean('resizeAssist', false);
-        if (resizeAssist) {
-            _this._keyboardHeight = 60;
-            _this._enableResizeAssist();
-        }
-        else {
-            _this._useAssist = config.getBoolean('scrollAssist', false);
-            var usePadding = config.getBoolean('scrollPadding', _this._useAssist);
-            if (usePadding) {
-                _this._enableScrollPadding();
-            }
-        }
+        _this.mode = config.get('mode');
         return _this;
     }
     Object.defineProperty(TextInput.prototype, "clearInput", {
@@ -48840,32 +48796,92 @@ var TextInput = (function (_super) {
          * @return {?}
          */
         set: function (val) {
-            this._clearInput = (!this._isTextarea && isTrueProperty(val));
+            this._clearInput = (this._type !== TEXTAREA && isTrueProperty(val));
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(TextInput.prototype, "type", {
+    Object.defineProperty(TextInput.prototype, "value", {
         /**
-         * \@input {string} The type of control to display. The default type is text.
-         * Possible values are: `"text"`, `"password"`, `"email"`, `"number"`, `"search"`, `"tel"`, or `"url"`.
+         * \@input {string} The text value of the input.
          * @return {?}
          */
         get: function () {
-            return (this._isTextarea)
-                ? 'text'
-                : this._type;
+            return this._value;
         },
         /**
          * @param {?} val
          * @return {?}
          */
         set: function (val) {
-            this._type = val;
+            this._value = val;
+            this.checkHasValue(val);
         },
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(TextInput.prototype, "type", {
+        /**
+         * \@input {string} The type of control to display. The default type is text. Possible values are: `"text"`, `"password"`, `"email"`, `"number"`, `"search"`, `"tel"`, or `"url"`.
+         * @return {?}
+         */
+        get: function () {
+            return this._type;
+        },
+        /**
+         * @param {?} val
+         * @return {?}
+         */
+        set: function (val) {
+            if (this._type !== TEXTAREA) {
+                this._type = 'text';
+                if (isString(val)) {
+                    val = val.toLowerCase();
+                    if (TEXT_TYPE_REGEX.test(val)) {
+                        this._type = val;
+                    }
+                }
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(TextInput.prototype, "disabled", {
+        /**
+         * \@input {boolean} If true, the user cannot interact with this element.
+         * @return {?}
+         */
+        get: function () {
+            return this._disabled;
+        },
+        /**
+         * @param {?} val
+         * @return {?}
+         */
+        set: function (val) {
+            this.setDisabled(this._disabled = isTrueProperty(val));
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * @hidden
+     * @param {?} val
+     * @return {?}
+     */
+    TextInput.prototype.setDisabled = function (val) {
+        this._renderer.setElementAttribute(this._elementRef.nativeElement, 'disabled', val ? '' : null);
+        this._item && this._item.setElementClass('item-input-disabled', val);
+        this._native && this._native.isDisabled(val);
+    };
+    /**
+     * @hidden
+     * @param {?} isDisabled
+     * @return {?}
+     */
+    TextInput.prototype.setDisabledState = function (isDisabled) {
+        this.disabled = isDisabled;
+    };
     Object.defineProperty(TextInput.prototype, "readonly", {
         /**
          * \@input {boolean} If true, the user cannot modify the value.
@@ -48886,8 +48902,7 @@ var TextInput = (function (_super) {
     });
     Object.defineProperty(TextInput.prototype, "clearOnEdit", {
         /**
-         * \@input {boolean} If true, the value will be cleared after focus upon edit.
-         * Defaults to `true` when `type` is `"password"`, `false` for all other types.
+         * \@input {boolean} If true, the value will be cleared after focus upon edit. Defaults to `true` when `type` is `"password"`, `false` for all other types.
          * @return {?}
          */
         get: function () {
@@ -48903,89 +48918,289 @@ var TextInput = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    /**
-     * @return {?}
-     */
-    TextInput.prototype.ngAfterContentInit = function () { };
+    Object.defineProperty(TextInput.prototype, "min", {
+        /**
+         * \@input {any} The minimum value, which must not be greater than its maximum (max attribute) value.
+         * @return {?}
+         */
+        get: function () {
+            return this._min;
+        },
+        /**
+         * @param {?} val
+         * @return {?}
+         */
+        set: function (val) {
+            this.setMin(this._min = val);
+        },
+        enumerable: true,
+        configurable: true
+    });
     /**
      * @hidden
+     * @param {?} val
      * @return {?}
      */
-    TextInput.prototype.ngAfterViewInit = function () {
-        (void 0) /* assert */;
-        // By default, password inputs clear after focus when they have content
-        if (this.clearOnEdit !== false && this.type === 'password') {
-            this.clearOnEdit = true;
+    TextInput.prototype.setMin = function (val) {
+        this._native && this._native.setMin(val);
+    };
+    Object.defineProperty(TextInput.prototype, "max", {
+        /**
+         * \@input {any} The maximum value, which must not be less than its minimum (min attribute) value.
+         * @return {?}
+         */
+        get: function () {
+            return this._max;
+        },
+        /**
+         * @param {?} val
+         * @return {?}
+         */
+        set: function (val) {
+            this.setMax(this._max = val);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * @hidden
+     * @param {?} val
+     * @return {?}
+     */
+    TextInput.prototype.setMax = function (val) {
+        this._native && this._native.setMax(val);
+    };
+    Object.defineProperty(TextInput.prototype, "step", {
+        /**
+         * \@input {any} Works with the min and max attributes to limit the increments at which a value can be set.
+         * @return {?}
+         */
+        get: function () {
+            return this._step;
+        },
+        /**
+         * @param {?} val
+         * @return {?}
+         */
+        set: function (val) {
+            this.setStep(this._step = val);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * @hidden
+     * @param {?} val
+     * @return {?}
+     */
+    TextInput.prototype.setStep = function (val) {
+        this._native && this._native.setStep(val);
+    };
+    Object.defineProperty(TextInput.prototype, "_nativeInput", {
+        /**
+         * @hidden
+         * @param {?} nativeInput
+         * @return {?}
+         */
+        set: function (nativeInput) {
+            if (this.type !== TEXTAREA) {
+                this.setNativeInput(nativeInput);
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(TextInput.prototype, "_nativeTextarea", {
+        /**
+         * @hidden
+         * @param {?} nativeInput
+         * @return {?}
+         */
+        set: function (nativeInput) {
+            if (this.type === TEXTAREA) {
+                this.setNativeInput(nativeInput);
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(TextInput.prototype, "_nextInput", {
+        /**
+         * @hidden
+         * @param {?} nextInput
+         * @return {?}
+         */
+        set: function (nextInput) {
+            var _this = this;
+            if (nextInput) {
+                nextInput.focused.subscribe(function () {
+                    _this._form.tabFocus(_this);
+                });
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * @hidden
+     * @param {?} nativeInput
+     * @return {?}
+     */
+    TextInput.prototype.setNativeInput = function (nativeInput) {
+        var _this = this;
+        this._native = nativeInput;
+        nativeInput.setValue(this._value);
+        nativeInput.setMin(this._min);
+        nativeInput.setMax(this._max);
+        nativeInput.setStep(this._step);
+        nativeInput.isDisabled(this.disabled);
+        if (this._item && this._item.labelId !== null) {
+            nativeInput.labelledBy(this._item.labelId);
         }
+        nativeInput.valueChange.subscribe(function (inputValue) {
+            _this.onChange(inputValue);
+            _this.checkHasValue(inputValue);
+        });
+        nativeInput.keydown.subscribe(function (inputValue) {
+            _this.onKeydown(inputValue);
+        });
+        this.focusChange(this.hasFocus());
+        nativeInput.focusChange.subscribe(function (textInputHasFocus) {
+            _this.focusChange(textInputHasFocus);
+            _this.checkHasValue(nativeInput.getValue());
+            if (!textInputHasFocus) {
+                _this.onTouched(textInputHasFocus);
+            }
+        });
+        this.checkHasValue(nativeInput.getValue());
         var /** @type {?} */ ionInputEle = this._elementRef.nativeElement;
-        var /** @type {?} */ nativeInputEle = this._native.nativeElement;
-        // Copy remaining attributes, not handled by ionic/angular
+        var /** @type {?} */ nativeInputEle = nativeInput.element();
+        // copy ion-input attributes to the native input element
         copyInputAttributes(ionInputEle, nativeInputEle);
-        // prevent having tabIndex duplicated
-        if (ionInputEle.hasAttribute('tabIndex')) {
-            ionInputEle.removeAttribute('tabIndex');
-        }
-        // handle the autofocus attribute
         if (ionInputEle.hasAttribute('autofocus')) {
+            // the ion-input element has the autofocus attributes
             ionInputEle.removeAttribute('autofocus');
-            switch (this._autoFocusAssist) {
-                case 'immediate':
-                    // config says to immediate focus on the input
-                    // works best on android devices
+            if (this._autoFocusAssist === 'immediate') {
+                // config says to immediate focus on the input
+                // works best on android devices
+                nativeInputEle.focus();
+            }
+            else if (this._autoFocusAssist === 'delay') {
+                // config says to chill out a bit and focus on the input after transitions
+                // works best on desktop
+                this._plt.timeout(function () {
                     nativeInputEle.focus();
-                    break;
-                case 'delay':
-                    // config says to chill out a bit and focus on the input after transitions
-                    // works best on desktop
-                    this._plt.timeout(function () { return nativeInputEle.focus(); }, 800);
-                    break;
+                }, 650);
             }
             // traditionally iOS has big issues with autofocus on actual devices
             // autoFocus is disabled by default with the iOS mode config
         }
-        // Initialize the input (can start emitting events)
-        this._initialize();
-        if (this.focus.observers.length > 0) {
-            console.warn('(focus) is deprecated in ion-input, use (ionFocus) instead');
+        // by default set autocomplete="off" unless specified by the input
+        if (ionInputEle.hasAttribute('autocomplete')) {
+            this._autoComplete = ionInputEle.getAttribute('autocomplete');
         }
-        if (this.blur.observers.length > 0) {
-            console.warn('(blur) is deprecated in ion-input, use (ionBlur) instead');
+        nativeInputEle.setAttribute('autocomplete', this._autoComplete);
+        // by default set autocorrect="off" unless specified by the input
+        if (ionInputEle.hasAttribute('autocorrect')) {
+            this._autoCorrect = ionInputEle.getAttribute('autocorrect');
         }
-    };
-    /**
-     * @hidden
-     * @return {?}
-     */
-    TextInput.prototype.ngOnDestroy = function () {
-        _super.prototype.ngOnDestroy.call(this);
-        this._onDestroy.next();
-        this._onDestroy = null;
+        nativeInputEle.setAttribute('autocorrect', this._autoCorrect);
     };
     /**
      * @hidden
      * @return {?}
      */
     TextInput.prototype.initFocus = function () {
-        this.setFocus();
+        var _this = this;
+        // begin the process of setting focus to the inner input element
+        var /** @type {?} */ app = this._app;
+        var /** @type {?} */ content = this._content;
+        var /** @type {?} */ nav = this._nav;
+        var /** @type {?} */ nativeInput = this._native;
+        (void 0) /* console.debug */;
+        if (content) {
+            // this input is inside of a scroll view
+            // find out if text input should be manually scrolled into view
+            // get container of this input, probably an ion-item a few nodes up
+            var /** @type {?} */ ele = this._elementRef.nativeElement;
+            ele = (ele.closest('ion-item,[ion-item]')) || ele;
+            var /** @type {?} */ scrollData = getScrollData(ele.offsetTop, ele.offsetHeight, content.getContentDimensions(), this._keyboardHeight, this._plt.height());
+            if (Math.abs(scrollData.scrollAmount) < 4) {
+                // the text input is in a safe position that doesn't
+                // require it to be scrolled into view, just set focus now
+                this.setFocus();
+                // all good, allow clicks again
+                app.setEnabled(true);
+                nav && nav.setTransitioning(false);
+                if (this._usePadding) {
+                    content.clearScrollPaddingFocusOut();
+                }
+                return;
+            }
+            if (this._usePadding) {
+                // add padding to the bottom of the scroll view (if needed)
+                content.addScrollPadding(scrollData.scrollPadding);
+            }
+            // manually scroll the text input to the top
+            // do not allow any clicks while it's scrolling
+            var /** @type {?} */ scrollDuration = getScrollAssistDuration(scrollData.scrollAmount);
+            app.setEnabled(false, scrollDuration);
+            nav && nav.setTransitioning(true);
+            // temporarily move the focus to the focus holder so the browser
+            // doesn't freak out while it's trying to get the input in place
+            // at this point the native text input still does not have focus
+            nativeInput.beginFocus(true, scrollData.inputSafeY);
+            // scroll the input into place
+            content.scrollTo(0, scrollData.scrollTo, scrollDuration, function () {
+                (void 0) /* console.debug */;
+                // the scroll view is in the correct position now
+                // give the native text input focus
+                nativeInput.beginFocus(false, 0);
+                // ensure this is the focused input
+                _this.setFocus();
+                // all good, allow clicks again
+                app.setEnabled(true);
+                nav && nav.setTransitioning(false);
+                if (_this._usePadding) {
+                    content.clearScrollPaddingFocusOut();
+                }
+            });
+        }
+        else {
+            // not inside of a scroll view, just focus it
+            this.setFocus();
+        }
     };
     /**
      * @hidden
      * @return {?}
      */
     TextInput.prototype.setFocus = function () {
-        // let's set focus to the element
-        // but only if it does not already have focus
-        if (!this.isFocus()) {
-            this._native.nativeElement.focus();
-        }
+        var _this = this;
+        // immediately set focus
+        this._form.setAsFocused(this);
+        // set focus on the actual input element
+        (void 0) /* console.debug */;
+        this._native.setFocus();
+        // ensure the body hasn't scrolled down
+        this._dom.write(function () {
+            _this._plt.doc().body.scrollTop = 0;
+        });
     };
     /**
      * @hidden
+     * @param {?} ev
+     * @param {?} shouldHideFocus
      * @return {?}
      */
-    TextInput.prototype.setBlur = function () {
-        if (this.isFocus()) {
-            this._native.nativeElement.blur();
+    TextInput.prototype.scrollHideFocus = function (ev, shouldHideFocus) {
+        var _this = this;
+        // do not continue if there's no nav, or it's transitioning
+        if (this._nav && this.hasFocus()) {
+            // if it does have focus, then do the dom write
+            this._dom.write(function () {
+                _this._native.hideFocus(shouldHideFocus);
+            });
         }
     };
     /**
@@ -48993,22 +49208,89 @@ var TextInput = (function (_super) {
      * @param {?} ev
      * @return {?}
      */
-    TextInput.prototype.onInput = function (ev) {
-        this.value = ev.target.value;
-        // TODO: deprecate this
-        this.input.emit(ev);
-    };
-    /**
-     * @hidden
-     * @param {?} ev
-     * @return {?}
-     */
-    TextInput.prototype.onBlur = function (ev) {
-        this._fireBlur();
-        // TODO: deprecate this (06/07/2017)
+    TextInput.prototype.inputBlurred = function (ev) {
         this.blur.emit(ev);
-        this._scrollData = null;
-        if (this._clearOnEdit && this.hasValue()) {
+    };
+    /**
+     * @hidden
+     * @param {?} ev
+     * @return {?}
+     */
+    TextInput.prototype.inputFocused = function (ev) {
+        this.focus.emit(ev);
+    };
+    /**
+     * @hidden
+     * @param {?} val
+     * @return {?}
+     */
+    TextInput.prototype.writeValue = function (val) {
+        this._value = val;
+        this.checkHasValue(val);
+    };
+    /**
+     * @hidden
+     * @param {?} val
+     * @return {?}
+     */
+    TextInput.prototype.onChange = function (val) {
+        this.checkHasValue(val);
+    };
+    /**
+     * @hidden
+     * @param {?} val
+     * @return {?}
+     */
+    TextInput.prototype.onKeydown = function (val) {
+        if (this._clearOnEdit) {
+            this.checkClearOnEdit(val);
+        }
+    };
+    /**
+     * @hidden
+     * @param {?} val
+     * @return {?}
+     */
+    TextInput.prototype.onTouched = function (val) { };
+    /**
+     * @hidden
+     * @return {?}
+     */
+    TextInput.prototype.hasFocus = function () {
+        // check if an input has focus or not
+        return this._plt.hasFocus(this._native.element());
+    };
+    /**
+     * @hidden
+     * @return {?}
+     */
+    TextInput.prototype.hasValue = function () {
+        var /** @type {?} */ inputValue = this._value;
+        return (inputValue !== null && inputValue !== undefined && inputValue !== '');
+    };
+    /**
+     * @hidden
+     * @param {?} inputValue
+     * @return {?}
+     */
+    TextInput.prototype.checkHasValue = function (inputValue) {
+        if (this._item) {
+            var /** @type {?} */ hasValue = (inputValue !== null && inputValue !== undefined && inputValue !== '');
+            this._item.setElementClass('input-has-value', hasValue);
+        }
+    };
+    /**
+     * @hidden
+     * @param {?} inputHasFocus
+     * @return {?}
+     */
+    TextInput.prototype.focusChange = function (inputHasFocus) {
+        if (this._item) {
+            (void 0) /* console.debug */;
+            this._item.setElementClass('input-has-focus', inputHasFocus);
+        }
+        // If clearOnEdit is enabled and the input blurred but has a value, set a flag
+        if (this._clearOnEdit && !inputHasFocus && this.hasValue()) {
             this._didBlurAfterEdit = true;
         }
     };
@@ -49017,31 +49299,97 @@ var TextInput = (function (_super) {
      * @param {?} ev
      * @return {?}
      */
-    TextInput.prototype.onFocus = function (ev) {
-        this._fireFocus();
-        // TODO: deprecate this (06/07/2017)
-        this.focus.emit(ev);
+    TextInput.prototype.pointerStart = function (ev) {
+        // input cover touchstart
+        if (ev.type === 'touchstart') {
+            this._isTouch = true;
+        }
+        if ((this._isTouch || (!this._isTouch && ev.type === 'mousedown')) && this._app.isEnabled()) {
+            // remember where the touchstart/mousedown started
+            this._coord = pointerCoord(ev);
+        }
+        (void 0) /* console.debug */;
     };
     /**
      * @hidden
      * @param {?} ev
      * @return {?}
      */
-    TextInput.prototype.onKeydown = function (ev) {
-        if (ev && this._clearOnEdit) {
-            this.checkClearOnEdit(ev.target.value);
+    TextInput.prototype.pointerEnd = function (ev) {
+        // input cover touchend/mouseup
+        (void 0) /* console.debug */;
+        if ((this._isTouch && ev.type === 'mouseup') || !this._app.isEnabled()) {
+            // the app is actively doing something right now
+            // don't try to scroll in the input
+            ev.preventDefault();
+            ev.stopPropagation();
+        }
+        else if (this._coord) {
+            // get where the touchend/mouseup ended
+            var /** @type {?} */ endCoord = pointerCoord(ev);
+            // focus this input if the pointer hasn't moved XX pixels
+            // and the input doesn't already have focus
+            if (!hasPointerMoved(8, this._coord, endCoord) && !this.hasFocus()) {
+                ev.preventDefault();
+                ev.stopPropagation();
+                // begin the input focus process
+                this.initFocus();
+            }
+        }
+        this._coord = null;
+    };
+    /**
+     * @hidden
+     * @return {?}
+     */
+    TextInput.prototype.setItemInputControlCss = function () {
+        var /** @type {?} */ item = this._item;
+        var /** @type {?} */ nativeInput = this._native;
+        var /** @type {?} */ inputControl = this.inputControl;
+        // Set the control classes on the item
+        if (item && inputControl) {
+            setControlCss(item, inputControl);
+        }
+        // Set the control classes on the native input
+        if (nativeInput && inputControl) {
+            setControlCss(nativeInput, inputControl);
         }
     };
     /**
      * @hidden
      * @return {?}
      */
-    TextInput.prototype._inputUpdated = function () {
-        _super.prototype._inputUpdated.call(this);
-        var /** @type {?} */ inputEle = this._native.nativeElement;
-        var /** @type {?} */ value = this._value;
-        if (inputEle.value !== value) {
-            inputEle.value = value;
+    TextInput.prototype.ngOnInit = function () {
+        var /** @type {?} */ item = this._item;
+        if (item) {
+            if (this.type === TEXTAREA) {
+                item.setElementClass('item-textarea', true);
+            }
+            item.setElementClass('item-input', true);
+            item.registerInput(this.type);
+        }
+        // By default, password inputs clear after focus when they have content
+        if (this.type === 'password' && this.clearOnEdit !== false) {
+            this.clearOnEdit = true;
+        }
+    };
+    /**
+     * @hidden
+     * @return {?}
+     */
+    TextInput.prototype.ngAfterContentChecked = function () {
+        this.setItemInputControlCss();
+    };
+    /**
+     * @hidden
+     * @return {?}
+     */
+    TextInput.prototype.ngOnDestroy = function () {
+        this._form.deregister(this);
+        // only stop listening to content scroll events if there is content
+        if (this._content) {
+            this._scrollStart.unsubscribe();
+            this._scrollEnd.unsubscribe();
         }
     };
     /**
@@ -49049,7 +49397,10 @@ var TextInput = (function (_super) {
      * @return {?}
      */
     TextInput.prototype.clearTextInput = function () {
-        this.value = '';
+        (void 0) /* console.debug */;
+        this._value = '';
+        this.onChange(this._value);
+        this.writeValue(this._value);
     };
     /**
      * Check if we need to clear the text input if clearOnEdit is enabled
@@ -49070,233 +49421,39 @@ var TextInput = (function (_super) {
         this._didBlurAfterEdit = false;
     };
     /**
+     * @hidden
+     * Angular2 Forms API method called by the view (formControlName) to register the
+     * onChange event handler that updates the model (Control).
+     * @param {?} fn
      * @return {?}
      */
-    TextInput.prototype._getScrollData = function () {
-        if (!this._content) {
-            return newScrollData();
-        }
-        // get container of this input, probably an ion-item a few nodes up
-        if (this._scrollData) {
-            return this._scrollData;
-        }
-        var /** @type {?} */ ele = this._elementRef.nativeElement;
-        ele = (ele.closest('ion-item,[ion-item]')) || ele;
-        return this._scrollData = getScrollData(ele.offsetTop, ele.offsetHeight, this._content.getContentDimensions(), this._keyboardHeight, this._plt.height());
-    };
+    TextInput.prototype.registerOnChange = function (fn) { this.onChange = fn; };
     /**
-     * @param {?} shouldRelocate
+     * @hidden
+     * Angular2 Forms API method called by the view (formControlName) to register
+     * the onTouched event handler that marks model (Control) as touched.
+     * @param {?} fn
      * @return {?}
      */
-    TextInput.prototype._relocateInput = function (shouldRelocate) {
-        if (this._relocated === shouldRelocate) {
-            return;
-        }
-        var /** @type {?} */ platform = this._plt;
-        var /** @type {?} */ componentEle = this.getNativeElement();
-        var /** @type {?} */ focusedInputEle = this._native.nativeElement;
-        (void 0) /* console.debug */;
-        if (shouldRelocate) {
-            // this allows for the actual input to receive the focus from
-            // the user's touch event, but before it receives focus, it
-            // moves the actual input to a location that will not screw
-            // up the app's layout, and does not allow the native browser
-            // to attempt to scroll the input into place (messing up headers/footers)
-            // the cloned input fills the area of where native input should be
-            // while the native input fakes out the browser by relocating itself
-            // before it receives the actual focus event
-            // We hide the focused input (with the visible caret) invisiable by making it scale(0),
-            cloneInputComponent(platform, componentEle, focusedInputEle);
-            var /** @type {?} */ inputRelativeY = this._getScrollData().inputSafeY;
-            // fix for #11817
-            var /** @type {?} */ tx = this._plt.isRTL ? 9999 : -9999;
-            focusedInputEle.style[platform.Css.transform] = "translate3d(" + tx + "px," + inputRelativeY + "px,0)";
-            focusedInputEle.style.opacity = '0';
-        }
-        else {
-            removeClone(platform, componentEle, focusedInputEle);
-        }
-        this._relocated = shouldRelocate;
-    };
+    TextInput.prototype.registerOnTouched = function (fn) { this.onTouched = fn; };
     /**
+     * @hidden
      * @return {?}
      */
-    TextInput.prototype._enableScrollPadding = function () {
-        var _this = this;
-        (void 0) /* assert */;
-        (void 0) /* console.debug */;
-        this.ionFocus.subscribe(function () {
-            var /** @type {?} */ content = _this._content;
-            // add padding to the bottom of the scroll view (if needed)
-            content.addScrollPadding(_this._getScrollData().scrollPadding);
-            content.clearScrollPaddingFocusOut();
-        });
-    };
-    /**
-     * @return {?}
-     */
-    TextInput.prototype._enableHideCaretOnScroll = function () {
-        var _this = this;
-        (void 0) /* assert */;
-        var /** @type {?} */ content = this._content;
-        (void 0) /* console.debug */;
-        content.ionScrollStart
-            .takeUntil(this._onDestroy)
-            .subscribe(function () { return scrollHideCaret(true); });
-        content.ionScrollEnd
-            .takeUntil(this._onDestroy)
-            .subscribe(function () { return scrollHideCaret(false); });
-        this.ionBlur.subscribe(function () { return _this._relocateInput(false); });
-        var /** @type {?} */ self = this;
-        /**
-         * @param {?} shouldHideCaret
-         * @return {?}
-         */
-        function scrollHideCaret(shouldHideCaret) {
-            // if it does have focus, then do the dom write
-            if (self.isFocus()) {
-                self._dom.write(function () { return self._relocateInput(shouldHideCaret); });
-            }
-        }
-    };
-    /**
-     * @return {?}
-     */
-    TextInput.prototype._enableResizeAssist = function () {
-        var _this = this;
-        (void 0) /* assert */;
-        (void 0) /* console.debug */;
-        this.ionFocus.subscribe(function () {
-            var /** @type {?} */ scrollData = _this._getScrollData();
-            if (Math.abs(scrollData.scrollAmount) > 100) {
-                _this._content.scrollTo(0, scrollData.scrollTo, scrollData.scrollDuration);
-            }
-        });
-    };
-    /**
-     * @param {?} ev
-     * @return {?}
-     */
-    TextInput.prototype._pointerStart = function (ev) {
-        (void 0) /* assert */;
-        // input cover touchstart
-        if (ev.type === 'touchstart') {
-            this._isTouch = true;
-        }
-        if ((this._isTouch || (!this._isTouch && ev.type === 'mousedown')) && this._app.isEnabled()) {
-            // remember where the touchstart/mousedown started
-            this._coord = pointerCoord(ev);
-        }
-        (void 0) /* console.debug */;
-    };
-    /**
-     * @param {?} ev
-     * @return {?}
-     */
-    TextInput.prototype._pointerEnd = function (ev) {
-        (void 0) /* assert */;
-        // input cover touchend/mouseup
-        (void 0) /* console.debug */;
-        if ((this._isTouch && ev.type === 'mouseup') || !this._app.isEnabled()) {
-            // the app is actively doing something right now
-            // don't try to scroll in the input
-            ev.preventDefault();
-            ev.stopPropagation();
-        }
-        else if (this._coord) {
-            // get where the touchend/mouseup ended
-            var /** @type {?} */ endCoord = pointerCoord(ev);
-            // focus this input if the pointer hasn't moved XX pixels
-            // and the input doesn't already have focus
-            if (!hasPointerMoved(8, this._coord, endCoord) && !this.isFocus()) {
-                ev.preventDefault();
-                ev.stopPropagation();
-                // begin the input focus process
-                this._jsSetFocus();
-            }
-        }
-        this._coord = null;
-    };
-    /**
-     * @return {?}
-     */
-    TextInput.prototype._jsSetFocus = function () {
-        var _this = this;
-        (void 0) /* assert */;
-        // begin the process of setting focus to the inner input element
-        var /** @type {?} */ content = this._content;
-        (void 0) /* console.debug */;
-        if (!content) {
-            // not inside of a scroll view, just focus it
-            this.setFocus();
-        }
-        var /** @type {?} */ scrollData = this._getScrollData();
-        if (Math.abs(scrollData.scrollAmount) < 4) {
-            // the text input is in a safe position that doesn't
-            // require it to be scrolled into view, just set focus now
-            this.setFocus();
-            return;
-        }
-        // temporarily move the focus to the focus holder so the browser
-        // doesn't freak out while it's trying to get the input in place
-        // at this point the native text input still does not have focus
-        this._relocateInput(true);
-        this.setFocus();
-        // scroll the input into place
-        content.scrollTo(0, scrollData.scrollTo, scrollData.scrollDuration, function () {
-            // the scroll view is in the correct position now
-            // give the native text input focus
-            _this._relocateInput(false);
-            // ensure this is the focused input
-            _this.setFocus();
-        });
+    TextInput.prototype.focusNext = function () {
+        this._form.tabFocus(this);
     };
     return TextInput;
-}(BaseInput));
+}(Ion));
 TextInput.decorators = [
     { type: Component, args: [{
                 selector: 'ion-input,ion-textarea',
-                template: '<input #textInput *ngIf="!_isTextarea" class="text-input" ' +
-                    '[ngClass]="\'text-input-\' + _mode"' +
-                    '(input)="onInput($event)" ' +
-                    '(blur)="onBlur($event)" ' +
-                    '(focus)="onFocus($event)" ' +
-                    '(keydown)="onKeydown($event)" ' +
-                    '[type]="_type" ' +
-                    '[attr.aria-labelledby]="_labelId" ' +
-                    '[attr.min]="min" ' +
-                    '[attr.max]="max" ' +
-                    '[attr.step]="step" ' +
-                    '[attr.autocomplete]="autocomplete" ' +
-                    '[attr.autocorrect]="autocorrect" ' +
-                    '[placeholder]="placeholder" ' +
-                    '[disabled]="_disabled" ' +
-                    '[readonly]="_readonly">' +
-                    '<textarea #textInput *ngIf="_isTextarea" class="text-input" ' +
-                    '[ngClass]="\'text-input-\' + _mode"' +
-                    '(input)="onInput($event)" ' +
-                    '(blur)="onBlur($event)" ' +
-                    '(focus)="onFocus($event)" ' +
-                    '(keydown)="onKeydown($event)" ' +
-                    '[attr.aria-labelledby]="_labelId" ' +
-                    '[attr.autocomplete]="autocomplete" ' +
-                    '[attr.autocorrect]="autocorrect" ' +
-                    '[placeholder]="placeholder" ' +
-                    '[disabled]="_disabled" ' +
-                    '[readonly]="_readonly"></textarea>' +
-                    '<button ion-button *ngIf="_clearInput" clear class="text-input-clear-icon" ' +
-                    'type="button" ' +
-                    '(click)="clearTextInput($event)" ' +
-                    '(mousedown)="clearTextInput($event)" ' +
-                    'tabindex="-1"></button>' +
-                    '<div class="input-cover" *ngIf="_useAssist" ' +
-                    '(touchstart)="_pointerStart($event)" ' +
-                    '(touchend)="_pointerEnd($event)" ' +
-                    '(mousedown)="_pointerStart($event)" ' +
-                    '(mouseup)="_pointerEnd($event)"></div>',
+                template: '<input [(ngModel)]="_value" [type]="type" (blur)="inputBlurred($event)" (focus)="inputFocused($event)" [placeholder]="placeholder" [disabled]="disabled" [readonly]="readonly" class="text-input" [ngClass]="\'text-input-\' + _mode" *ngIf="_type!==\'textarea\'"  #input>' +
+                    '<textarea [(ngModel)]="_value" (blur)="inputBlurred($event)" (focus)="inputFocused($event)" [placeholder]="placeholder" [disabled]="disabled" [readonly]="readonly" class="text-input" [ngClass]="\'text-input-\' + _mode" *ngIf="_type===\'textarea\'" #textarea></textarea>' +
+                    '<input [type]="type" aria-hidden="true" next-input *ngIf="_useAssist">' +
+                    '<button ion-button clear [hidden]="!clearInput" type="button" class="text-input-clear-icon" (click)="clearTextInput()" (mousedown)="clearTextInput()"></button>' +
+                    '<div (touchstart)="pointerStart($event)" (touchend)="pointerEnd($event)" (mousedown)="pointerStart($event)" (mouseup)="pointerEnd($event)" class="input-cover" tappable *ngIf="_useAssist"></div>',
                 encapsulation: ViewEncapsulation.None,
-                changeDetection: ChangeDetectionStrategy.OnPush,
-                inputs: ['value']
             },] },
 ];
 /**
@@ -49311,22 +49468,24 @@ TextInput.ctorParameters = function () { return [
     { type: Renderer, },
     { type: Content, decorators: [{ type: Optional },] },
     { type: Item, decorators: [{ type: Optional },] },
+    { type: NavController, decorators: [{ type: Optional },] },
     { type: NgControl, decorators: [{ type: Optional },] },
     { type: DomController, },
 ]; };
 TextInput.propDecorators = {
+    'placeholder': [{ type: Input },],
     'clearInput': [{ type: Input },],
+    'value': [{ type: Input },],
     'type': [{ type: Input },],
+    'disabled': [{ type: Input },],
     'readonly': [{ type: Input },],
     'clearOnEdit': [{ type: Input },],
-    '_native': [{ type: ViewChild, args: ['textInput', { read: ElementRef },] },],
-    'autocomplete': [{ type: Input },],
-    'autocorrect': [{ type: Input },],
-    'placeholder': [{ type: Input },],
     'min': [{ type: Input },],
     'max': [{ type: Input },],
     'step': [{ type: Input },],
-    'input': [{ type: Output },],
+    '_nativeInput': [{ type: ViewChild, args: ['input', { read: NativeInput },] },],
+    '_nativeTextarea': [{ type: ViewChild, args: ['textarea', { read: NativeInput },] },],
+    '_nextInput': [{ type: ViewChild, args: [NextInput,] },],
     'blur': [{ type: Output },],
     'focus': [{ type: Output },],
 };
@@ -49373,18 +49532,8 @@ TextInput.propDecorators = {
  * \@demo /docs/demos/src/textarea/
  */
 var SCROLL_ASSIST_SPEED = 0.3;
-/**
- * @return {?}
- */
-function newScrollData() {
-    return {
-        scrollAmount: 0,
-        scrollTo: 0,
-        scrollPadding: 0,
-        scrollDuration: 0,
-        inputSafeY: 0
-    };
-}
+var TEXTAREA = 'textarea';
+var TEXT_TYPE_REGEX = /password|email|number|search|tel|url|date|month|time|week/;
 /**
  * @hidden
  * @param {?} inputOffsetTop
@@ -49419,7 +49568,12 @@ function getScrollData(inputOffsetTop, inputOffsetHeight, scrollViewDimensions, 
     6) Input top within safe area, bottom below safe area, no room to scroll, input larger than safe area
     7) Input top below safe area, no room to scroll, input larger than safe area
     */
-    var /** @type {?} */ scrollData = newScrollData();
+    var /** @type {?} */ scrollData = {
+        scrollAmount: 0,
+        scrollTo: 0,
+        scrollPadding: 0,
+        inputSafeY: 0
+    };
     if (inputTopWithinSafeArea && inputBottomWithinSafeArea) {
         // Input top within safe area, bottom within safe area
         // no need to scroll to a position, it's good as-is
@@ -49457,69 +49611,47 @@ function getScrollData(inputOffsetTop, inputOffsetHeight, scrollViewDimensions, 
     // some cases may not need it, but when jumping around it's best
     // to have the padding already rendered so there's no jank
     scrollData.scrollPadding = keyboardHeight;
-    // calculate animation duration
-    var /** @type {?} */ distance = Math.abs(scrollData.scrollAmount);
-    var /** @type {?} */ duration = distance / SCROLL_ASSIST_SPEED;
-    scrollData.scrollDuration = Math.min(400, Math.max(150, duration));
+    // var safeAreaEle: HTMLElement = (<any>window).safeAreaEle;
+    // if (!safeAreaEle) {
+    //   safeAreaEle = (<any>window).safeAreaEle  = document.createElement('div');
+    //   safeAreaEle.style.cssText = 'position:absolute; padding:1px 5px; left:0; right:0; font-weight:bold; font-size:10px; font-family:Courier; text-align:right; background:rgba(0, 128, 0, 0.8); text-shadow:1px 1px white; pointer-events:none;';
+    //   document.body.appendChild(safeAreaEle);
+    // }
+    // safeAreaEle.style.top = safeAreaTop + 'px';
+    // safeAreaEle.style.height = safeAreaHeight + 'px';
+    // safeAreaEle.innerHTML = `
+    //   <div>scrollTo: ${scrollData.scrollTo}</div>
+    //   <div>scrollAmount: ${scrollData.scrollAmount}</div>
+    //   <div>scrollPadding: ${scrollData.scrollPadding}</div>
+    //   <div>inputSafeY: ${scrollData.inputSafeY}</div>
+    //   <div>scrollHeight: ${scrollViewDimensions.scrollHeight}</div>
+    //   <div>scrollTop: ${scrollViewDimensions.scrollTop}</div>
+    //   <div>contentHeight: ${scrollViewDimensions.contentHeight}</div>
+    //   <div>plaformHeight: ${plaformHeight}</div>
+    // `;
     return scrollData;
 }
 /**
- * @param {?} plt
- * @param {?} srcComponentEle
- * @param {?} srcNativeInputEle
+ * @param {?} element
+ * @param {?} control
  * @return {?}
  */
-function cloneInputComponent(plt, srcComponentEle, srcNativeInputEle) {
-    // Make sure we kill all the clones before creating new ones
-    // It is a defensive, removeClone() should do nothing
-    // removeClone(plt, srcComponentEle, srcNativeInputEle);
-    (void 0) /* assert */;
-    // given a native <input> or <textarea> element
-    // find its parent wrapping component like <ion-input> or <ion-textarea>
-    // then clone the entire component
-    if (srcComponentEle) {
-        // DOM READ
-        var /** @type {?} */ srcTop = srcComponentEle.offsetTop;
-        var /** @type {?} */ srcLeft = srcComponentEle.offsetLeft;
-        var /** @type {?} */ srcWidth = srcComponentEle.offsetWidth;
-        var /** @type {?} */ srcHeight = srcComponentEle.offsetHeight;
-        // DOM WRITE
-        // not using deep clone so we don't pull in unnecessary nodes
-        var /** @type {?} */ clonedComponentEle = (srcComponentEle.cloneNode(false));
-        var /** @type {?} */ clonedStyle = clonedComponentEle.style;
-        clonedComponentEle.classList.add('cloned-input');
-        clonedComponentEle.setAttribute('aria-hidden', 'true');
-        clonedStyle.pointerEvents = 'none';
-        clonedStyle.position = 'absolute';
-        clonedStyle.top = srcTop + 'px';
-        clonedStyle.left = srcLeft + 'px';
-        clonedStyle.width = srcWidth + 'px';
-        clonedStyle.height = srcHeight + 'px';
-        var /** @type {?} */ clonedNativeInputEle = (srcNativeInputEle.cloneNode(false));
-        clonedNativeInputEle.value = srcNativeInputEle.value;
-        clonedNativeInputEle.tabIndex = -1;
-        clonedComponentEle.appendChild(clonedNativeInputEle);
-        srcComponentEle.parentNode.appendChild(clonedComponentEle);
-        srcComponentEle.style.pointerEvents = 'none';
-    }
-    ((srcNativeInputEle.style))[plt.Css.transform] = 'scale(0)';
+function setControlCss(element, control) {
+    element.setElementClass('ng-untouched', control.untouched);
+    element.setElementClass('ng-touched', control.touched);
+    element.setElementClass('ng-pristine', control.pristine);
+    element.setElementClass('ng-dirty', control.dirty);
+    element.setElementClass('ng-valid', control.valid);
+    element.setElementClass('ng-invalid', !control.valid);
 }
 /**
- * @param {?} plt
- * @param {?} srcComponentEle
- * @param {?} srcNativeInputEle
+ * @param {?} distanceToScroll
  * @return {?}
  */
-function removeClone(plt, srcComponentEle, srcNativeInputEle) {
-    if (srcComponentEle && srcComponentEle.parentElement) {
-        var /** @type {?} */ clonedInputEles = srcComponentEle.parentElement.querySelectorAll('.cloned-input');
-        for (var /** @type {?} */ i = 0; i < clonedInputEles.length; i++) {
-            clonedInputEles[i].parentNode.removeChild(clonedInputEles[i]);
-        }
-        srcComponentEle.style.pointerEvents = '';
-    }
-    ((srcNativeInputEle.style))[plt.Css.transform] = '';
-    srcNativeInputEle.style.opacity = '';
+function getScrollAssistDuration(distanceToScroll) {
+    distanceToScroll = Math.abs(distanceToScroll);
+    var /** @type {?} */ duration = distanceToScroll / SCROLL_ASSIST_SPEED;
+    return Math.min(400, Math.max(150, duration));
 }
 
 /**
@@ -49543,7 +49675,7 @@ ItemContent.decorators = [
  */
 ItemContent.ctorParameters = function () { return []; };
 
-var __extends$53 = (undefined && undefined.__extends) || (function () {
+var __extends$52 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -49557,7 +49689,7 @@ var __extends$53 = (undefined && undefined.__extends) || (function () {
  * @hidden
  */
 var ItemDivider = (function (_super) {
-    __extends$53(ItemDivider, _super);
+    __extends$52(ItemDivider, _super);
     /**
      * @param {?} config
      * @param {?} elementRef
@@ -49670,7 +49802,7 @@ ItemOptions.propDecorators = {
     'ionSwipe': [{ type: Output },],
 };
 
-var __extends$55 = (undefined && undefined.__extends) || (function () {
+var __extends$54 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -49684,7 +49816,7 @@ var __extends$55 = (undefined && undefined.__extends) || (function () {
  * @hidden
  */
 var ItemSlidingGesture = (function (_super) {
-    __extends$55(ItemSlidingGesture, _super);
+    __extends$54(ItemSlidingGesture, _super);
     /**
      * @param {?} plt
      * @param {?} list
@@ -49818,7 +49950,7 @@ function clickedOptionButton(ev) {
     return !!ele;
 }
 
-var __extends$54 = (undefined && undefined.__extends) || (function () {
+var __extends$53 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -49864,7 +49996,7 @@ var __extends$54 = (undefined && undefined.__extends) || (function () {
  *
  */
 var List = (function (_super) {
-    __extends$54(List, _super);
+    __extends$53(List, _super);
     /**
      * @param {?} config
      * @param {?} elementRef
@@ -50032,11 +50164,11 @@ var ITEM_SIDE_FLAG_BOTH = ITEM_SIDE_FLAG_LEFT | ITEM_SIDE_FLAG_RIGHT;
  * ### Button Layout
  * If an icon is placed with text in the option button, by default it will
  * display the icon on top of the text. This can be changed to display the icon
- * to the left of the text by setting `icon-start` as an attribute on the
+ * to the left of the text by setting `icon-left` as an attribute on the
  * `<ion-item-options>` element.
  *
  * ```html
- * <ion-item-options icon-start>
+ * <ion-item-options icon-left>
  *    <button ion-button (click)="archive(item)">
  *      <ion-icon name="archive"></ion-icon>
  *      Archive
@@ -50045,23 +50177,6 @@ var ITEM_SIDE_FLAG_BOTH = ITEM_SIDE_FLAG_LEFT | ITEM_SIDE_FLAG_RIGHT;
  *
  * ```
  *
- * ### Expandable Options
- *
- * Options can be expanded to take up the full width of the item if you swipe past
- * a certain point. This can be combined with the `ionSwipe` event to call methods
- * on the class.
- *
- * ```html
- *
- * <ion-item-sliding (ionSwipe)="delete(item)">
- *   <ion-item>Item</ion-item>
- *   <ion-item-options>
- *     <button ion-button expandable (click)="delete(item)">Delete</button>
- *   </ion-item-options>
- * </ion-item-sliding>
- * ```
- *
- * We can call `delete` by either clicking the button, or by doing a full swipe on the item.
  *
  * \@demo /docs/demos/src/item-sliding/
  * @see {\@link /docs/components#lists List Component Docs}
@@ -50285,20 +50400,21 @@ var ItemSliding = (function () {
         if (isFinal) {
             this.item.setElementStyle(platform.Css.transition, '');
         }
-        if (openAmount > 0) {
-            var /** @type {?} */ state$$1 = (openAmount >= (this._optsWidthRightSide + SWIPE_MARGIN))
-                ? 8 /* Right */ | 32 /* SwipeRight */
-                : 8;
-            this._setState(state$$1);
-        }
-        else if (openAmount < 0) {
-            var /** @type {?} */ state$$1 = (openAmount <= (-this._optsWidthLeftSide - SWIPE_MARGIN))
-                ? 16 /* Left */ | 64 /* SwipeLeft */
-                : 16;
-            this._setState(state$$1);
-        }
         else {
-            (void 0) /* assert */;
+            if (openAmount > 0) {
+                var /** @type {?} */ state$$1 = (openAmount >= (this._optsWidthRightSide + SWIPE_MARGIN))
+                    ? 8 /* Right */ | 32 /* SwipeRight */
+                    : 8;
+                this._setState(state$$1);
+            }
+            else if (openAmount < 0) {
+                var /** @type {?} */ state$$1 = (openAmount <= (-this._optsWidthLeftSide - SWIPE_MARGIN))
+                    ? 16 /* Left */ | 64 /* SwipeLeft */
+                    : 16;
+                this._setState(state$$1);
+            }
+        }
+        if (openAmount === 0) {
             this._tmr = platform.timeout(function () {
                 _this._setState(2 /* Disabled */);
                 _this._tmr = null;
@@ -50444,7 +50560,7 @@ Reorder.propDecorators = {
     'onClick': [{ type: HostListener, args: ['click', ['$event'],] },],
 };
 
-var __extends$56 = (undefined && undefined.__extends) || (function () {
+var __extends$55 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -50458,7 +50574,7 @@ var __extends$56 = (undefined && undefined.__extends) || (function () {
  * @hidden
  */
 var ListHeader = (function (_super) {
-    __extends$56(ListHeader, _super);
+    __extends$55(ListHeader, _super);
     /**
      * @param {?} config
      * @param {?} renderer
@@ -50565,26 +50681,10 @@ var LoadingCmp = (function () {
      */
     LoadingCmp.prototype.ionViewDidEnter = function () {
         var _this = this;
+        this._plt.focusOutActiveElement();
         // If there is a duration, dismiss after that amount of time
         if (this.d && this.d.duration) {
             this.durationTimeout = setTimeout(function () { return _this.dismiss('backdrop'); }, this.d.duration);
-        }
-    };
-    /**
-     * @param {?} ev
-     * @return {?}
-     */
-    LoadingCmp.prototype.keyUp = function (ev) {
-        if (this._viewCtrl.isLast() && ev.keyCode === KEY_ESCAPE) {
-            this.bdClick();
-        }
-    };
-    /**
-     * @return {?}
-     */
-    LoadingCmp.prototype.bdClick = function () {
-        if (this.d.enableBackdropDismiss) {
-            this.dismiss('backdrop');
         }
     };
     /**
@@ -50609,7 +50709,7 @@ var LoadingCmp = (function () {
 LoadingCmp.decorators = [
     { type: Component, args: [{
                 selector: 'ion-loading',
-                template: '<ion-backdrop [hidden]="!d.showBackdrop" (click)="bdClick()" [class.backdrop-no-tappable]="!d.enableBackdropDismiss"></ion-backdrop>' +
+                template: '<ion-backdrop [hidden]="!d.showBackdrop"></ion-backdrop>' +
                     '<div class="loading-wrapper">' +
                     '<div *ngIf="showSpinner" class="loading-spinner">' +
                     '<ion-spinner [name]="d.spinner"></ion-spinner>' +
@@ -50634,12 +50734,9 @@ LoadingCmp.ctorParameters = function () { return [
     { type: NavParams, },
     { type: Renderer, },
 ]; };
-LoadingCmp.propDecorators = {
-    'keyUp': [{ type: HostListener, args: ['body:keyup', ['$event'],] },],
-};
 var loadingIds = -1;
 
-var __extends$58 = (undefined && undefined.__extends) || (function () {
+var __extends$57 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -50653,7 +50750,7 @@ var __extends$58 = (undefined && undefined.__extends) || (function () {
  * Animations for loading
  */
 var LoadingPopIn = (function (_super) {
-    __extends$58(LoadingPopIn, _super);
+    __extends$57(LoadingPopIn, _super);
     function LoadingPopIn() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -50675,7 +50772,7 @@ var LoadingPopIn = (function (_super) {
     return LoadingPopIn;
 }(Transition));
 var LoadingPopOut = (function (_super) {
-    __extends$58(LoadingPopOut, _super);
+    __extends$57(LoadingPopOut, _super);
     function LoadingPopOut() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -50697,7 +50794,7 @@ var LoadingPopOut = (function (_super) {
     return LoadingPopOut;
 }(Transition));
 var LoadingMdPopIn = (function (_super) {
-    __extends$58(LoadingMdPopIn, _super);
+    __extends$57(LoadingMdPopIn, _super);
     function LoadingMdPopIn() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -50719,7 +50816,7 @@ var LoadingMdPopIn = (function (_super) {
     return LoadingMdPopIn;
 }(Transition));
 var LoadingMdPopOut = (function (_super) {
-    __extends$58(LoadingMdPopOut, _super);
+    __extends$57(LoadingMdPopOut, _super);
     function LoadingMdPopOut() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -50741,7 +50838,7 @@ var LoadingMdPopOut = (function (_super) {
     return LoadingMdPopOut;
 }(Transition));
 var LoadingWpPopIn = (function (_super) {
-    __extends$58(LoadingWpPopIn, _super);
+    __extends$57(LoadingWpPopIn, _super);
     function LoadingWpPopIn() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -50763,7 +50860,7 @@ var LoadingWpPopIn = (function (_super) {
     return LoadingWpPopIn;
 }(Transition));
 var LoadingWpPopOut = (function (_super) {
-    __extends$58(LoadingWpPopOut, _super);
+    __extends$57(LoadingWpPopOut, _super);
     function LoadingWpPopOut() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -50785,7 +50882,7 @@ var LoadingWpPopOut = (function (_super) {
     return LoadingWpPopOut;
 }(Transition));
 
-var __extends$57 = (undefined && undefined.__extends) || (function () {
+var __extends$56 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -50799,7 +50896,7 @@ var __extends$57 = (undefined && undefined.__extends) || (function () {
  * @hidden
  */
 var Loading = (function (_super) {
-    __extends$57(Loading, _super);
+    __extends$56(Loading, _super);
     /**
      * @param {?} app
      * @param {?=} opts
@@ -50809,7 +50906,6 @@ var Loading = (function (_super) {
         if (opts === void 0) { opts = {}; }
         var _this = this;
         opts.showBackdrop = isPresent(opts.showBackdrop) ? !!opts.showBackdrop : true;
-        opts.enableBackdropDismiss = isPresent(opts.enableBackdropDismiss) ? !!opts.enableBackdropDismiss : false;
         opts.dismissOnPageChange = isPresent(opts.dismissOnPageChange) ? !!opts.dismissOnPageChange : false;
         _this = _super.call(this, LoadingCmp, opts, null) || this;
         _this._app = app;
@@ -50993,7 +51089,6 @@ var Loading = (function (_super) {
  * | content               |`string`    | The html content for the loading indicator.                                                                      |
  * | cssClass              |`string`    | Additional classes for custom styles, separated by spaces.                                                       |
  * | showBackdrop          |`boolean`   | Whether to show the backdrop. Default true.                                                                      |
- * | enableBackdropDismiss | `boolean`  | Whether the loading indicator should be dismissed by tapping the backdrop. Default false.                        |
  * | dismissOnPageChange   |`boolean`   | Whether to dismiss the indicator when navigating to a new page. Default false.                                   |
  * | duration              |`number`    | How many milliseconds to wait before hiding the indicator. By default, it will show until `dismiss()` is called. |
  *
@@ -51031,7 +51126,7 @@ LoadingController.ctorParameters = function () { return [
     { type: Config, },
 ]; };
 
-var __extends$59 = (undefined && undefined.__extends) || (function () {
+var __extends$58 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -51045,7 +51140,7 @@ var __extends$59 = (undefined && undefined.__extends) || (function () {
  * Gesture attached to the content which the menu is assigned to
  */
 var MenuContentGesture = (function (_super) {
-    __extends$59(MenuContentGesture, _super);
+    __extends$58(MenuContentGesture, _super);
     /**
      * @param {?} plt
      * @param {?} menu
@@ -51108,7 +51203,7 @@ var MenuContentGesture = (function (_super) {
      * @return {?}
      */
     MenuContentGesture.prototype.onSlide = function (slide, ev) {
-        var /** @type {?} */ z = (this.menu.isRightSide !== this.plt.isRTL ? slide.min : slide.max);
+        var /** @type {?} */ z = (this.menu.isRightSide ? slide.min : slide.max);
         var /** @type {?} */ stepValue = (slide.distance / z);
         this.menu._swipeProgress(stepValue);
     };
@@ -51118,7 +51213,7 @@ var MenuContentGesture = (function (_super) {
      * @return {?}
      */
     MenuContentGesture.prototype.onSlideEnd = function (slide, ev) {
-        var /** @type {?} */ z = (this.menu.isRightSide !== this.plt.isRTL ? slide.min : slide.max);
+        var /** @type {?} */ z = (this.menu.isRightSide ? slide.min : slide.max);
         var /** @type {?} */ currentStepValue = (slide.distance / z);
         var /** @type {?} */ velocity = slide.velocity;
         z = Math.abs(z * 0.5);
@@ -51136,7 +51231,7 @@ var MenuContentGesture = (function (_super) {
      */
     MenuContentGesture.prototype.getElementStartPos = function (slide, ev) {
         var /** @type {?} */ menu = this.menu;
-        if (menu.isRightSide !== this.plt.isRTL) {
+        if (menu.isRightSide) {
             return menu.isOpen ? slide.min : slide.max;
         }
         // left menu
@@ -51147,7 +51242,7 @@ var MenuContentGesture = (function (_super) {
      */
     MenuContentGesture.prototype.getSlideBoundaries = function () {
         var /** @type {?} */ menu = this.menu;
-        if (menu.isRightSide !== this.plt.isRTL) {
+        if (menu.isRightSide) {
             return {
                 min: -menu.width(),
                 max: 0
@@ -51162,7 +51257,7 @@ var MenuContentGesture = (function (_super) {
     return MenuContentGesture;
 }(SlideEdgeGesture));
 
-var __extends$61 = (undefined && undefined.__extends) || (function () {
+var __extends$60 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -51320,7 +51415,7 @@ var RootNode = (function () {
  *
  */
 var SplitPane = (function (_super) {
-    __extends$61(SplitPane, _super);
+    __extends$60(SplitPane, _super);
     /**
      * @param {?} _zone
      * @param {?} _plt
@@ -51578,7 +51673,7 @@ SplitPane.propDecorators = {
     'ionChange': [{ type: Output },],
 };
 
-var __extends$60 = (undefined && undefined.__extends) || (function () {
+var __extends$59 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -51621,13 +51716,14 @@ var __extends$60 = (undefined && undefined.__extends) || (function () {
  * @see {\@link /docs/components#navigation Navigation Component Docs}
  */
 var Nav = (function (_super) {
-    __extends$60(Nav, _super);
+    __extends$59(Nav, _super);
     /**
      * @param {?} viewCtrl
      * @param {?} parent
      * @param {?} app
      * @param {?} config
      * @param {?} plt
+     * @param {?} keyboard
      * @param {?} elementRef
      * @param {?} zone
      * @param {?} renderer
@@ -51638,8 +51734,8 @@ var Nav = (function (_super) {
      * @param {?} domCtrl
      * @param {?} errHandler
      */
-    function Nav(viewCtrl, parent, app, config, plt, elementRef, zone, renderer, cfr, gestureCtrl, transCtrl, linker, domCtrl, errHandler) {
-        var _this = _super.call(this, parent, app, config, plt, elementRef, zone, renderer, cfr, gestureCtrl, transCtrl, linker, domCtrl, errHandler) || this;
+    function Nav(viewCtrl, parent, app, config, plt, keyboard, elementRef, zone, renderer, cfr, gestureCtrl, transCtrl, linker, domCtrl, errHandler) {
+        var _this = _super.call(this, parent, app, config, plt, keyboard, elementRef, zone, renderer, cfr, gestureCtrl, transCtrl, linker, domCtrl, errHandler) || this;
         _this._hasInit = false;
         if (viewCtrl) {
             // an ion-nav can also act as an ion-page within a parent ion-nav
@@ -51765,6 +51861,7 @@ Nav.ctorParameters = function () { return [
     { type: App, },
     { type: Config, },
     { type: Platform, },
+    { type: Keyboard, },
     { type: ElementRef, },
     { type: NgZone, },
     { type: Renderer, },
@@ -51789,7 +51886,7 @@ Nav.propDecorators = {
  * will be displayed differently based on the mode, however the display type can be changed
  * to any of the available [menu types](#menu-types). The menu element should be a sibling
  * to the app's content element. There can be any number of menus attached to the content.
- * These can be controlled from the templates, or programmatically using the [MenuController](../app/MenuController).
+ * These can be controlled from the templates, or programmatically using the [MenuController](../MenuController).
  *
  * \@usage
  *
@@ -51934,14 +52031,14 @@ Nav.propDecorators = {
  * }
  * ```
  *
- * See the [MenuController](../../app/MenuController) API docs for all of the methods
+ * See the [MenuController](../MenuController) API docs for all of the methods
  * and usage information.
  *
  *
  * \@demo /docs/demos/src/menu/
  *
  * @see {\@link /docs/components#menus Menu Component Docs}
- * @see {\@link ../../app/MenuController MenuController API Docs}
+ * @see {\@link ../MenuController MenuController API Docs}
  * @see {\@link ../../nav/Nav Nav API Docs}
  * @see {\@link ../../nav/NavController NavController API Docs}
  */
@@ -52236,11 +52333,10 @@ var Menu = (function () {
         }
         // user has finished dragging the menu
         var /** @type {?} */ isRightSide$$1 = this.isRightSide;
-        var /** @type {?} */ isRTL = this._plt.isRTL;
         var /** @type {?} */ opening = !this.isOpen;
         var /** @type {?} */ shouldComplete = (opening)
-            ? (isRightSide$$1 !== isRTL) ? shouldCompleteLeft : shouldCompleteRight
-            : (isRightSide$$1 !== isRTL) ? shouldCompleteRight : shouldCompleteLeft;
+            ? isRightSide$$1 ? shouldCompleteLeft : shouldCompleteRight
+            : isRightSide$$1 ? shouldCompleteRight : shouldCompleteLeft;
         this._getType().setProgressEnd(shouldComplete, stepValue, velocity, function (isOpen) {
             (void 0) /* console.debug */;
             _this._after(isOpen);
@@ -52583,7 +52679,7 @@ MenuClose.propDecorators = {
     'close': [{ type: HostListener, args: ['click',] },],
 };
 
-var __extends$63 = (undefined && undefined.__extends) || (function () {
+var __extends$62 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -52597,7 +52693,7 @@ var __extends$63 = (undefined && undefined.__extends) || (function () {
  * @hidden
  */
 var ToolbarBase = (function (_super) {
-    __extends$63(ToolbarBase, _super);
+    __extends$62(ToolbarBase, _super);
     /**
      * @param {?} config
      * @param {?} elementRef
@@ -52625,7 +52721,7 @@ var ToolbarBase = (function (_super) {
     return ToolbarBase;
 }(Ion));
 
-var __extends$62 = (undefined && undefined.__extends) || (function () {
+var __extends$61 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -52672,7 +52768,7 @@ var __extends$62 = (undefined && undefined.__extends) || (function () {
  * @see {\@link ../../toolbar/Toolbar/ Toolbar API Docs}
  */
 var Navbar = (function (_super) {
-    __extends$62(Navbar, _super);
+    __extends$61(Navbar, _super);
     /**
      * @param {?} _app
      * @param {?} viewCtrl
@@ -52954,7 +53050,7 @@ MenuToggle.propDecorators = {
     'toggle': [{ type: HostListener, args: ['click',] },],
 };
 
-var __extends$64 = (undefined && undefined.__extends) || (function () {
+var __extends$63 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -53056,7 +53152,7 @@ var MenuType = (function () {
  * The menu itself, which is under the content, does not move.
  */
 var MenuRevealType = (function (_super) {
-    __extends$64(MenuRevealType, _super);
+    __extends$63(MenuRevealType, _super);
     /**
      * @param {?} menu
      * @param {?} plt
@@ -53079,7 +53175,7 @@ MenuController.registerType('reveal', MenuRevealType);
  * The menu itself also slides over to reveal its bad self.
  */
 var MenuPushType = (function (_super) {
-    __extends$64(MenuPushType, _super);
+    __extends$63(MenuPushType, _super);
     /**
      * @param {?} menu
      * @param {?} plt
@@ -53117,7 +53213,7 @@ MenuController.registerType('push', MenuPushType);
  * itself, which is under the menu, does not move.
  */
 var MenuOverlayType = (function (_super) {
-    __extends$64(MenuOverlayType, _super);
+    __extends$63(MenuOverlayType, _super);
     /**
      * @param {?} menu
      * @param {?} plt
@@ -53550,7 +53646,7 @@ ModalCmp.propDecorators = {
     '_keyUp': [{ type: HostListener, args: ['body:keyup', ['$event'],] },],
 };
 
-var __extends$67 = (undefined && undefined.__extends) || (function () {
+var __extends$66 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -53564,7 +53660,7 @@ var __extends$67 = (undefined && undefined.__extends) || (function () {
  * Animations for modals
  */
 var ModalSlideIn = (function (_super) {
-    __extends$67(ModalSlideIn, _super);
+    __extends$66(ModalSlideIn, _super);
     function ModalSlideIn() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -53590,7 +53686,7 @@ var ModalSlideIn = (function (_super) {
     return ModalSlideIn;
 }(PageTransition));
 var ModalSlideOut = (function (_super) {
-    __extends$67(ModalSlideOut, _super);
+    __extends$66(ModalSlideOut, _super);
     function ModalSlideOut() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -53618,7 +53714,7 @@ var ModalSlideOut = (function (_super) {
     return ModalSlideOut;
 }(PageTransition));
 var ModalMDSlideIn = (function (_super) {
-    __extends$67(ModalMDSlideIn, _super);
+    __extends$66(ModalMDSlideIn, _super);
     function ModalMDSlideIn() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -53642,7 +53738,7 @@ var ModalMDSlideIn = (function (_super) {
     return ModalMDSlideIn;
 }(PageTransition));
 var ModalMDSlideOut = (function (_super) {
-    __extends$67(ModalMDSlideOut, _super);
+    __extends$66(ModalMDSlideOut, _super);
     function ModalMDSlideOut() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -53667,7 +53763,7 @@ var ModalMDSlideOut = (function (_super) {
     return ModalMDSlideOut;
 }(PageTransition));
 
-var __extends$66 = (undefined && undefined.__extends) || (function () {
+var __extends$65 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -53681,7 +53777,7 @@ var __extends$66 = (undefined && undefined.__extends) || (function () {
  * @hidden
  */
 var ModalImpl = (function (_super) {
-    __extends$66(ModalImpl, _super);
+    __extends$65(ModalImpl, _super);
     /**
      * @param {?} app
      * @param {?} component
@@ -53743,7 +53839,7 @@ var ModalImpl = (function (_super) {
     return ModalImpl;
 }(ViewController));
 
-var __extends$65 = (undefined && undefined.__extends) || (function () {
+var __extends$64 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -53757,7 +53853,7 @@ var __extends$65 = (undefined && undefined.__extends) || (function () {
  * @hidden
  */
 var Modal = (function (_super) {
-    __extends$65(Modal, _super);
+    __extends$64(Modal, _super);
     /**
      * @param {?} app
      * @param {?} component
@@ -53842,7 +53938,6 @@ var Modal = (function (_super) {
  * |-----------------------|------------|------------------------------------------------------------------------------------------------------------------|
  * | showBackdrop          |`boolean`   | Whether to show the backdrop. Default true.                                                                      |
  * | enableBackdropDismiss |`boolean`   | Whether the popover should be dismissed by tapping the backdrop. Default true.                                   |
- * | cssClass              |`string`    | Additional classes for custom styles, separated by spaces.                                                       |
  *
  * A modal can also emit data, which is useful when it is used to add or edit
  * data. For example, a profile page could slide up in a modal, and on submit,
@@ -54172,7 +54267,7 @@ NavPushAnchor.ctorParameters = function () { return [
     { type: DeepLinker, decorators: [{ type: Optional },] },
 ]; };
 
-var __extends$68 = (undefined && undefined.__extends) || (function () {
+var __extends$67 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -54207,7 +54302,7 @@ var __extends$68 = (undefined && undefined.__extends) || (function () {
  * {\@link /docs/api/components/api/components/item/item ion-item}
  */
 var Note = (function (_super) {
-    __extends$68(Note, _super);
+    __extends$67(Note, _super);
     /**
      * @param {?} config
      * @param {?} elementRef
@@ -54380,6 +54475,7 @@ var PopoverCmp = (function () {
      * @return {?}
      */
     PopoverCmp.prototype.ionViewPreLoad = function () {
+        this._plt.focusOutActiveElement();
         this._load(this._navParams.data.component);
     };
     /**
@@ -54483,7 +54579,7 @@ PopoverCmp.propDecorators = {
 };
 var popoverIds = -1;
 
-var __extends$71 = (undefined && undefined.__extends) || (function () {
+var __extends$70 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -54497,7 +54593,7 @@ var __extends$71 = (undefined && undefined.__extends) || (function () {
  * Animations for popover
  */
 var PopoverTransition = (function (_super) {
-    __extends$71(PopoverTransition, _super);
+    __extends$70(PopoverTransition, _super);
     function PopoverTransition() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -54629,7 +54725,7 @@ var PopoverTransition = (function (_super) {
     return PopoverTransition;
 }(PageTransition));
 var PopoverPopIn = (function (_super) {
-    __extends$71(PopoverPopIn, _super);
+    __extends$70(PopoverPopIn, _super);
     function PopoverPopIn() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -54661,7 +54757,7 @@ var PopoverPopIn = (function (_super) {
     return PopoverPopIn;
 }(PopoverTransition));
 var PopoverPopOut = (function (_super) {
-    __extends$71(PopoverPopOut, _super);
+    __extends$70(PopoverPopOut, _super);
     function PopoverPopOut() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -54683,7 +54779,7 @@ var PopoverPopOut = (function (_super) {
     return PopoverPopOut;
 }(PopoverTransition));
 var PopoverMdPopIn = (function (_super) {
-    __extends$71(PopoverMdPopIn, _super);
+    __extends$70(PopoverMdPopIn, _super);
     function PopoverMdPopIn() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -54715,7 +54811,7 @@ var PopoverMdPopIn = (function (_super) {
     return PopoverMdPopIn;
 }(PopoverTransition));
 var PopoverMdPopOut = (function (_super) {
-    __extends$71(PopoverMdPopOut, _super);
+    __extends$70(PopoverMdPopOut, _super);
     function PopoverMdPopOut() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -54737,7 +54833,7 @@ var PopoverMdPopOut = (function (_super) {
 var POPOVER_IOS_BODY_PADDING = 2;
 var POPOVER_MD_BODY_PADDING = 12;
 
-var __extends$70 = (undefined && undefined.__extends) || (function () {
+var __extends$69 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -54751,7 +54847,7 @@ var __extends$70 = (undefined && undefined.__extends) || (function () {
  * @hidden
  */
 var PopoverImpl = (function (_super) {
-    __extends$70(PopoverImpl, _super);
+    __extends$69(PopoverImpl, _super);
     /**
      * @param {?} app
      * @param {?} component
@@ -54798,7 +54894,7 @@ var PopoverImpl = (function (_super) {
     return PopoverImpl;
 }(ViewController));
 
-var __extends$69 = (undefined && undefined.__extends) || (function () {
+var __extends$68 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -54812,7 +54908,7 @@ var __extends$69 = (undefined && undefined.__extends) || (function () {
  * @hidden
  */
 var Popover = (function (_super) {
-    __extends$69(Popover, _super);
+    __extends$68(Popover, _super);
     /**
      * @param {?} app
      * @param {?} component
@@ -55253,7 +55349,7 @@ RadioGroup.propDecorators = {
 };
 var radioGroupIds = -1;
 
-var __extends$72 = (undefined && undefined.__extends) || (function () {
+var __extends$71 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -55299,7 +55395,7 @@ var __extends$72 = (undefined && undefined.__extends) || (function () {
  * @see {\@link ../RadioGroup RadioGroup API Docs}
  */
 var RadioButton = (function (_super) {
-    __extends$72(RadioButton, _super);
+    __extends$71(RadioButton, _super);
     /**
      * @param {?} _form
      * @param {?} config
@@ -55501,7 +55597,7 @@ RadioButton.propDecorators = {
     '_click': [{ type: HostListener, args: ['click', ['$event'],] },],
 };
 
-var __extends$73 = (undefined && undefined.__extends) || (function () {
+var __extends$72 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -55583,7 +55679,7 @@ var __extends$73 = (undefined && undefined.__extends) || (function () {
  * \@demo /docs/demos/src/range/
  */
 var Range = (function (_super) {
-    __extends$73(Range, _super);
+    __extends$72(Range, _super);
     /**
      * @param {?} form
      * @param {?} _haptic
@@ -55627,7 +55723,6 @@ var Range = (function (_super) {
             val = Math.round(val);
             if (!isNaN(val)) {
                 this._min = val;
-                this._inputUpdated();
             }
         },
         enumerable: true,
@@ -55649,7 +55744,6 @@ var Range = (function (_super) {
             val = Math.round(val);
             if (!isNaN(val)) {
                 this._max = val;
-                this._inputUpdated();
             }
         },
         enumerable: true,
@@ -56369,7 +56463,7 @@ var Refresher = (function () {
          */
         this.ionStart = new EventEmitter();
         this._events = new UIEventManager(_plt);
-        _content._hasRefresher = true;
+        _content.setElementClass('has-refresher', true);
         this._gesture = gestureCtrl.createGesture({
             name: GESTURE_REFRESHER,
             priority: GESTURE_PRIORITY_REFRESHER
@@ -56929,7 +57023,7 @@ Scroll.propDecorators = {
     '_scrollContent': [{ type: ViewChild, args: ['scrollContent', { read: ElementRef },] },],
 };
 
-var __extends$74 = (undefined && undefined.__extends) || (function () {
+var __extends$73 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -56959,7 +57053,7 @@ var __extends$74 = (undefined && undefined.__extends) || (function () {
  * @see {\@link /docs/components#searchbar Searchbar Component Docs}
  */
 var Searchbar = (function (_super) {
-    __extends$74(Searchbar, _super);
+    __extends$73(Searchbar, _super);
     /**
      * @param {?} config
      * @param {?} _plt
@@ -57009,7 +57103,7 @@ var Searchbar = (function (_super) {
     }
     Object.defineProperty(Searchbar.prototype, "showCancelButton", {
         /**
-         * \@input {boolean} If true, show the cancel button. Default `false`.
+         * \@input {boolean} If true, show the cancel button.
          * @return {?}
          */
         get: function () {
@@ -57082,7 +57176,7 @@ var Searchbar = (function (_super) {
     });
     Object.defineProperty(Searchbar.prototype, "animated", {
         /**
-         * \@input {boolean} If true, enable searchbar animation. Default `false`.
+         * \@input {boolean} If true, enable searchbar animation.
          * @return {?}
          */
         get: function () {
@@ -57115,11 +57209,8 @@ var Searchbar = (function (_super) {
      */
     Searchbar.prototype._inputUpdated = function () {
         var /** @type {?} */ ele = this._searchbarInput.nativeElement;
-        var /** @type {?} */ value = this._value;
-        // It is important not to re-assign the value if it is the same, because,
-        // otherwise, the caret is moved to the end of the input
-        if (ele.value !== value) {
-            ele.value = value;
+        if (ele) {
+            ele.value = this.value;
         }
         this.positionElements();
     };
@@ -57163,22 +57254,12 @@ var Searchbar = (function (_super) {
             // Get the width of the span then remove it
             var /** @type {?} */ textWidth = tempSpan.offsetWidth;
             doc.body.removeChild(tempSpan);
-            // Set the input padding start
+            // Set the input padding left
             var /** @type {?} */ inputLeft = 'calc(50% - ' + (textWidth / 2) + 'px)';
-            if (this._plt.isRTL) {
-                inputEle.style.paddingRight = inputLeft;
-            }
-            else {
-                inputEle.style.paddingLeft = inputLeft;
-            }
-            // Set the icon margin start
+            inputEle.style.paddingLeft = inputLeft;
+            // Set the icon margin left
             var /** @type {?} */ iconLeft = 'calc(50% - ' + ((textWidth / 2) + 30) + 'px)';
-            if (this._plt.isRTL) {
-                iconEle.style.marginRight = iconLeft;
-            }
-            else {
-                iconEle.style.marginLeft = iconLeft;
-            }
+            iconEle.style.marginLeft = iconLeft;
         }
     };
     /**
@@ -57193,22 +57274,12 @@ var Searchbar = (function (_super) {
             var /** @type {?} */ cancelStyle = cancelStyleEle.style;
             this._isCancelVisible = showShowCancel;
             if (showShowCancel) {
-                if (this._plt.isRTL) {
-                    cancelStyle.marginLeft = '0';
-                }
-                else {
-                    cancelStyle.marginRight = '0';
-                }
+                cancelStyle.marginRight = '0';
             }
             else {
                 var /** @type {?} */ offset = cancelStyleEle.offsetWidth;
                 if (offset > 0) {
-                    if (this._plt.isRTL) {
-                        cancelStyle.marginLeft = -offset + 'px';
-                    }
-                    else {
-                        cancelStyle.marginRight = -offset + 'px';
-                    }
+                    cancelStyle.marginRight = -offset + 'px';
                 }
             }
         }
@@ -57262,7 +57333,7 @@ var Searchbar = (function (_super) {
     Searchbar.prototype.clearInput = function (ev) {
         var _this = this;
         this.ionClear.emit(ev);
-        // setTimeout() fixes https://github.com/ionic-team/ionic/issues/7527
+        // setTimeout() fixes https://github.com/driftyco/ionic/issues/7527
         // wait for 4 frames
         setTimeout(function () {
             var /** @type {?} */ value = _this._value;
@@ -57461,7 +57532,7 @@ SegmentButton.propDecorators = {
     'onClick': [{ type: HostListener, args: ['click',] },],
 };
 
-var __extends$75 = (undefined && undefined.__extends) || (function () {
+var __extends$74 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -57476,7 +57547,7 @@ var __extends$75 = (undefined && undefined.__extends) || (function () {
  * \@description
  * A Segment is a group of buttons, sometimes known as Segmented Controls, that allow the user to interact with a compact group of a number of controls.
  * Segments provide functionality similar to tabs, selecting one will unselect all others. You should use a tab bar instead of a segmented control when you want to let the user move back and forth between distinct pages in your app.
- * You could use Angular's `ngModel` or `FormBuilder` API. For an overview on how `FormBuilder` works, checkout [Angular Forms](http://learnangular2.com/forms/), or [Angular FormBuilder](https://angular.io/docs/ts/latest/api/forms/index/FormBuilder-class.html)
+ * You could use Angular 2's `ngModel` or `FormBuilder` API. For an overview on how `FormBuilder` works, checkout [Angular 2 Forms](http://learnangular2.com/forms/), or [Angular FormBuilder](https://angular.io/docs/ts/latest/api/forms/index/FormBuilder-class.html)
  *
  *
  * ```html
@@ -57496,11 +57567,11 @@ var __extends$75 = (undefined && undefined.__extends) || (function () {
  *
  * <ion-content>
  *   <!-- Segment in content -->
- *   <ion-segment [(ngModel)]="relationship" color="primary" (ionChange)="segmentChanged($event)">
- *     <ion-segment-button value="friends">
+ *   <ion-segment [(ngModel)]="relationship" color="primary">
+ *     <ion-segment-button value="friends" (ionSelect)="selectedFriends()">
  *       Friends
  *     </ion-segment-button>
- *     <ion-segment-button value="enemies">
+ *     <ion-segment-button value="enemies" (ionSelect)="selectedEnemies()">
  *       Enemies
  *     </ion-segment-button>
  *   </ion-segment>
@@ -57525,10 +57596,10 @@ var __extends$75 = (undefined && undefined.__extends) || (function () {
  *
  * \@demo /docs/demos/src/segment/
  * @see {\@link /docs/components#segment Segment Component Docs}
- * @see [Angular Forms](http://learnangular2.com/forms/)
+ * @see [Angular 2 Forms](http://learnangular2.com/forms/)
  */
 var Segment = (function (_super) {
-    __extends$75(Segment, _super);
+    __extends$74(Segment, _super);
     /**
      * @param {?} config
      * @param {?} elementRef
@@ -57644,7 +57715,7 @@ SelectPopover.ctorParameters = function () { return [
     { type: ViewController, },
 ]; };
 
-var __extends$76 = (undefined && undefined.__extends) || (function () {
+var __extends$75 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -57763,35 +57834,10 @@ var __extends$76 = (undefined && undefined.__extends) || (function () {
  * };
  * ```
  *
- * ### Object Value References
- *
- * When using objects for select values, it is possible for the identities of these objects to
- * change if they are coming from a server or database, while the selected value's identity
- * remains the same. For example, this can occur when an existing record with the desired object value
- * is loaded into the select, but the newly retrieved select options now have different identities. This will
- * result in the select appearing to have no value at all, even though the original selection in still intact.
- *
- * Using the `compareWith` `Input` is the solution to this problem
- *
- * ```html
- * <ion-item>
- *   <ion-label>Employee</ion-label>
- *   <ion-select [(ngModel)]="employee" [compareWith]="compareFn">
- *     <ion-option *ngFor="let employee of employees" [value]="employee">{{employee.name}}</ion-option>
- *   </ion-select>
- * </ion-item>
- * ```
- *
- * ```ts
- * compareFn(e1: Employee, e2: Employee): boolean {
- *   return e1 && e2 ? e1.id === e2.id : e1 === e2;
- * }
- * ```
- *
  * \@demo /docs/demos/src/select/
  */
 var Select = (function (_super) {
-    __extends$76(Select, _super);
+    __extends$75(Select, _super);
     /**
      * @param {?} _app
      * @param {?} form
@@ -57809,7 +57855,6 @@ var Select = (function (_super) {
         _this._multi = false;
         _this._texts = [];
         _this._text = '';
-        _this._compareWith = isCheckedProperty;
         /**
          * \@input {string} The text to display on the cancel button. Default: `Cancel`.
          */
@@ -57839,26 +57884,15 @@ var Select = (function (_super) {
         _this.ionCancel = new EventEmitter();
         return _this;
     }
-    Object.defineProperty(Select.prototype, "compareWith", {
-        /**
-         * \@input {Function} The function that will be called to compare object values
-         * @param {?} fn
-         * @return {?}
-         */
-        set: function (fn) {
-            if (typeof fn !== 'function') {
-                throw new Error("compareWith must be a function, but received " + JSON.stringify(fn));
-            }
-            this._compareWith = fn;
-        },
-        enumerable: true,
-        configurable: true
-    });
     /**
      * @param {?} ev
      * @return {?}
      */
     Select.prototype._click = function (ev) {
+        if (ev.detail === 0) {
+            // do not continue if the click event came from a form submit
+            return;
+        }
         ev.preventDefault();
         ev.stopPropagation();
         this.open(ev);
@@ -57946,13 +57980,10 @@ var Select = (function (_super) {
                     input.ionSelect.emit(input.value);
                 }
             }); });
-            var /** @type {?} */ popoverCssClass = 'select-popover';
-            // If the user passed a cssClass for the select, add it
-            popoverCssClass += selectOptions.cssClass ? ' ' + selectOptions.cssClass : '';
             overlay = new Popover(this._app, SelectPopover, {
                 options: popoverOptions
             }, {
-                cssClass: popoverCssClass
+                cssClass: 'select-popover'
             }, this.config, this.deepLinker);
             // ev.target is readonly.
             // place popover regarding to ion-select instead of .button-inner
@@ -58093,7 +58124,7 @@ var Select = (function (_super) {
             this._options.forEach(function (option) {
                 // check this option if the option's value is in the values array
                 option.selected = _this.getValues().some(function (selectValue) {
-                    return _this._compareWith(selectValue, option.value);
+                    return isCheckedProperty(selectValue, option.value);
                 });
                 if (option.selected) {
                     _this._texts.push(option.text);
@@ -58145,7 +58176,6 @@ Select.propDecorators = {
     'selectOptions': [{ type: Input },],
     'interface': [{ type: Input },],
     'selectedText': [{ type: Input },],
-    'compareWith': [{ type: Input },],
     'ionCancel': [{ type: Output },],
     '_click': [{ type: HostListener, args: ['click', ['$event'],] },],
     '_keyup': [{ type: HostListener, args: ['keyup.space',] },],
@@ -58208,7 +58238,7 @@ var DisplayWhen = (function () {
     return DisplayWhen;
 }());
 
-var __extends$77 = (undefined && undefined.__extends) || (function () {
+var __extends$76 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -58260,7 +58290,7 @@ var __extends$77 = (undefined && undefined.__extends) || (function () {
  * @see {\@link ../../../platform/Platform Platform API Docs}
  */
 var ShowWhen = (function (_super) {
-    __extends$77(ShowWhen, _super);
+    __extends$76(ShowWhen, _super);
     /**
      * @param {?} showWhen
      * @param {?} plt
@@ -58289,7 +58319,7 @@ ShowWhen.ctorParameters = function () { return [
     { type: NgZone, },
 ]; };
 
-var __extends$78 = (undefined && undefined.__extends) || (function () {
+var __extends$77 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -58341,7 +58371,7 @@ var __extends$78 = (undefined && undefined.__extends) || (function () {
  * @see {\@link ../../../platform/Platform Platform API Docs}
  */
 var HideWhen = (function (_super) {
-    __extends$78(HideWhen, _super);
+    __extends$77(HideWhen, _super);
     /**
      * @param {?} hideWhen
      * @param {?} plt
@@ -61045,10 +61075,8 @@ function cleanupStyles(s) {
         return;
     }
     // Container
-    if (s.container) {
-        removeClass(s.container, s._classNames);
-        s.container.removeAttribute('style');
-    }
+    removeClass(s.container, s._classNames);
+    s.container.removeAttribute('style');
     // Wrapper
     s._wrapper.removeAttribute('style');
     // Slides
@@ -61995,7 +62023,7 @@ function doResize(s, plt, forceUpdatePagination) {
     s._allowSwipeToNext = allowSwipeToNext;
 }
 
-var __extends$79 = (undefined && undefined.__extends) || (function () {
+var __extends$78 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -62084,7 +62112,7 @@ var __extends$79 = (undefined && undefined.__extends) || (function () {
  *
  *   slideChanged() {
  *     let currentIndex = this.slides.getActiveIndex();
- *     console.log('Current index is', currentIndex);
+ *     console.log("Current index is", currentIndex);
  *   }
  * }
  * ```
@@ -62110,7 +62138,7 @@ var __extends$79 = (undefined && undefined.__extends) || (function () {
  * ```
  *
  * To see all of the available options, take a look at the
- * [source for slides](https://github.com/ionic-team/ionic/blob/master/src/components/slides/slides.ts).
+ * [source for slides](https://github.com/driftyco/ionic/blob/master/src/components/slides/slides.ts).
  *
  * \@demo /docs/demos/src/slides/
  * @see {\@link /docs/components#slides Slides Component Docs}
@@ -62128,7 +62156,7 @@ var __extends$79 = (undefined && undefined.__extends) || (function () {
  * Licensed under MIT
  */
 var Slides = (function (_super) {
-    __extends$79(Slides, _super);
+    __extends$78(Slides, _super);
     /**
      * @param {?} config
      * @param {?} _plt
@@ -62169,7 +62197,6 @@ var Slides = (function (_super) {
         _this.roundLengths = false;
         _this._spaceBetween = 0;
         _this._slidesPerView = 1;
-        _this._centeredSlides = false;
         /**
          * @hidden
          */
@@ -62182,6 +62209,10 @@ var Slides = (function (_super) {
          * @hidden
          */
         _this.slidesPerGroup = 1;
+        /**
+         * @hidden
+         */
+        _this.centeredSlides = false;
         /**
          * @hidden
          */
@@ -62778,25 +62809,7 @@ var Slides = (function (_super) {
          * @return {?}
          */
         set: function (val) {
-            this._slidesPerView = val === 'auto' ? 'auto' : parseFloat(val);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Slides.prototype, "centeredSlides", {
-        /**
-         * \@input {boolean} Center a slide in the middle of the screen.
-         * @return {?}
-         */
-        get: function () {
-            return this._centeredSlides;
-        },
-        /**
-         * @param {?} val
-         * @return {?}
-         */
-        set: function (val) {
-            this._centeredSlides = isTrueProperty(val);
+            this._slidesPerView = val === 'auto' ? 'auto' : parseInt(val, 10);
         },
         enumerable: true,
         configurable: true
@@ -63036,7 +63049,6 @@ Slides.propDecorators = {
     'zoom': [{ type: Input },],
     'spaceBetween': [{ type: Input },],
     'slidesPerView': [{ type: Input },],
-    'centeredSlides': [{ type: Input },],
     'ionSlideWillChange': [{ type: Output },],
     'ionSlideDidChange': [{ type: Output },],
     'ionSlideDrag': [{ type: Output },],
@@ -63105,7 +63117,7 @@ Slide.ctorParameters = function () { return [
     { type: Slides, },
 ]; };
 
-var __extends$80 = (undefined && undefined.__extends) || (function () {
+var __extends$79 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -63209,7 +63221,7 @@ var __extends$80 = (undefined && undefined.__extends) || (function () {
  * ```
  */
 var Spinner = (function (_super) {
-    __extends$80(Spinner, _super);
+    __extends$79(Spinner, _super);
     /**
      * @param {?} config
      * @param {?} elementRef
@@ -63468,12 +63480,9 @@ var TabHighlight = (function () {
      */
     TabHighlight.prototype.select = function (tab) {
         var _this = this;
-        if (!tab) {
-            return;
-        }
         var /** @type {?} */ dom = this._dom;
         dom.read(function () {
-            var /** @type {?} */ btnEle = tab.btn.getNativeElement();
+            var /** @type {?} */ btnEle = tab.btn.getElementRef().nativeElement;
             var /** @type {?} */ transform = "translate3d(" + btnEle.offsetLeft + "px,0,0) scaleX(" + btnEle.offsetWidth + ")";
             dom.write(function () {
                 var /** @type {?} */ ele = _this._elementRef.nativeElement;
@@ -63502,7 +63511,7 @@ TabHighlight.ctorParameters = function () { return [
     { type: DomController, },
 ]; };
 
-var __extends$82 = (undefined && undefined.__extends) || (function () {
+var __extends$81 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -63645,7 +63654,7 @@ var __extends$82 = (undefined && undefined.__extends) || (function () {
  *
  */
 var Tabs = (function (_super) {
-    __extends$82(Tabs, _super);
+    __extends$81(Tabs, _super);
     /**
      * @param {?} parent
      * @param {?} viewCtrl
@@ -63655,9 +63664,8 @@ var Tabs = (function (_super) {
      * @param {?} _plt
      * @param {?} renderer
      * @param {?} _linker
-     * @param {?=} keyboard
      */
-    function Tabs(parent, viewCtrl, _app, config, elementRef, _plt, renderer, _linker, keyboard) {
+    function Tabs(parent, viewCtrl, _app, config, elementRef, _plt, renderer, _linker) {
         var _this = _super.call(this, config, elementRef, renderer, 'tabs') || this;
         _this.viewCtrl = viewCtrl;
         _this._app = _app;
@@ -63675,10 +63683,6 @@ var Tabs = (function (_super) {
          * \@internal
          */
         _this._selectHistory = [];
-        /**
-         * \@internal
-         */
-        _this._onDestroy = new Subject_2();
         /**
          * \@output {any} Emitted when the tab changes.
          */
@@ -63707,34 +63711,13 @@ var Tabs = (function (_super) {
             viewCtrl._setContent(_this);
             viewCtrl._setContentRef(elementRef);
         }
-        var keyboardResizes = config.getBoolean('keyboardResizes', false);
-        if (keyboard && keyboardResizes) {
-            keyboard.willHide
-                .takeUntil(_this._onDestroy)
-                .subscribe(function () {
-                _this._plt.timeout(function () { return _this.setTabbarHidden(false); }, 50);
-            });
-            keyboard.willShow
-                .takeUntil(_this._onDestroy)
-                .subscribe(function () { return _this.setTabbarHidden(true); });
-        }
         return _this;
     }
     /**
-     * \@internal
-     * @param {?} tabbarHidden
-     * @return {?}
-     */
-    Tabs.prototype.setTabbarHidden = function (tabbarHidden) {
-        this.setElementClass('tabbar-hidden', tabbarHidden);
-        this.resize();
-    };
-    /**
-     * \@internal
      * @return {?}
      */
     Tabs.prototype.ngOnDestroy = function () {
-        this._onDestroy.next();
+        this._resizeObs && this._resizeObs.unsubscribe();
         this.parent.unregisterChildNav(this);
     };
     /**
@@ -63747,9 +63730,9 @@ var Tabs = (function (_super) {
         this._setConfig('tabsLayout', 'icon-top');
         this._setConfig('tabsHighlight', this.tabsHighlight);
         if (this.tabsHighlight) {
-            this._plt.resize
-                .takeUntil(this._onDestroy)
-                .subscribe(function () { return _this._highlight.select(_this.getSelected()); });
+            this._resizeObs = this._plt.resize.subscribe(function () {
+                _this._highlight.select(_this.getSelected());
+            });
         }
         this.initTabs();
     };
@@ -64063,7 +64046,6 @@ Tabs.ctorParameters = function () { return [
     { type: Platform, },
     { type: Renderer, },
     { type: DeepLinker, },
-    { type: Keyboard, },
 ]; };
 Tabs.propDecorators = {
     'selectedIndex': [{ type: Input },],
@@ -64077,7 +64059,7 @@ Tabs.propDecorators = {
 };
 var tabIds = -1;
 
-var __extends$81 = (undefined && undefined.__extends) || (function () {
+var __extends$80 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -64142,8 +64124,8 @@ var __extends$81 = (undefined && undefined.__extends) || (function () {
  *
  *   // set some user information on chatParams
  *   chatParams = {
- *     user1: 'admin',
- *     user2: 'ionic'
+ *     user1: "admin",
+ *     user2: "ionic"
  *   };
  *
  *   constructor() {
@@ -64157,7 +64139,7 @@ var __extends$81 = (undefined && undefined.__extends) || (function () {
  * ```ts
  * export class ChatPage {
  *   constructor(navParams: NavParams) {
- *     console.log('Passed params', navParams.data);
+ *     console.log("Passed params", navParams.data);
  *   }
  * }
  * ```
@@ -64194,12 +64176,13 @@ var __extends$81 = (undefined && undefined.__extends) || (function () {
  * @see {\@link ../../nav/NavController NavController API Docs}
  */
 var Tab = (function (_super) {
-    __extends$81(Tab, _super);
+    __extends$80(Tab, _super);
     /**
      * @param {?} parent
      * @param {?} app
      * @param {?} config
      * @param {?} plt
+     * @param {?} keyboard
      * @param {?} elementRef
      * @param {?} zone
      * @param {?} renderer
@@ -64211,10 +64194,10 @@ var Tab = (function (_super) {
      * @param {?} _dom
      * @param {?} errHandler
      */
-    function Tab(parent, app, config, plt, elementRef, zone, renderer, cfr, _cd, gestureCtrl, transCtrl, linker, _dom, errHandler) {
+    function Tab(parent, app, config, plt, keyboard, elementRef, zone, renderer, cfr, _cd, gestureCtrl, transCtrl, linker, _dom, errHandler) {
         var _this = 
         // A Tab is a NavController for its child pages
-        _super.call(this, parent, app, config, plt, elementRef, zone, renderer, cfr, gestureCtrl, transCtrl, linker, _dom, errHandler) || this;
+        _super.call(this, parent, app, config, plt, keyboard, elementRef, zone, renderer, cfr, gestureCtrl, transCtrl, linker, _dom, errHandler) || this;
         _this._cd = _cd;
         _this.linker = linker;
         _this._dom = _dom;
@@ -64438,6 +64421,7 @@ Tab.ctorParameters = function () { return [
     { type: App, },
     { type: Config, },
     { type: Platform, },
+    { type: Keyboard, },
     { type: ElementRef, },
     { type: NgZone, },
     { type: Renderer, },
@@ -64464,7 +64448,7 @@ Tab.propDecorators = {
     '_vp': [{ type: ViewChild, args: ['viewport', { read: ViewContainerRef },] },],
 };
 
-var __extends$83 = (undefined && undefined.__extends) || (function () {
+var __extends$82 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -64478,7 +64462,7 @@ var __extends$83 = (undefined && undefined.__extends) || (function () {
  * @hidden
  */
 var TabButton = (function (_super) {
-    __extends$83(TabButton, _super);
+    __extends$82(TabButton, _super);
     /**
      * @param {?} config
      * @param {?} elementRef
@@ -64663,7 +64647,7 @@ ToastCmp.ctorParameters = function () { return [
 ]; };
 var toastIds = -1;
 
-var __extends$85 = (undefined && undefined.__extends) || (function () {
+var __extends$84 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -64674,7 +64658,7 @@ var __extends$85 = (undefined && undefined.__extends) || (function () {
     };
 })();
 var ToastSlideIn = (function (_super) {
-    __extends$85(ToastSlideIn, _super);
+    __extends$84(ToastSlideIn, _super);
     function ToastSlideIn() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -64711,7 +64695,7 @@ var ToastSlideIn = (function (_super) {
     return ToastSlideIn;
 }(Transition));
 var ToastSlideOut = (function (_super) {
-    __extends$85(ToastSlideOut, _super);
+    __extends$84(ToastSlideOut, _super);
     function ToastSlideOut() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -64742,7 +64726,7 @@ var ToastSlideOut = (function (_super) {
     return ToastSlideOut;
 }(Transition));
 var ToastMdSlideIn = (function (_super) {
-    __extends$85(ToastMdSlideIn, _super);
+    __extends$84(ToastMdSlideIn, _super);
     function ToastMdSlideIn() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -64779,7 +64763,7 @@ var ToastMdSlideIn = (function (_super) {
     return ToastMdSlideIn;
 }(Transition));
 var ToastMdSlideOut = (function (_super) {
-    __extends$85(ToastMdSlideOut, _super);
+    __extends$84(ToastMdSlideOut, _super);
     function ToastMdSlideOut() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -64810,7 +64794,7 @@ var ToastMdSlideOut = (function (_super) {
     return ToastMdSlideOut;
 }(Transition));
 var ToastWpPopIn = (function (_super) {
-    __extends$85(ToastWpPopIn, _super);
+    __extends$84(ToastWpPopIn, _super);
     function ToastWpPopIn() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -64845,7 +64829,7 @@ var ToastWpPopIn = (function (_super) {
     return ToastWpPopIn;
 }(Transition));
 var ToastWpPopOut = (function (_super) {
-    __extends$85(ToastWpPopOut, _super);
+    __extends$84(ToastWpPopOut, _super);
     function ToastWpPopOut() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -64885,7 +64869,7 @@ var ToastWpPopOut = (function (_super) {
 var TOAST_POSITION_TOP$1 = 'top';
 var TOAST_POSITION_MIDDLE$1 = 'middle';
 
-var __extends$84 = (undefined && undefined.__extends) || (function () {
+var __extends$83 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -64899,7 +64883,7 @@ var __extends$84 = (undefined && undefined.__extends) || (function () {
  * @hidden
  */
 var Toast = (function (_super) {
-    __extends$84(Toast, _super);
+    __extends$83(Toast, _super);
     /**
      * @param {?} app
      * @param {?=} opts
@@ -64990,7 +64974,6 @@ var Toast = (function (_super) {
     Toast.prototype.present = function (navOptions) {
         if (navOptions === void 0) { navOptions = {}; }
         navOptions.disableApp = false;
-        navOptions.keyboardClose = false;
         return this._app.present(this, navOptions, PORTAL_TOAST);
     };
     /**
@@ -65100,7 +65083,7 @@ ToastController.ctorParameters = function () { return [
     { type: Config, },
 ]; };
 
-var __extends$87 = (undefined && undefined.__extends) || (function () {
+var __extends$86 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -65114,7 +65097,7 @@ var __extends$87 = (undefined && undefined.__extends) || (function () {
  * @hidden
  */
 var ToggleGesture = (function (_super) {
-    __extends$87(ToggleGesture, _super);
+    __extends$86(ToggleGesture, _super);
     /**
      * @param {?} plt
      * @param {?} toggle
@@ -65167,7 +65150,7 @@ var ToggleGesture = (function (_super) {
     return ToggleGesture;
 }(PanGesture));
 
-var __extends$86 = (undefined && undefined.__extends) || (function () {
+var __extends$85 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -65185,7 +65168,7 @@ var __extends$86 = (undefined && undefined.__extends) || (function () {
  * Toggles can also have colors assigned to them, by adding any color
  * attribute.
  *
- * See the [Angular Docs](https://angular.io/docs/ts/latest/guide/forms.html)
+ * See the [Angular 2 Docs](https://angular.io/docs/ts/latest/guide/forms.html)
  * for more info on forms and inputs.
  *
  * \@usage
@@ -65215,7 +65198,7 @@ var __extends$86 = (undefined && undefined.__extends) || (function () {
  * @see {\@link /docs/components#toggle Toggle Component Docs}
  */
 var Toggle = (function (_super) {
-    __extends$86(Toggle, _super);
+    __extends$85(Toggle, _super);
     /**
      * @param {?} form
      * @param {?} config
@@ -65269,7 +65252,7 @@ var Toggle = (function (_super) {
      * @hidden
      * @return {?}
      */
-    Toggle.prototype._inputUpdated = function () { };
+    Toggle.prototype._inputCheckHasValue = function () { };
     /**
      * @hidden
      * @param {?} val
@@ -65304,10 +65287,26 @@ var Toggle = (function (_super) {
             (void 0) /* assert */;
             return;
         }
-        if (this._shouldToggle(currentX, -15)) {
+        var /** @type {?} */ dirty = false;
+        var /** @type {?} */ value;
+        var /** @type {?} */ activated;
+        if (this._value) {
+            if (currentX + 15 < this._startX) {
+                dirty = true;
+                value = false;
+                activated = true;
+            }
+        }
+        else if (currentX - 15 > this._startX) {
+            dirty = true;
+            value = true;
+            activated = (currentX < this._startX + 5);
+        }
+        if (dirty) {
             this._zone.run(function () {
-                _this.value = !_this.value;
+                _this.value = value;
                 _this._startX = currentX;
+                _this._activated = activated;
                 _this._haptic.selection();
             });
         }
@@ -65325,32 +65324,20 @@ var Toggle = (function (_super) {
         }
         (void 0) /* console.debug */;
         this._zone.run(function () {
-            if (_this._shouldToggle(endX, 4)) {
-                _this.value = !_this.value;
+            if (_this._value) {
+                if (_this._startX + 4 > endX) {
+                    _this.value = false;
+                    _this._haptic.selection();
+                }
+            }
+            else if (_this._startX - 4 < endX) {
+                _this.value = true;
                 _this._haptic.selection();
             }
             _this._activated = false;
             _this._fireBlur();
             _this._startX = null;
         });
-    };
-    /**
-     * @hidden
-     * @param {?} currentX
-     * @param {?} margin
-     * @return {?}
-     */
-    Toggle.prototype._shouldToggle = function (currentX, margin) {
-        var /** @type {?} */ isLTR = !this._plt.isRTL;
-        var /** @type {?} */ startX = this._startX;
-        if (this._value) {
-            return (isLTR && (startX + margin > currentX)) ||
-                (!isLTR && (startX - margin < currentX));
-        }
-        else {
-            return (isLTR && (startX - margin < currentX)) ||
-                (!isLTR && (startX + margin > currentX));
-        }
     };
     /**
      * @hidden
@@ -65364,6 +65351,13 @@ var Toggle = (function (_super) {
             ev.stopPropagation();
             this.value = !this.value;
         }
+    };
+    /**
+     * @hidden
+     * @return {?}
+     */
+    Toggle.prototype.initFocus = function () {
+        this._elementRef.nativeElement.querySelector('button').focus();
     };
     /**
      * @hidden
@@ -65419,7 +65413,7 @@ Toggle.propDecorators = {
     '_keyup': [{ type: HostListener, args: ['keyup', ['$event'],] },],
 };
 
-var __extends$88 = (undefined && undefined.__extends) || (function () {
+var __extends$87 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -65449,7 +65443,7 @@ var __extends$88 = (undefined && undefined.__extends) || (function () {
  *
  */
 var Footer = (function (_super) {
-    __extends$88(Footer, _super);
+    __extends$87(Footer, _super);
     /**
      * @param {?} config
      * @param {?} elementRef
@@ -65478,7 +65472,7 @@ Footer.ctorParameters = function () { return [
     { type: ViewController, decorators: [{ type: Optional },] },
 ]; };
 
-var __extends$89 = (undefined && undefined.__extends) || (function () {
+var __extends$88 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -65512,7 +65506,7 @@ var __extends$89 = (undefined && undefined.__extends) || (function () {
  *
  */
 var Header = (function (_super) {
-    __extends$89(Header, _super);
+    __extends$88(Header, _super);
     /**
      * @param {?} config
      * @param {?} elementRef
@@ -65541,7 +65535,7 @@ Header.ctorParameters = function () { return [
     { type: ViewController, decorators: [{ type: Optional },] },
 ]; };
 
-var __extends$90 = (undefined && undefined.__extends) || (function () {
+var __extends$89 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -65555,7 +65549,7 @@ var __extends$90 = (undefined && undefined.__extends) || (function () {
  * \@name Toolbar
  * \@description
  * A Toolbar is a generic bar that is positioned above or below content.
- * Unlike a [Navbar](../Navbar/), a toolbar can be used as a subheader.
+ * Unlike a [Navbar](../../navbar/Navbar), a toolbar can be used as a subheader.
  * When toolbars are placed within an `<ion-header>` or `<ion-footer>`,
  * the toolbars stay fixed in their respective location. When placed within
  * `<ion-content>`, toolbars will scroll with the content.
@@ -65637,10 +65631,10 @@ var __extends$90 = (undefined && undefined.__extends) || (function () {
  *  ```
  *
  * \@demo /docs/demos/src/toolbar/
- * @see {\@link ../Navbar/ Navbar API Docs}
+ * @see {\@link ../../navbar/Navbar/ Navbar API Docs}
  */
 var Toolbar = (function (_super) {
-    __extends$90(Toolbar, _super);
+    __extends$89(Toolbar, _super);
     /**
      * @param {?} config
      * @param {?} elementRef
@@ -65679,7 +65673,7 @@ Toolbar.ctorParameters = function () { return [
     { type: Renderer, },
 ]; };
 
-var __extends$91 = (undefined && undefined.__extends) || (function () {
+var __extends$90 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -65693,7 +65687,7 @@ var __extends$91 = (undefined && undefined.__extends) || (function () {
  * @hidden
  */
 var ToolbarItem = (function (_super) {
-    __extends$91(ToolbarItem, _super);
+    __extends$90(ToolbarItem, _super);
     /**
      * @param {?} config
      * @param {?} elementRef
@@ -65742,7 +65736,7 @@ ToolbarItem.propDecorators = {
     '_buttons': [{ type: ContentChildren, args: [Button,] },],
 };
 
-var __extends$92 = (undefined && undefined.__extends) || (function () {
+var __extends$91 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -65788,7 +65782,7 @@ var __extends$92 = (undefined && undefined.__extends) || (function () {
  * \@demo /docs/demos/src/title/
  */
 var ToolbarTitle = (function (_super) {
-    __extends$92(ToolbarTitle, _super);
+    __extends$91(ToolbarTitle, _super);
     /**
      * @param {?} config
      * @param {?} elementRef
@@ -65855,7 +65849,7 @@ Thumbnail.decorators = [
  */
 Thumbnail.ctorParameters = function () { return []; };
 
-var __extends$93 = (undefined && undefined.__extends) || (function () {
+var __extends$92 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -65907,7 +65901,7 @@ var __extends$93 = (undefined && undefined.__extends) || (function () {
  *
  */
 var Typography = (function (_super) {
-    __extends$93(Typography, _super);
+    __extends$92(Typography, _super);
     /**
      * @param {?} config
      * @param {?} elementRef
@@ -67124,7 +67118,7 @@ var VirtualScroll = (function () {
      * @return {?}
      */
     VirtualScroll.prototype._updateDiffer = function () {
-        if (isPresent(this._records)) {
+        if (isBlank$1(this._differ) && isPresent(this._records)) {
             this._differ = this._iterableDiffers.find(this._records).create(this._virtualTrackBy);
         }
     };
@@ -68354,7 +68348,7 @@ var UrlSerializer = (function () {
      * @return {?}
      */
     UrlSerializer.prototype.serialize = function (path) {
-        return '/' + path.map(function (segment) { return segment.id; }).join('/');
+        return '/' + path.map(function (segment) { return segment.id.replace(/\/\:.*/, ''); }).join('/');
     };
     /**
      * Serializes a component and its data into a NavSegment.
@@ -71033,7 +71027,7 @@ function setupProvideEvents(plt, dom) {
     };
 }
 
-var __extends$94 = (undefined && undefined.__extends) || (function () {
+var __extends$93 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -71084,7 +71078,7 @@ var __extends$94 = (undefined && undefined.__extends) || (function () {
  * More information about Angular's [`ErrorHandler`](https://angular.io/docs/ts/latest/api/core/index/ErrorHandler-class.html).
  */
 var IonicErrorHandler = (function (_super) {
-    __extends$94(IonicErrorHandler, _super);
+    __extends$93(IonicErrorHandler, _super);
     function IonicErrorHandler() {
         return _super.call(this, false) || this;
     }
@@ -71219,7 +71213,6 @@ var PLATFORM_CONFIGS = {
         ],
         settings: {
             autoFocusAssist: 'delay',
-            hideCaretOnScroll: true,
             hoverCSS: false,
             inputBlurring: isIos,
             inputCloning: isIos,
@@ -71231,8 +71224,6 @@ var PLATFORM_CONFIGS = {
             tapPolyfill: isIosUIWebView,
             virtualScrollEventAssist: isIosUIWebView,
             disableScrollAssist: isIos,
-            keyboardResizes: keyboardResizes,
-            resizeAssist: keyboardResizes,
         },
         /**
          * @param {?} plt
@@ -71378,17 +71369,6 @@ var PLATFORM_CONFIGS = {
         }
     }
 };
-/**
- * @param {?} plt
- * @return {?}
- */
-function keyboardResizes(plt) {
-    var /** @type {?} */ win = (plt.win());
-    if (win.Ionic && win.Ionic.keyboardResizes === true) {
-        return true;
-    }
-    return false;
-}
 var PlatformConfigToken = new OpaqueToken('PLTCONFIG');
 /**
  * @return {?}
@@ -71496,7 +71476,7 @@ function registerModeConfigs(config) {
     };
 }
 
-var __extends$95 = (undefined && undefined.__extends) || (function () {
+var __extends$94 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -71511,7 +71491,7 @@ var __extends$95 = (undefined && undefined.__extends) || (function () {
  * This class overrides the default Angular gesture config.
  */
 var IonicGestureConfig = (function (_super) {
-    __extends$95(IonicGestureConfig, _super);
+    __extends$94(IonicGestureConfig, _super);
     function IonicGestureConfig() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -71780,6 +71760,8 @@ IonicModule.decorators = [
                     ListHeader,
                     Reorder,
                     LoadingCmp,
+                    NativeInput,
+                    NextInput,
                     Menu,
                     MenuClose,
                     MenuToggle,
@@ -71880,6 +71862,8 @@ IonicModule.decorators = [
                     ListHeader,
                     Reorder,
                     LoadingCmp,
+                    NativeInput,
+                    NextInput,
                     Menu,
                     MenuClose,
                     MenuToggle,
@@ -72078,6 +72062,8 @@ exports.NavPop = NavPop;
 exports.NavPopAnchor = NavPopAnchor;
 exports.NavPush = NavPush;
 exports.NavPushAnchor = NavPushAnchor;
+exports.NativeInput = NativeInput;
+exports.NextInput = NextInput;
 exports.Note = Note;
 exports.Option = Option;
 exports.Picker = Picker;

@@ -85,7 +85,7 @@ var Searchbar = (function (_super) {
     }
     Object.defineProperty(Searchbar.prototype, "showCancelButton", {
         /**
-         * \@input {boolean} If true, show the cancel button. Default `false`.
+         * \@input {boolean} If true, show the cancel button.
          * @return {?}
          */
         get: function () {
@@ -158,7 +158,7 @@ var Searchbar = (function (_super) {
     });
     Object.defineProperty(Searchbar.prototype, "animated", {
         /**
-         * \@input {boolean} If true, enable searchbar animation. Default `false`.
+         * \@input {boolean} If true, enable searchbar animation.
          * @return {?}
          */
         get: function () {
@@ -191,11 +191,8 @@ var Searchbar = (function (_super) {
      */
     Searchbar.prototype._inputUpdated = function () {
         var /** @type {?} */ ele = this._searchbarInput.nativeElement;
-        var /** @type {?} */ value = this._value;
-        // It is important not to re-assign the value if it is the same, because,
-        // otherwise, the caret is moved to the end of the input
-        if (ele.value !== value) {
-            ele.value = value;
+        if (ele) {
+            ele.value = this.value;
         }
         this.positionElements();
     };
@@ -239,22 +236,12 @@ var Searchbar = (function (_super) {
             // Get the width of the span then remove it
             var /** @type {?} */ textWidth = tempSpan.offsetWidth;
             doc.body.removeChild(tempSpan);
-            // Set the input padding start
+            // Set the input padding left
             var /** @type {?} */ inputLeft = 'calc(50% - ' + (textWidth / 2) + 'px)';
-            if (this._plt.isRTL) {
-                inputEle.style.paddingRight = inputLeft;
-            }
-            else {
-                inputEle.style.paddingLeft = inputLeft;
-            }
-            // Set the icon margin start
+            inputEle.style.paddingLeft = inputLeft;
+            // Set the icon margin left
             var /** @type {?} */ iconLeft = 'calc(50% - ' + ((textWidth / 2) + 30) + 'px)';
-            if (this._plt.isRTL) {
-                iconEle.style.marginRight = iconLeft;
-            }
-            else {
-                iconEle.style.marginLeft = iconLeft;
-            }
+            iconEle.style.marginLeft = iconLeft;
         }
     };
     /**
@@ -269,22 +256,12 @@ var Searchbar = (function (_super) {
             var /** @type {?} */ cancelStyle = cancelStyleEle.style;
             this._isCancelVisible = showShowCancel;
             if (showShowCancel) {
-                if (this._plt.isRTL) {
-                    cancelStyle.marginLeft = '0';
-                }
-                else {
-                    cancelStyle.marginRight = '0';
-                }
+                cancelStyle.marginRight = '0';
             }
             else {
                 var /** @type {?} */ offset = cancelStyleEle.offsetWidth;
                 if (offset > 0) {
-                    if (this._plt.isRTL) {
-                        cancelStyle.marginLeft = -offset + 'px';
-                    }
-                    else {
-                        cancelStyle.marginRight = -offset + 'px';
-                    }
+                    cancelStyle.marginRight = -offset + 'px';
                 }
             }
         }
@@ -338,7 +315,7 @@ var Searchbar = (function (_super) {
     Searchbar.prototype.clearInput = function (ev) {
         var _this = this;
         this.ionClear.emit(ev);
-        // setTimeout() fixes https://github.com/ionic-team/ionic/issues/7527
+        // setTimeout() fixes https://github.com/driftyco/ionic/issues/7527
         // wait for 4 frames
         setTimeout(function () {
             var /** @type {?} */ value = _this._value;

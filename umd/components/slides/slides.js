@@ -109,7 +109,7 @@ var __extends = (this && this.__extends) || (function () {
      *
      *   slideChanged() {
      *     let currentIndex = this.slides.getActiveIndex();
-     *     console.log('Current index is', currentIndex);
+     *     console.log("Current index is", currentIndex);
      *   }
      * }
      * ```
@@ -135,7 +135,7 @@ var __extends = (this && this.__extends) || (function () {
      * ```
      *
      * To see all of the available options, take a look at the
-     * [source for slides](https://github.com/ionic-team/ionic/blob/master/src/components/slides/slides.ts).
+     * [source for slides](https://github.com/driftyco/ionic/blob/master/src/components/slides/slides.ts).
      *
      * \@demo /docs/demos/src/slides/
      * @see {\@link /docs/components#slides Slides Component Docs}
@@ -194,7 +194,6 @@ var __extends = (this && this.__extends) || (function () {
             _this.roundLengths = false;
             _this._spaceBetween = 0;
             _this._slidesPerView = 1;
-            _this._centeredSlides = false;
             /**
              * @hidden
              */
@@ -207,6 +206,10 @@ var __extends = (this && this.__extends) || (function () {
              * @hidden
              */
             _this.slidesPerGroup = 1;
+            /**
+             * @hidden
+             */
+            _this.centeredSlides = false;
             /**
              * @hidden
              */
@@ -803,25 +806,7 @@ var __extends = (this && this.__extends) || (function () {
              * @return {?}
              */
             set: function (val) {
-                this._slidesPerView = val === 'auto' ? 'auto' : parseFloat(val);
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Slides.prototype, "centeredSlides", {
-            /**
-             * \@input {boolean} Center a slide in the middle of the screen.
-             * @return {?}
-             */
-            get: function () {
-                return this._centeredSlides;
-            },
-            /**
-             * @param {?} val
-             * @return {?}
-             */
-            set: function (val) {
-                this._centeredSlides = util_1.isTrueProperty(val);
+                this._slidesPerView = val === 'auto' ? 'auto' : parseInt(val, 10);
             },
             enumerable: true,
             configurable: true
@@ -1061,7 +1046,6 @@ var __extends = (this && this.__extends) || (function () {
         'zoom': [{ type: core_1.Input },],
         'spaceBetween': [{ type: core_1.Input },],
         'slidesPerView': [{ type: core_1.Input },],
-        'centeredSlides': [{ type: core_1.Input },],
         'ionSlideWillChange': [{ type: core_1.Output },],
         'ionSlideDidChange': [{ type: core_1.Output },],
         'ionSlideDrag': [{ type: core_1.Output },],
@@ -1146,8 +1130,6 @@ var __extends = (this && this.__extends) || (function () {
         Slides.prototype._spaceBetween;
         /** @type {?} */
         Slides.prototype._slidesPerView;
-        /** @type {?} */
-        Slides.prototype._centeredSlides;
         /**
          * @hidden
          * @type {?}
@@ -1163,6 +1145,11 @@ var __extends = (this && this.__extends) || (function () {
          * @type {?}
          */
         Slides.prototype.slidesPerGroup;
+        /**
+         * @hidden
+         * @type {?}
+         */
+        Slides.prototype.centeredSlides;
         /**
          * @hidden
          * @type {?}

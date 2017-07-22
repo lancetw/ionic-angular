@@ -138,6 +138,7 @@ var PickerCmp = (function () {
      * @return {?}
      */
     PickerCmp.prototype.ionViewDidEnter = function () {
+        this._plt.focusOutActiveElement();
         var /** @type {?} */ focusableEle = this._elementRef.nativeElement.querySelector('button');
         if (focusableEle) {
             focusableEle.focus();

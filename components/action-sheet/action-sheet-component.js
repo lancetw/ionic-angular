@@ -84,6 +84,7 @@ var ActionSheetCmp = (function () {
      * @return {?}
      */
     ActionSheetCmp.prototype.ionViewDidEnter = function () {
+        this._plt.focusOutActiveElement();
         var /** @type {?} */ focusableEle = this._elementRef.nativeElement.querySelector('button');
         if (focusableEle) {
             focusableEle.focus();
@@ -163,13 +164,13 @@ ActionSheetCmp.decorators = [
                     '<div class="action-sheet-group">' +
                     '<div class="action-sheet-title" id="{{hdrId}}" *ngIf="d.title">{{d.title}}</div>' +
                     '<div class="action-sheet-sub-title" id="{{descId}}" *ngIf="d.subTitle">{{d.subTitle}}</div>' +
-                    '<button ion-button="action-sheet-button" (click)="click(b)" *ngFor="let b of d.buttons" class="disable-hover" [attr.icon-start]="b.icon ? \'\' : null" [ngClass]="b.cssClass">' +
+                    '<button ion-button="action-sheet-button" (click)="click(b)" *ngFor="let b of d.buttons" class="disable-hover" [attr.icon-left]="b.icon ? \'\' : null" [ngClass]="b.cssClass">' +
                     '<ion-icon [name]="b.icon" *ngIf="b.icon" class="action-sheet-icon"></ion-icon>' +
                     '{{b.text}}' +
                     '</button>' +
                     '</div>' +
                     '<div class="action-sheet-group" *ngIf="cancelButton">' +
-                    '<button ion-button="action-sheet-button" (click)="click(cancelButton)" class="action-sheet-cancel disable-hover" [attr.icon-start]="cancelButton.icon ? \'\' : null" [ngClass]="cancelButton.cssClass">' +
+                    '<button ion-button="action-sheet-button" (click)="click(cancelButton)" class="action-sheet-cancel disable-hover" [attr.icon-left]="cancelButton.icon ? \'\' : null" [ngClass]="cancelButton.cssClass">' +
                     '<ion-icon [name]="cancelButton.icon" *ngIf="cancelButton.icon" class="action-sheet-icon"></ion-icon>' +
                     '{{cancelButton.text}}' +
                     '</button>' +

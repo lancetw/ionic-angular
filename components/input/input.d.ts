@@ -1,14 +1,17 @@
 import { ElementRef, EventEmitter, Renderer } from '@angular/core';
 import { NgControl } from '@angular/forms';
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/takeUntil';
 import { App } from '../app/app';
 import { Config } from '../../config/config';
-import { Content, ContentDimensions } from '../content/content';
+import { Content, ContentDimensions, ScrollEvent } from '../content/content';
+import { PointerCoordinates } from '../../util/dom';
 import { DomController } from '../../platform/dom-controller';
 import { Form, IonicFormInput } from '../../util/form';
-import { BaseInput } from '../../util/base-input';
+import { Ion } from '../ion';
 import { Item } from '../item/item';
+import { NativeInput } from './native-input';
+import { NextInput } from './next-input';
+import { NavController } from '../../navigation/nav-controller';
+import { NavControllerBase } from '../../navigation/nav-controller-base';
 import { Platform } from '../../platform/platform';
 /**
  * @name Input
@@ -74,96 +77,123 @@ import { Platform } from '../../platform/platform';
  *
  * @demo /docs/demos/src/input/
  */
-export declare class TextInput extends BaseInput<string> implements IonicFormInput {
+export declare class TextInput extends Ion implements IonicFormInput {
     private _plt;
-    private form;
+    private _form;
     private _app;
     private _content;
-    private item;
+    private _item;
     ngControl: NgControl;
     private _dom;
+    _autoComplete: string;
+    _autoCorrect: string;
     _autoFocusAssist: string;
     _clearInput: boolean;
     _clearOnEdit: boolean;
+    _coord: PointerCoordinates;
     _didBlurAfterEdit: boolean;
+    _disabled: boolean;
     _readonly: boolean;
-    _keyboardHeight: number;
-    _type: string;
-    _scrollData: ScrollData;
-    _isTextarea: boolean;
-    _onDestroy: Subject<void>;
-    _coord: any;
     _isTouch: boolean;
+    _keyboardHeight: number;
+    _min: any;
+    _max: any;
+    _step: any;
+    _native: NativeInput;
+    _nav: NavControllerBase;
+    _scrollStart: any;
+    _scrollEnd: any;
+    _type: string;
     _useAssist: boolean;
-    _relocated: boolean;
-    /**
-     * @input {boolean} If true, a clear icon will appear in the input when there is a value. Clicking it clears the input.
-     */
-    clearInput: any;
-    /**
-     * @input {string} The type of control to display. The default type is text.
-     * Possible values are: `"text"`, `"password"`, `"email"`, `"number"`, `"search"`, `"tel"`, or `"url"`.
-     */
-    type: any;
-    /**
-     * @input {boolean} If true, the user cannot modify the value.
-     */
-    readonly: boolean;
-    /**
-     * @input {boolean} If true, the value will be cleared after focus upon edit.
-     * Defaults to `true` when `type` is `"password"`, `false` for all other types.
-     */
-    clearOnEdit: any;
-    /**
-     * @hidden
-     */
-    _native: ElementRef;
-    /**
-     * @input {string} Instructional text that shows before the input has a value.
-     */
-    autocomplete: string;
-    /**
-     * @input {string} Instructional text that shows before the input has a value.
-     */
-    autocorrect: string;
+    _usePadding: boolean;
+    _value: any;
+    /** @hidden */
+    inputControl: NgControl;
+    constructor(config: Config, _plt: Platform, _form: Form, _app: App, elementRef: ElementRef, renderer: Renderer, _content: Content, _item: Item, nav: NavController, ngControl: NgControl, _dom: DomController);
     /**
      * @input {string} Instructional text that shows before the input has a value.
      */
     placeholder: string;
     /**
+     * @input {boolean} If true, a clear icon will appear in the input when there is a value. Clicking it clears the input.
+     */
+    clearInput: any;
+    /**
+     * @input {string} The text value of the input.
+     */
+    value: any;
+    /**
+     * @input {string} The type of control to display. The default type is text. Possible values are: `"text"`, `"password"`, `"email"`, `"number"`, `"search"`, `"tel"`, or `"url"`.
+     */
+    type: any;
+    /**
+     * @input {boolean} If true, the user cannot interact with this element.
+     */
+    disabled: boolean;
+    /**
+     * @hidden
+     */
+    setDisabled(val: boolean): void;
+    /**
+     * @hidden
+     */
+    setDisabledState(isDisabled: boolean): void;
+    /**
+     * @input {boolean} If true, the user cannot modify the value.
+     */
+    readonly: boolean;
+    /**
+     * @input {boolean} If true, the value will be cleared after focus upon edit. Defaults to `true` when `type` is `"password"`, `false` for all other types.
+     */
+    clearOnEdit: any;
+    /**
      * @input {any} The minimum value, which must not be greater than its maximum (max attribute) value.
      */
-    min: number | string;
+    min: any;
+    /**
+     * @hidden
+     */
+    setMin(val: any): void;
     /**
      * @input {any} The maximum value, which must not be less than its minimum (min attribute) value.
      */
-    max: number | string;
+    max: any;
+    /**
+     * @hidden
+     */
+    setMax(val: any): void;
     /**
      * @input {any} Works with the min and max attributes to limit the increments at which a value can be set.
      */
-    step: number | string;
+    step: any;
     /**
      * @hidden
      */
-    input: EventEmitter<UIEvent>;
+    setStep(val: any): void;
     /**
      * @hidden
      */
-    blur: EventEmitter<UIEvent>;
+    _nativeInput: NativeInput;
     /**
      * @hidden
      */
-    focus: EventEmitter<UIEvent>;
-    constructor(config: Config, _plt: Platform, form: Form, _app: App, elementRef: ElementRef, renderer: Renderer, _content: Content, item: Item, ngControl: NgControl, _dom: DomController);
-    ngAfterContentInit(): void;
+    _nativeTextarea: NativeInput;
     /**
      * @hidden
      */
-    ngAfterViewInit(): void;
+    _nextInput: NextInput;
+    /**
+     * @output {event} Emitted when the input no longer has focus.
+     */
+    blur: EventEmitter<Event>;
+    /**
+     * @output {event} Emitted when the input has focus.
+     */
+    focus: EventEmitter<Event>;
     /**
      * @hidden
      */
-    ngOnDestroy(): void;
+    setNativeInput(nativeInput: NativeInput): void;
     /**
      * @hidden
      */
@@ -175,27 +205,71 @@ export declare class TextInput extends BaseInput<string> implements IonicFormInp
     /**
      * @hidden
      */
-    setBlur(): void;
+    scrollHideFocus(ev: ScrollEvent, shouldHideFocus: boolean): void;
     /**
      * @hidden
      */
-    onInput(ev: any): void;
+    inputBlurred(ev: UIEvent): void;
     /**
      * @hidden
      */
-    onBlur(ev: UIEvent): void;
+    inputFocused(ev: UIEvent): void;
     /**
      * @hidden
      */
-    onFocus(ev: UIEvent): void;
+    writeValue(val: any): void;
     /**
      * @hidden
      */
-    onKeydown(ev: any): void;
+    onChange(val: any): void;
     /**
      * @hidden
      */
-    _inputUpdated(): void;
+    onKeydown(val: any): void;
+    /**
+     * @hidden
+     */
+    onTouched(val: any): void;
+    /**
+     * @hidden
+     */
+    hasFocus(): boolean;
+    /**
+     * @hidden
+     */
+    hasValue(): boolean;
+    /**
+     * @hidden
+     */
+    checkHasValue(inputValue: any): void;
+    /**
+     * @hidden
+     */
+    focusChange(inputHasFocus: boolean): void;
+    /**
+     * @hidden
+     */
+    pointerStart(ev: UIEvent): void;
+    /**
+     * @hidden
+     */
+    pointerEnd(ev: UIEvent): void;
+    /**
+     * @hidden
+     */
+    setItemInputControlCss(): void;
+    /**
+     * @hidden
+     */
+    ngOnInit(): void;
+    /**
+     * @hidden
+     */
+    ngAfterContentChecked(): void;
+    /**
+     * @hidden
+     */
+    ngOnDestroy(): void;
     /**
      * @hidden
      */
@@ -205,14 +279,24 @@ export declare class TextInput extends BaseInput<string> implements IonicFormInp
     * @hidden
     */
     checkClearOnEdit(inputValue: string): void;
-    _getScrollData(): ScrollData;
-    _relocateInput(shouldRelocate: boolean): void;
-    _enableScrollPadding(): void;
-    _enableHideCaretOnScroll(): void;
-    _enableResizeAssist(): void;
-    _pointerStart(ev: UIEvent): void;
-    _pointerEnd(ev: UIEvent): void;
-    _jsSetFocus(): void;
+    /**
+     * @hidden
+     * Angular2 Forms API method called by the view (formControlName) to register the
+     * onChange event handler that updates the model (Control).
+     * @param {Function} fn  the onChange event handler.
+     */
+    registerOnChange(fn: any): void;
+    /**
+     * @hidden
+     * Angular2 Forms API method called by the view (formControlName) to register
+     * the onTouched event handler that marks model (Control) as touched.
+     * @param {Function} fn  onTouched event handler.
+     */
+    registerOnTouched(fn: any): void;
+    /**
+     * @hidden
+     */
+    focusNext(): void;
 }
 /**
  * @hidden
@@ -222,6 +306,5 @@ export interface ScrollData {
     scrollAmount: number;
     scrollTo: number;
     scrollPadding: number;
-    scrollDuration: number;
     inputSafeY: number;
 }

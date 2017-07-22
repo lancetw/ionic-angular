@@ -1,11 +1,8 @@
 import { AfterViewInit, ElementRef, EventEmitter, Renderer, ViewContainerRef } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/takeUntil';
 import { App } from '../app/app';
 import { Config } from '../../config/config';
 import { DeepLinker } from '../../navigation/deep-linker';
 import { Ion } from '../ion';
-import { Keyboard } from '../../platform/keyboard';
 import { Tabs as ITabs } from '../../navigation/nav-interfaces';
 import { NavController } from '../../navigation/nav-controller';
 import { NavControllerBase } from '../../navigation/nav-controller-base';
@@ -167,13 +164,13 @@ export declare class Tabs extends Ion implements AfterViewInit, RootNode, ITabs 
     /** @internal */
     _selectHistory: string[];
     /** @internal */
-    _onDestroy: Subject<void>;
+    _resizeObs: any;
     /**
      * @input {number} The default selected tab index when first loaded. If a selected index isn't provided then it will use `0`, the first tab.
      */
     selectedIndex: number;
     /**
-     * @input {string} Set the tabbar layout: `icon-top`, `icon-start`, `icon-end`, `icon-bottom`, `icon-hide`, `title-hide`.
+     * @input {string} Set the tabbar layout: `icon-top`, `icon-left`, `icon-right`, `icon-bottom`, `icon-hide`, `title-hide`.
      */
     tabsLayout: string;
     /**
@@ -204,14 +201,7 @@ export declare class Tabs extends Ion implements AfterViewInit, RootNode, ITabs 
      * @hidden
      */
     parent: NavControllerBase;
-    constructor(parent: NavController, viewCtrl: ViewController, _app: App, config: Config, elementRef: ElementRef, _plt: Platform, renderer: Renderer, _linker: DeepLinker, keyboard?: Keyboard);
-    /**
-     * @internal
-     */
-    setTabbarHidden(tabbarHidden: boolean): void;
-    /**
-     * @internal
-     */
+    constructor(parent: NavController, viewCtrl: ViewController, _app: App, config: Config, elementRef: ElementRef, _plt: Platform, renderer: Renderer, _linker: DeepLinker);
     ngOnDestroy(): void;
     /**
      * @internal

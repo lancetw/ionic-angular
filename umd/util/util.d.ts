@@ -14,8 +14,7 @@ export declare function deepEqual(a: any, b: any): boolean;
 /** @hidden */
 export declare function debounce(fn: Function, wait: number, immediate?: boolean): any;
 /**
- * @hidden
- * Rewrites an absolute URL so it works across file and http based engines
+ * Rewrites an absolute URL so it works across file and http based engines.
  */
 export declare function normalizeURL(url: string): string;
 /**

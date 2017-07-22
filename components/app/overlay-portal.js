@@ -14,6 +14,7 @@ import { Config } from '../../config/config';
 import { DeepLinker } from '../../navigation/deep-linker';
 import { DomController } from '../../platform/dom-controller';
 import { GestureController } from '../../gestures/gesture-controller';
+import { Keyboard } from '../../platform/keyboard';
 import { NavControllerBase } from '../../navigation/nav-controller-base';
 import { Platform } from '../../platform/platform';
 import { TransitionController } from '../../transitions/transition-controller';
@@ -26,6 +27,7 @@ var OverlayPortal = (function (_super) {
      * @param {?} app
      * @param {?} config
      * @param {?} plt
+     * @param {?} keyboard
      * @param {?} elementRef
      * @param {?} zone
      * @param {?} renderer
@@ -37,8 +39,8 @@ var OverlayPortal = (function (_super) {
      * @param {?} domCtrl
      * @param {?} errHandler
      */
-    function OverlayPortal(app, config, plt, elementRef, zone, renderer, cfr, gestureCtrl, transCtrl, linker, viewPort, domCtrl, errHandler) {
-        var _this = _super.call(this, null, app, config, plt, elementRef, zone, renderer, cfr, gestureCtrl, transCtrl, linker, domCtrl, errHandler) || this;
+    function OverlayPortal(app, config, plt, keyboard, elementRef, zone, renderer, cfr, gestureCtrl, transCtrl, linker, viewPort, domCtrl, errHandler) {
+        var _this = _super.call(this, null, app, config, plt, keyboard, elementRef, zone, renderer, cfr, gestureCtrl, transCtrl, linker, domCtrl, errHandler) || this;
         _this._isPortal = true;
         _this._init = true;
         _this.setViewport(viewPort);
@@ -83,6 +85,7 @@ OverlayPortal.ctorParameters = function () { return [
     { type: App, decorators: [{ type: Inject, args: [forwardRef(function () { return App; }),] },] },
     { type: Config, },
     { type: Platform, },
+    { type: Keyboard, },
     { type: ElementRef, },
     { type: NgZone, },
     { type: Renderer, },

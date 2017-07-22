@@ -168,7 +168,6 @@ var ItemReorder = (function () {
         this._content = _content;
         this._enableReorder = false;
         this._visibleReorder = false;
-        this._isStart = false;
         this._lastToIndex = -1;
         /**
          * \@output {object} Emitted when the item is reordered. Emits an object
@@ -177,18 +176,6 @@ var ItemReorder = (function () {
         this.ionItemReorder = new EventEmitter();
         this._element = elementRef.nativeElement;
     }
-    Object.defineProperty(ItemReorder.prototype, "side", {
-        /**
-         * \@input {string} Which side of the view the ion-reorder should be placed. Default `"end"`.
-         * @param {?} side
-         * @return {?}
-         */
-        set: function (side) {
-            this._isStart = side === 'start';
-        },
-        enumerable: true,
-        configurable: true
-    });
     /**
      * @hidden
      * @return {?}
@@ -351,7 +338,6 @@ ItemReorder.decorators = [
                 host: {
                     '[class.reorder-enabled]': '_enableReorder',
                     '[class.reorder-visible]': '_visibleReorder',
-                    '[class.reorder-side-start]': '_isStart'
                 }
             },] },
 ];
@@ -368,7 +354,6 @@ ItemReorder.ctorParameters = function () { return [
 ]; };
 ItemReorder.propDecorators = {
     'ionItemReorder': [{ type: Output },],
-    'side': [{ type: Input, args: ['side',] },],
     'reorder': [{ type: Input },],
 };
 function ItemReorder_tsickle_Closure_declarations() {
@@ -385,8 +370,6 @@ function ItemReorder_tsickle_Closure_declarations() {
     ItemReorder.prototype._enableReorder;
     /** @type {?} */
     ItemReorder.prototype._visibleReorder;
-    /** @type {?} */
-    ItemReorder.prototype._isStart;
     /** @type {?} */
     ItemReorder.prototype._reorderGesture;
     /** @type {?} */

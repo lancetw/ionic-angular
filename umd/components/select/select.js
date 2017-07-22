@@ -142,31 +142,6 @@ var __extends = (this && this.__extends) || (function () {
      * };
      * ```
      *
-     * ### Object Value References
-     *
-     * When using objects for select values, it is possible for the identities of these objects to
-     * change if they are coming from a server or database, while the selected value's identity
-     * remains the same. For example, this can occur when an existing record with the desired object value
-     * is loaded into the select, but the newly retrieved select options now have different identities. This will
-     * result in the select appearing to have no value at all, even though the original selection in still intact.
-     *
-     * Using the `compareWith` `Input` is the solution to this problem
-     *
-     * ```html
-     * <ion-item>
-     *   <ion-label>Employee</ion-label>
-     *   <ion-select [(ngModel)]="employee" [compareWith]="compareFn">
-     *     <ion-option *ngFor="let employee of employees" [value]="employee">{{employee.name}}</ion-option>
-     *   </ion-select>
-     * </ion-item>
-     * ```
-     *
-     * ```ts
-     * compareFn(e1: Employee, e2: Employee): boolean {
-     *   return e1 && e2 ? e1.id === e2.id : e1 === e2;
-     * }
-     * ```
-     *
      * \@demo /docs/demos/src/select/
      */
     var Select = (function (_super) {
@@ -188,7 +163,6 @@ var __extends = (this && this.__extends) || (function () {
             _this._multi = false;
             _this._texts = [];
             _this._text = '';
-            _this._compareWith = util_1.isCheckedProperty;
             /**
              * \@input {string} The text to display on the cancel button. Default: `Cancel`.
              */
@@ -218,26 +192,15 @@ var __extends = (this && this.__extends) || (function () {
             _this.ionCancel = new core_1.EventEmitter();
             return _this;
         }
-        Object.defineProperty(Select.prototype, "compareWith", {
-            /**
-             * \@input {Function} The function that will be called to compare object values
-             * @param {?} fn
-             * @return {?}
-             */
-            set: function (fn) {
-                if (typeof fn !== 'function') {
-                    throw new Error("compareWith must be a function, but received " + JSON.stringify(fn));
-                }
-                this._compareWith = fn;
-            },
-            enumerable: true,
-            configurable: true
-        });
         /**
          * @param {?} ev
          * @return {?}
          */
         Select.prototype._click = function (ev) {
+            if (ev.detail === 0) {
+                // do not continue if the click event came from a form submit
+                return;
+            }
             ev.preventDefault();
             ev.stopPropagation();
             this.open(ev);
@@ -325,13 +288,10 @@ var __extends = (this && this.__extends) || (function () {
                         input.ionSelect.emit(input.value);
                     }
                 }); });
-                var /** @type {?} */ popoverCssClass = 'select-popover';
-                // If the user passed a cssClass for the select, add it
-                popoverCssClass += selectOptions.cssClass ? ' ' + selectOptions.cssClass : '';
                 overlay = new popover_1.Popover(this._app, select_popover_component_1.SelectPopover, {
                     options: popoverOptions
                 }, {
-                    cssClass: popoverCssClass
+                    cssClass: 'select-popover'
                 }, this.config, this.deepLinker);
                 // ev.target is readonly.
                 // place popover regarding to ion-select instead of .button-inner
@@ -472,7 +432,7 @@ var __extends = (this && this.__extends) || (function () {
                 this._options.forEach(function (option) {
                     // check this option if the option's value is in the values array
                     option.selected = _this.getValues().some(function (selectValue) {
-                        return _this._compareWith(selectValue, option.value);
+                        return util_1.isCheckedProperty(selectValue, option.value);
                     });
                     if (option.selected) {
                         _this._texts.push(option.text);
@@ -524,7 +484,6 @@ var __extends = (this && this.__extends) || (function () {
         'selectOptions': [{ type: core_1.Input },],
         'interface': [{ type: core_1.Input },],
         'selectedText': [{ type: core_1.Input },],
-        'compareWith': [{ type: core_1.Input },],
         'ionCancel': [{ type: core_1.Output },],
         '_click': [{ type: core_1.HostListener, args: ['click', ['$event'],] },],
         '_keyup': [{ type: core_1.HostListener, args: ['keyup.space',] },],
@@ -552,8 +511,6 @@ var __extends = (this && this.__extends) || (function () {
         Select.prototype._texts;
         /** @type {?} */
         Select.prototype._text;
-        /** @type {?} */
-        Select.prototype._compareWith;
         /**
          * \@input {string} The text to display on the cancel button. Default: `Cancel`.
          * @type {?}

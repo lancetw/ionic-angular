@@ -88,7 +88,7 @@ var __extends = (this && this.__extends) || (function () {
          * @return {?}
          */
         MenuContentGesture.prototype.onSlide = function (slide, ev) {
-            var /** @type {?} */ z = (this.menu.isRightSide !== this.plt.isRTL ? slide.min : slide.max);
+            var /** @type {?} */ z = (this.menu.isRightSide ? slide.min : slide.max);
             var /** @type {?} */ stepValue = (slide.distance / z);
             this.menu._swipeProgress(stepValue);
         };
@@ -98,7 +98,7 @@ var __extends = (this && this.__extends) || (function () {
          * @return {?}
          */
         MenuContentGesture.prototype.onSlideEnd = function (slide, ev) {
-            var /** @type {?} */ z = (this.menu.isRightSide !== this.plt.isRTL ? slide.min : slide.max);
+            var /** @type {?} */ z = (this.menu.isRightSide ? slide.min : slide.max);
             var /** @type {?} */ currentStepValue = (slide.distance / z);
             var /** @type {?} */ velocity = slide.velocity;
             z = Math.abs(z * 0.5);
@@ -116,7 +116,7 @@ var __extends = (this && this.__extends) || (function () {
          */
         MenuContentGesture.prototype.getElementStartPos = function (slide, ev) {
             var /** @type {?} */ menu = this.menu;
-            if (menu.isRightSide !== this.plt.isRTL) {
+            if (menu.isRightSide) {
                 return menu.isOpen ? slide.min : slide.max;
             }
             // left menu
@@ -127,7 +127,7 @@ var __extends = (this && this.__extends) || (function () {
          */
         MenuContentGesture.prototype.getSlideBoundaries = function () {
             var /** @type {?} */ menu = this.menu;
-            if (menu.isRightSide !== this.plt.isRTL) {
+            if (menu.isRightSide) {
                 return {
                     min: -menu.width(),
                     max: 0

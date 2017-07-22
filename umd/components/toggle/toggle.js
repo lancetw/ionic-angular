@@ -40,7 +40,7 @@ var __extends = (this && this.__extends) || (function () {
      * Toggles can also have colors assigned to them, by adding any color
      * attribute.
      *
-     * See the [Angular Docs](https://angular.io/docs/ts/latest/guide/forms.html)
+     * See the [Angular 2 Docs](https://angular.io/docs/ts/latest/guide/forms.html)
      * for more info on forms and inputs.
      *
      * \@usage
@@ -124,7 +124,7 @@ var __extends = (this && this.__extends) || (function () {
          * @hidden
          * @return {?}
          */
-        Toggle.prototype._inputUpdated = function () { };
+        Toggle.prototype._inputCheckHasValue = function () { };
         /**
          * @hidden
          * @param {?} val
@@ -159,10 +159,26 @@ var __extends = (this && this.__extends) || (function () {
                 (void 0) /* assert */;
                 return;
             }
-            if (this._shouldToggle(currentX, -15)) {
+            var /** @type {?} */ dirty = false;
+            var /** @type {?} */ value;
+            var /** @type {?} */ activated;
+            if (this._value) {
+                if (currentX + 15 < this._startX) {
+                    dirty = true;
+                    value = false;
+                    activated = true;
+                }
+            }
+            else if (currentX - 15 > this._startX) {
+                dirty = true;
+                value = true;
+                activated = (currentX < this._startX + 5);
+            }
+            if (dirty) {
                 this._zone.run(function () {
-                    _this.value = !_this.value;
+                    _this.value = value;
                     _this._startX = currentX;
+                    _this._activated = activated;
                     _this._haptic.selection();
                 });
             }
@@ -180,32 +196,20 @@ var __extends = (this && this.__extends) || (function () {
             }
             (void 0) /* console.debug */;
             this._zone.run(function () {
-                if (_this._shouldToggle(endX, 4)) {
-                    _this.value = !_this.value;
+                if (_this._value) {
+                    if (_this._startX + 4 > endX) {
+                        _this.value = false;
+                        _this._haptic.selection();
+                    }
+                }
+                else if (_this._startX - 4 < endX) {
+                    _this.value = true;
                     _this._haptic.selection();
                 }
                 _this._activated = false;
                 _this._fireBlur();
                 _this._startX = null;
             });
-        };
-        /**
-         * @hidden
-         * @param {?} currentX
-         * @param {?} margin
-         * @return {?}
-         */
-        Toggle.prototype._shouldToggle = function (currentX, margin) {
-            var /** @type {?} */ isLTR = !this._plt.isRTL;
-            var /** @type {?} */ startX = this._startX;
-            if (this._value) {
-                return (isLTR && (startX + margin > currentX)) ||
-                    (!isLTR && (startX - margin < currentX));
-            }
-            else {
-                return (isLTR && (startX - margin < currentX)) ||
-                    (!isLTR && (startX + margin > currentX));
-            }
         };
         /**
          * @hidden
@@ -219,6 +223,13 @@ var __extends = (this && this.__extends) || (function () {
                 ev.stopPropagation();
                 this.value = !this.value;
             }
+        };
+        /**
+         * @hidden
+         * @return {?}
+         */
+        Toggle.prototype.initFocus = function () {
+            this._elementRef.nativeElement.querySelector('button').focus();
         };
         /**
          * @hidden

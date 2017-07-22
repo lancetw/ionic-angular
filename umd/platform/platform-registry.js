@@ -122,7 +122,6 @@
             ],
             settings: {
                 autoFocusAssist: 'delay',
-                hideCaretOnScroll: true,
                 hoverCSS: false,
                 inputBlurring: platform_utils_1.isIos,
                 inputCloning: platform_utils_1.isIos,
@@ -134,8 +133,6 @@
                 tapPolyfill: platform_utils_1.isIosUIWebView,
                 virtualScrollEventAssist: platform_utils_1.isIosUIWebView,
                 disableScrollAssist: platform_utils_1.isIos,
-                keyboardResizes: keyboardResizes,
-                resizeAssist: keyboardResizes,
             },
             /**
              * @param {?} plt
@@ -281,17 +278,6 @@
             }
         }
     };
-    /**
-     * @param {?} plt
-     * @return {?}
-     */
-    function keyboardResizes(plt) {
-        var /** @type {?} */ win = (plt.win());
-        if (win.Ionic && win.Ionic.keyboardResizes === true) {
-            return true;
-        }
-        return false;
-    }
     exports.PlatformConfigToken = new core_1.OpaqueToken('PLTCONFIG');
     /**
      * @return {?}

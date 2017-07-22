@@ -1,4 +1,4 @@
-import { Injectable, NgZone, EventEmitter } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Config } from '../config/config';
 import { DomController } from './dom-controller';
 import { isTextInput } from '../util/dom';
@@ -30,78 +30,22 @@ export class Keyboard {
         this._plt = _plt;
         this._zone = _zone;
         this._dom = _dom;
-        this.willShow = new EventEmitter();
-        this.willHide = new EventEmitter();
-        this.didShow = new EventEmitter();
-        this.didHide = new EventEmitter();
-        this.eventsAvailable = false;
         this.focusOutline(config.get('focusOutline'));
         const win = _plt.win();
-        if (config.getBoolean('keyboardResizes', false)) {
-            this.listenV2(win);
-        }
-        else {
-            this.listenV1(win);
-        }
-    }
-    /**
-     * @param {?} win
-     * @return {?}
-     */
-    listenV2(win) {
-        const /** @type {?} */ platform = this._plt;
-        platform.registerListener(win, 'keyboardWillShow', () => {
-            this._zone.run(() => {
-                this.willShow.emit();
-            });
-        }, { zone: false, passive: true });
-        platform.registerListener(win, 'keyboardWillHide', () => {
-            this._zone.run(() => {
-                this.willHide.emit();
-            });
-        }, { zone: false, passive: true });
-        platform.registerListener(win, 'keyboardDidShow', () => {
-            this._zone.run(() => {
-                this.didShow.emit();
-            });
-        }, { zone: false, passive: true });
-        platform.registerListener(win, 'keyboardDidHide', () => {
-            this._zone.run(() => {
-                this.didHide.emit();
-            });
-        }, { zone: false, passive: true });
-        this.eventsAvailable = true;
-    }
-    /**
-     * @param {?} win
-     * @return {?}
-     */
-    listenV1(win) {
-        const /** @type {?} */ platform = this._plt;
-        platform.registerListener(win, 'native.keyboardhide', () => {
-            this.blurActiveInput(true);
-        }, { zone: false, passive: true });
-        platform.registerListener(win, 'native.keyboardshow', () => {
-            this.blurActiveInput(false);
-        }, { zone: false, passive: true });
-    }
-    /**
-     * @param {?} shouldBlur
-     * @return {?}
-     */
-    blurActiveInput(shouldBlur) {
-        const /** @type {?} */ platform = this._plt;
-        platform.cancelTimeout(this._tmr);
-        if (shouldBlur) {
-            this._tmr = platform.timeout(() => {
+        _plt.registerListener(win, 'native.keyboardhide', () => {
+            _plt.cancelTimeout(this._tmr);
+            this._tmr = _plt.timeout(() => {
                 // this custom cordova plugin event fires when the keyboard will hide
                 // useful when the virtual keyboard is closed natively
-                // https://github.com/ionic-team/ionic-plugin-keyboard
+                // https://github.com/driftyco/ionic-plugin-keyboard
                 if (this.isOpen()) {
-                    platform.focusOutActiveElement();
+                    this._plt.focusOutActiveElement();
                 }
             }, 80);
-        }
+        }, { zone: false, passive: true });
+        _plt.registerListener(win, 'native.keyboardshow', () => {
+            _plt.cancelTimeout(this._tmr);
+        }, { zone: false, passive: true });
     }
     /**
      * Check to see if the keyboard is open or not.
@@ -293,16 +237,6 @@ function Keyboard_tsickle_Closure_declarations() {
     Keyboard.ctorParameters;
     /** @type {?} */
     Keyboard.prototype._tmr;
-    /** @type {?} */
-    Keyboard.prototype.willShow;
-    /** @type {?} */
-    Keyboard.prototype.willHide;
-    /** @type {?} */
-    Keyboard.prototype.didShow;
-    /** @type {?} */
-    Keyboard.prototype.didHide;
-    /** @type {?} */
-    Keyboard.prototype.eventsAvailable;
     /** @type {?} */
     Keyboard.prototype._plt;
     /** @type {?} */

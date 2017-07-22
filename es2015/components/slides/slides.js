@@ -88,7 +88,7 @@ import { ViewController } from '../../navigation/view-controller';
  *
  *   slideChanged() {
  *     let currentIndex = this.slides.getActiveIndex();
- *     console.log('Current index is', currentIndex);
+ *     console.log("Current index is", currentIndex);
  *   }
  * }
  * ```
@@ -114,7 +114,7 @@ import { ViewController } from '../../navigation/view-controller';
  * ```
  *
  * To see all of the available options, take a look at the
- * [source for slides](https://github.com/ionic-team/ionic/blob/master/src/components/slides/slides.ts).
+ * [source for slides](https://github.com/driftyco/ionic/blob/master/src/components/slides/slides.ts).
  *
  * \@demo /docs/demos/src/slides/
  * @see {\@link /docs/components#slides Slides Component Docs}
@@ -172,7 +172,6 @@ export class Slides extends Ion {
         this.roundLengths = false;
         this._spaceBetween = 0;
         this._slidesPerView = 1;
-        this._centeredSlides = false;
         /**
          * @hidden
          */
@@ -185,6 +184,10 @@ export class Slides extends Ion {
          * @hidden
          */
         this.slidesPerGroup = 1;
+        /**
+         * @hidden
+         */
+        this.centeredSlides = false;
         /**
          * @hidden
          */
@@ -727,21 +730,7 @@ export class Slides extends Ion {
      * @return {?}
      */
     set slidesPerView(val) {
-        this._slidesPerView = val === 'auto' ? 'auto' : parseFloat(val);
-    }
-    /**
-     * \@input {boolean} Center a slide in the middle of the screen.
-     * @return {?}
-     */
-    get centeredSlides() {
-        return this._centeredSlides;
-    }
-    /**
-     * @param {?} val
-     * @return {?}
-     */
-    set centeredSlides(val) {
-        this._centeredSlides = isTrueProperty(val);
+        this._slidesPerView = val === 'auto' ? 'auto' : parseInt(val, 10);
     }
     /**
      * @return {?}
@@ -974,7 +963,6 @@ Slides.propDecorators = {
     'zoom': [{ type: Input },],
     'spaceBetween': [{ type: Input },],
     'slidesPerView': [{ type: Input },],
-    'centeredSlides': [{ type: Input },],
     'ionSlideWillChange': [{ type: Output },],
     'ionSlideDidChange': [{ type: Output },],
     'ionSlideDrag': [{ type: Output },],
@@ -1058,8 +1046,6 @@ function Slides_tsickle_Closure_declarations() {
     Slides.prototype._spaceBetween;
     /** @type {?} */
     Slides.prototype._slidesPerView;
-    /** @type {?} */
-    Slides.prototype._centeredSlides;
     /**
      * @hidden
      * @type {?}
@@ -1075,6 +1061,11 @@ function Slides_tsickle_Closure_declarations() {
      * @type {?}
      */
     Slides.prototype.slidesPerGroup;
+    /**
+     * @hidden
+     * @type {?}
+     */
+    Slides.prototype.centeredSlides;
     /**
      * @hidden
      * @type {?}

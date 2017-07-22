@@ -46,6 +46,7 @@ var PopoverCmp = (function () {
      * @return {?}
      */
     PopoverCmp.prototype.ionViewPreLoad = function () {
+        this._plt.focusOutActiveElement();
         this._load(this._navParams.data.component);
     };
     /**

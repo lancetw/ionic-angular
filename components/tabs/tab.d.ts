@@ -4,6 +4,7 @@ import { Config } from '../../config/config';
 import { DeepLinker } from '../../navigation/deep-linker';
 import { DomController } from '../../platform/dom-controller';
 import { GestureController } from '../../gestures/gesture-controller';
+import { Keyboard } from '../../platform/keyboard';
 import { Tab as ITab } from '../../navigation/nav-interfaces';
 import { NavControllerBase } from '../../navigation/nav-controller-base';
 import { NavOptions } from '../../navigation/nav-util';
@@ -67,8 +68,8 @@ import { ViewController } from '../../navigation/view-controller';
  *
  *   // set some user information on chatParams
  *   chatParams = {
- *     user1: 'admin',
- *     user2: 'ionic'
+ *     user1: "admin",
+ *     user2: "ionic"
  *   };
  *
  *   constructor() {
@@ -82,7 +83,7 @@ import { ViewController } from '../../navigation/view-controller';
  * ```ts
  * export class ChatPage {
  *   constructor(navParams: NavParams) {
- *     console.log('Passed params', navParams.data);
+ *     console.log("Passed params", navParams.data);
  *   }
  * }
  * ```
@@ -205,7 +206,7 @@ export declare class Tab extends NavControllerBase implements ITab {
      * @output {Tab} Emitted when the current tab is selected.
      */
     ionSelect: EventEmitter<Tab>;
-    constructor(parent: Tabs, app: App, config: Config, plt: Platform, elementRef: ElementRef, zone: NgZone, renderer: Renderer, cfr: ComponentFactoryResolver, _cd: ChangeDetectorRef, gestureCtrl: GestureController, transCtrl: TransitionController, linker: DeepLinker, _dom: DomController, errHandler: ErrorHandler);
+    constructor(parent: Tabs, app: App, config: Config, plt: Platform, keyboard: Keyboard, elementRef: ElementRef, zone: NgZone, renderer: Renderer, cfr: ComponentFactoryResolver, _cd: ChangeDetectorRef, gestureCtrl: GestureController, transCtrl: TransitionController, linker: DeepLinker, _dom: DomController, errHandler: ErrorHandler);
     /**
      * @hidden
      */

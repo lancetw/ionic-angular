@@ -179,7 +179,6 @@
             this._content = _content;
             this._enableReorder = false;
             this._visibleReorder = false;
-            this._isStart = false;
             this._lastToIndex = -1;
             /**
              * \@output {object} Emitted when the item is reordered. Emits an object
@@ -188,18 +187,6 @@
             this.ionItemReorder = new core_1.EventEmitter();
             this._element = elementRef.nativeElement;
         }
-        Object.defineProperty(ItemReorder.prototype, "side", {
-            /**
-             * \@input {string} Which side of the view the ion-reorder should be placed. Default `"end"`.
-             * @param {?} side
-             * @return {?}
-             */
-            set: function (side) {
-                this._isStart = side === 'start';
-            },
-            enumerable: true,
-            configurable: true
-        });
         /**
          * @hidden
          * @return {?}
@@ -361,7 +348,6 @@
                     host: {
                         '[class.reorder-enabled]': '_enableReorder',
                         '[class.reorder-visible]': '_visibleReorder',
-                        '[class.reorder-side-start]': '_isStart'
                     }
                 },] },
     ];
@@ -378,7 +364,6 @@
     ]; };
     ItemReorder.propDecorators = {
         'ionItemReorder': [{ type: core_1.Output },],
-        'side': [{ type: core_1.Input, args: ['side',] },],
         'reorder': [{ type: core_1.Input },],
     };
     exports.ItemReorder = ItemReorder;
@@ -396,8 +381,6 @@
         ItemReorder.prototype._enableReorder;
         /** @type {?} */
         ItemReorder.prototype._visibleReorder;
-        /** @type {?} */
-        ItemReorder.prototype._isStart;
         /** @type {?} */
         ItemReorder.prototype._reorderGesture;
         /** @type {?} */

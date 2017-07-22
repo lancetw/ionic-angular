@@ -1,12 +1,9 @@
 import { Component, ElementRef, EventEmitter, forwardRef, Input, Output, Optional, Renderer, ViewChild, ViewContainerRef, ViewEncapsulation } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/takeUntil';
 import { App } from '../app/app';
 import { Config } from '../../config/config';
 import { DeepLinker } from '../../navigation/deep-linker';
 import { Ion } from '../ion';
 import { isBlank } from '../../util/util';
-import { Keyboard } from '../../platform/keyboard';
 import { NavController } from '../../navigation/nav-controller';
 import { getComponent, DIRECTION_SWITCH } from '../../navigation/nav-util';
 import { RootNode } from '../split-pane/split-pane';
@@ -155,9 +152,8 @@ export class Tabs extends Ion {
      * @param {?} _plt
      * @param {?} renderer
      * @param {?} _linker
-     * @param {?=} keyboard
      */
-    constructor(parent, viewCtrl, _app, config, elementRef, _plt, renderer, _linker, keyboard) {
+    constructor(parent, viewCtrl, _app, config, elementRef, _plt, renderer, _linker) {
         super(config, elementRef, renderer, 'tabs');
         this.viewCtrl = viewCtrl;
         this._app = _app;
@@ -175,10 +171,6 @@ export class Tabs extends Ion {
          * \@internal
          */
         this._selectHistory = [];
-        /**
-         * \@internal
-         */
-        this._onDestroy = new Subject();
         /**
          * \@output {any} Emitted when the tab changes.
          */
@@ -207,33 +199,12 @@ export class Tabs extends Ion {
             viewCtrl._setContent(this);
             viewCtrl._setContentRef(elementRef);
         }
-        const keyboardResizes = config.getBoolean('keyboardResizes', false);
-        if (keyboard && keyboardResizes) {
-            keyboard.willHide
-                .takeUntil(this._onDestroy)
-                .subscribe(() => {
-                this._plt.timeout(() => this.setTabbarHidden(false), 50);
-            });
-            keyboard.willShow
-                .takeUntil(this._onDestroy)
-                .subscribe(() => this.setTabbarHidden(true));
-        }
     }
     /**
-     * \@internal
-     * @param {?} tabbarHidden
-     * @return {?}
-     */
-    setTabbarHidden(tabbarHidden) {
-        this.setElementClass('tabbar-hidden', tabbarHidden);
-        this.resize();
-    }
-    /**
-     * \@internal
      * @return {?}
      */
     ngOnDestroy() {
-        this._onDestroy.next();
+        this._resizeObs && this._resizeObs.unsubscribe();
         this.parent.unregisterChildNav(this);
     }
     /**
@@ -245,9 +216,9 @@ export class Tabs extends Ion {
         this._setConfig('tabsLayout', 'icon-top');
         this._setConfig('tabsHighlight', this.tabsHighlight);
         if (this.tabsHighlight) {
-            this._plt.resize
-                .takeUntil(this._onDestroy)
-                .subscribe(() => this._highlight.select(this.getSelected()));
+            this._resizeObs = this._plt.resize.subscribe(() => {
+                this._highlight.select(this.getSelected());
+            });
         }
         this.initTabs();
     }
@@ -556,7 +527,6 @@ Tabs.ctorParameters = () => [
     { type: Platform, },
     { type: Renderer, },
     { type: DeepLinker, },
-    { type: Keyboard, },
 ];
 Tabs.propDecorators = {
     'selectedIndex': [{ type: Input },],
@@ -617,14 +587,14 @@ function Tabs_tsickle_Closure_declarations() {
      * \@internal
      * @type {?}
      */
-    Tabs.prototype._onDestroy;
+    Tabs.prototype._resizeObs;
     /**
      * \@input {number} The default selected tab index when first loaded. If a selected index isn't provided then it will use `0`, the first tab.
      * @type {?}
      */
     Tabs.prototype.selectedIndex;
     /**
-     * \@input {string} Set the tabbar layout: `icon-top`, `icon-start`, `icon-end`, `icon-bottom`, `icon-hide`, `title-hide`.
+     * \@input {string} Set the tabbar layout: `icon-top`, `icon-left`, `icon-right`, `icon-bottom`, `icon-hide`, `title-hide`.
      * @type {?}
      */
     Tabs.prototype.tabsLayout;

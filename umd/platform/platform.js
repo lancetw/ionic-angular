@@ -148,7 +148,7 @@
          *   constructor(public plt: Platform) {
          *     if (this.plt.is('ios')) {
          *       // This will only print when on iOS
-         *       console.log('I am an iOS device!');
+         *       console.log("I'm an iOS device!");
          *     }
          *   }
          * }
@@ -318,7 +318,7 @@
          * @return {?}
          */
         Platform.prototype.setDir = function (dir, updateDocument) {
-            this._dir = dir;
+            this._dir = dir = (dir || '').toLowerCase();
             this.isRTL = (dir === 'rtl');
             if (updateDocument !== false) {
                 this._doc['documentElement'].setAttribute('dir', dir);
@@ -1230,8 +1230,7 @@
         // set values from "document"
         var /** @type {?} */ docElement = doc.documentElement;
         plt.setDocument(doc);
-        var /** @type {?} */ dir = docElement.dir;
-        plt.setDir(dir === 'rtl' ? 'rtl' : 'ltr', !dir);
+        plt.setDir(docElement.dir, false);
         plt.setLang(docElement.lang, false);
         // set css properties
         plt.setCssProps(docElement);

@@ -23,8 +23,6 @@ export declare class LoadingCmp {
     ionViewWillEnter(): void;
     ionViewDidLeave(): void;
     ionViewDidEnter(): void;
-    keyUp(ev: KeyboardEvent): void;
-    bdClick(): void;
     dismiss(role: string): Promise<any>;
     ngOnDestroy(): void;
 }

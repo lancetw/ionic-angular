@@ -108,7 +108,6 @@ var Toast = (function (_super) {
     Toast.prototype.present = function (navOptions) {
         if (navOptions === void 0) { navOptions = {}; }
         navOptions.disableApp = false;
-        navOptions.keyboardClose = false;
         return this._app.present(this, navOptions, PORTAL_TOAST);
     };
     /**

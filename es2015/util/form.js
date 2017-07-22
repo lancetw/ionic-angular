@@ -22,7 +22,9 @@ export class Form {
      */
     deregister(input) {
         removeArrayItem(this._inputs, input);
-        this.unsetAsFocused(input);
+        if (input === this._focused) {
+            this._focused = null;
+        }
     }
     /**
      * @param {?} input
@@ -32,32 +34,22 @@ export class Form {
         this._focused = input;
     }
     /**
-     * @param {?} input
-     * @return {?}
-     */
-    unsetAsFocused(input) {
-        if (input === this._focused) {
-            this._focused = null;
-        }
-    }
-    /**
      * Focuses the next input element, if it exists.
      * @param {?} currentInput
      * @return {?}
      */
     tabFocus(currentInput) {
-        const /** @type {?} */ inputs = this._inputs;
-        let /** @type {?} */ index = inputs.indexOf(currentInput) + 1;
-        if (index > 0 && index < inputs.length) {
-            var /** @type {?} */ nextInput = inputs[index];
+        let /** @type {?} */ index = this._inputs.indexOf(currentInput);
+        if (index > -1 && (index + 1) < this._inputs.length) {
+            let /** @type {?} */ nextInput = this._inputs[index + 1];
             if (nextInput !== this._focused) {
                 (void 0) /* console.debug */;
                 return nextInput.initFocus();
             }
         }
-        index = inputs.indexOf(this._focused);
+        index = this._inputs.indexOf(this._focused);
         if (index > 0) {
-            var /** @type {?} */ previousInput = inputs[index - 1];
+            let /** @type {?} */ previousInput = this._inputs[index - 1];
             if (previousInput) {
                 (void 0) /* console.debug */;
                 previousInput.initFocus();

@@ -130,7 +130,7 @@ var ItemReorderGesture = (function () {
      * @return {?}
      */
     ItemReorderGesture.prototype.itemForCoord = function (coord) {
-        var /** @type {?} */ sideOffset = this.reorderList._isStart === this.plt.isRTL ? -100 : 100;
+        var /** @type {?} */ sideOffset = this.plt.isRTL ? 100 : -100;
         var /** @type {?} */ x = this.offset.x + sideOffset;
         var /** @type {?} */ y = coord.y;
         var /** @type {?} */ element = this.plt.getElementFromPoint(x, y);

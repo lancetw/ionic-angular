@@ -98,7 +98,7 @@
     }
     exports.isTextInput = isTextInput;
     exports.NON_TEXT_INPUT_REGEX = /^(radio|checkbox|range|file|submit|reset|color|image|button)$/i;
-    var /** @type {?} */ SKIP_INPUT_ATTR = ['value', 'checked', 'disabled', 'readonly', 'placeholder', 'type', 'class', 'style', 'id', 'autofocus', 'autocomplete', 'autocorrect'];
+    var /** @type {?} */ skipInputAttrsReg = /^(value|checked|disabled|type|class|style|id|autofocus|autocomplete|autocorrect)$/i;
     /**
      * @param {?} srcElement
      * @param {?} destElement
@@ -111,7 +111,7 @@
         var /** @type {?} */ attrs = srcElement.attributes;
         for (var /** @type {?} */ i = 0; i < attrs.length; i++) {
             var /** @type {?} */ attr = attrs[i];
-            if (SKIP_INPUT_ATTR.indexOf(attr.name) === -1) {
+            if (!skipInputAttrsReg.test(attr.name)) {
                 destElement.setAttribute(attr.name, attr.value);
             }
         }

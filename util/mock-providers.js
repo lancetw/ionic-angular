@@ -17,6 +17,7 @@ import { DomController } from '../platform/dom-controller';
 import { GestureController } from '../gestures/gesture-controller';
 import { Haptic } from '../tap-click/haptic';
 import { IonicApp } from '../components/app/app-root';
+import { Keyboard } from '../platform/keyboard';
 import { Menu } from '../components/menu/menu';
 import { NavControllerBase } from '../navigation/nav-controller-base';
 import { OverlayPortal } from '../components/app/overlay-portal';
@@ -635,13 +636,14 @@ export function mockNavController() {
     var /** @type {?} */ app = mockApp(config, platform);
     var /** @type {?} */ zone = mockZone();
     var /** @type {?} */ dom = mockDomController(platform);
+    var /** @type {?} */ keyboard = new Keyboard(config, platform, zone, dom);
     var /** @type {?} */ elementRef = mockElementRef();
     var /** @type {?} */ renderer = mockRenderer();
     var /** @type {?} */ componentFactoryResolver = null;
     var /** @type {?} */ gestureCtrl = new GestureController(app);
     var /** @type {?} */ linker = mockDeepLinker(null, app);
     var /** @type {?} */ trnsCtrl = mockTrasitionController(config);
-    var /** @type {?} */ nav = new NavControllerBase(null, app, config, platform, elementRef, zone, renderer, componentFactoryResolver, gestureCtrl, trnsCtrl, linker, dom, null);
+    var /** @type {?} */ nav = new NavControllerBase(null, app, config, platform, keyboard, elementRef, zone, renderer, componentFactoryResolver, gestureCtrl, trnsCtrl, linker, dom, null);
     nav._viewInit = function (enteringView) {
         enteringView.init(mockComponentRef());
         enteringView._state = STATE_INITIALIZED;
@@ -664,6 +666,7 @@ export function mockNavController() {
 export function mockOverlayPortal(app, config, plt) {
     var /** @type {?} */ zone = mockZone();
     var /** @type {?} */ dom = mockDomController(plt);
+    var /** @type {?} */ keyboard = new Keyboard(config, plt, zone, dom);
     var /** @type {?} */ elementRef = mockElementRef();
     var /** @type {?} */ renderer = mockRenderer();
     var /** @type {?} */ componentFactoryResolver = null;
@@ -671,7 +674,7 @@ export function mockOverlayPortal(app, config, plt) {
     var /** @type {?} */ serializer = new UrlSerializer(null);
     var /** @type {?} */ location = mockLocation();
     var /** @type {?} */ deepLinker = new DeepLinker(app, serializer, location, null, null);
-    return new OverlayPortal(app, config, plt, elementRef, zone, renderer, componentFactoryResolver, gestureCtrl, null, deepLinker, null, dom, null);
+    return new OverlayPortal(app, config, plt, keyboard, elementRef, zone, renderer, componentFactoryResolver, gestureCtrl, null, deepLinker, null, dom, null);
 }
 /**
  * @param {?} parentTabs
@@ -683,13 +686,14 @@ export function mockTab(parentTabs) {
     var /** @type {?} */ app = ((parentTabs))._app || mockApp(config, platform);
     var /** @type {?} */ zone = mockZone();
     var /** @type {?} */ dom = mockDomController(platform);
+    var /** @type {?} */ keyboard = new Keyboard(config, platform, zone, dom);
     var /** @type {?} */ elementRef = mockElementRef();
     var /** @type {?} */ renderer = mockRenderer();
     var /** @type {?} */ changeDetectorRef = mockChangeDetectorRef();
     var /** @type {?} */ compiler = null;
     var /** @type {?} */ gestureCtrl = new GestureController(app);
     var /** @type {?} */ linker = mockDeepLinker(null, app);
-    var /** @type {?} */ tab = new Tab(parentTabs, app, config, platform, elementRef, zone, renderer, compiler, changeDetectorRef, gestureCtrl, null, linker, dom, null);
+    var /** @type {?} */ tab = new Tab(parentTabs, app, config, platform, keyboard, elementRef, zone, renderer, compiler, changeDetectorRef, gestureCtrl, null, linker, dom, null);
     tab.load = function (opts, cb) {
         cb();
     };

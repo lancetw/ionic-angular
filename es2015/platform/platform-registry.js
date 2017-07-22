@@ -111,7 +111,6 @@ export const /** @type {?} */ PLATFORM_CONFIGS = {
         ],
         settings: {
             autoFocusAssist: 'delay',
-            hideCaretOnScroll: true,
             hoverCSS: false,
             inputBlurring: isIos,
             inputCloning: isIos,
@@ -123,8 +122,6 @@ export const /** @type {?} */ PLATFORM_CONFIGS = {
             tapPolyfill: isIosUIWebView,
             virtualScrollEventAssist: isIosUIWebView,
             disableScrollAssist: isIos,
-            keyboardResizes: keyboardResizes,
-            resizeAssist: keyboardResizes,
         },
         /**
          * @param {?} plt
@@ -270,17 +267,6 @@ export const /** @type {?} */ PLATFORM_CONFIGS = {
         }
     }
 };
-/**
- * @param {?} plt
- * @return {?}
- */
-function keyboardResizes(plt) {
-    const /** @type {?} */ win = (plt.win());
-    if (win.Ionic && win.Ionic.keyboardResizes === true) {
-        return true;
-    }
-    return false;
-}
 export const /** @type {?} */ PlatformConfigToken = new OpaqueToken('PLTCONFIG');
 /**
  * @return {?}

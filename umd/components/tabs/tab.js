@@ -14,7 +14,7 @@ var __extends = (this && this.__extends) || (function () {
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "@angular/core", "../app/app", "../../config/config", "../../navigation/deep-linker", "../../platform/dom-controller", "../../gestures/gesture-controller", "../../util/util", "../../navigation/nav-controller-base", "../../platform/platform", "./tabs", "../../transitions/transition-controller"], factory);
+        define(["require", "exports", "@angular/core", "../app/app", "../../config/config", "../../navigation/deep-linker", "../../platform/dom-controller", "../../gestures/gesture-controller", "../../util/util", "../../platform/keyboard", "../../navigation/nav-controller-base", "../../platform/platform", "./tabs", "../../transitions/transition-controller"], factory);
     }
 })(function (require, exports) {
     "use strict";
@@ -26,6 +26,7 @@ var __extends = (this && this.__extends) || (function () {
     var dom_controller_1 = require("../../platform/dom-controller");
     var gesture_controller_1 = require("../../gestures/gesture-controller");
     var util_1 = require("../../util/util");
+    var keyboard_1 = require("../../platform/keyboard");
     var nav_controller_base_1 = require("../../navigation/nav-controller-base");
     var platform_1 = require("../../platform/platform");
     var tabs_1 = require("./tabs");
@@ -85,8 +86,8 @@ var __extends = (this && this.__extends) || (function () {
      *
      *   // set some user information on chatParams
      *   chatParams = {
-     *     user1: 'admin',
-     *     user2: 'ionic'
+     *     user1: "admin",
+     *     user2: "ionic"
      *   };
      *
      *   constructor() {
@@ -100,7 +101,7 @@ var __extends = (this && this.__extends) || (function () {
      * ```ts
      * export class ChatPage {
      *   constructor(navParams: NavParams) {
-     *     console.log('Passed params', navParams.data);
+     *     console.log("Passed params", navParams.data);
      *   }
      * }
      * ```
@@ -143,6 +144,7 @@ var __extends = (this && this.__extends) || (function () {
          * @param {?} app
          * @param {?} config
          * @param {?} plt
+         * @param {?} keyboard
          * @param {?} elementRef
          * @param {?} zone
          * @param {?} renderer
@@ -154,10 +156,10 @@ var __extends = (this && this.__extends) || (function () {
          * @param {?} _dom
          * @param {?} errHandler
          */
-        function Tab(parent, app, config, plt, elementRef, zone, renderer, cfr, _cd, gestureCtrl, transCtrl, linker, _dom, errHandler) {
+        function Tab(parent, app, config, plt, keyboard, elementRef, zone, renderer, cfr, _cd, gestureCtrl, transCtrl, linker, _dom, errHandler) {
             var _this = 
             // A Tab is a NavController for its child pages
-            _super.call(this, parent, app, config, plt, elementRef, zone, renderer, cfr, gestureCtrl, transCtrl, linker, _dom, errHandler) || this;
+            _super.call(this, parent, app, config, plt, keyboard, elementRef, zone, renderer, cfr, gestureCtrl, transCtrl, linker, _dom, errHandler) || this;
             _this._cd = _cd;
             _this.linker = linker;
             _this._dom = _dom;
@@ -381,6 +383,7 @@ var __extends = (this && this.__extends) || (function () {
         { type: app_1.App, },
         { type: config_1.Config, },
         { type: platform_1.Platform, },
+        { type: keyboard_1.Keyboard, },
         { type: core_1.ElementRef, },
         { type: core_1.NgZone, },
         { type: core_1.Renderer, },

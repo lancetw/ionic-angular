@@ -39,7 +39,7 @@ import { Ion } from '../ion';
   *
   * <ion-chip>
   *   <ion-avatar>
-  *     <img src="assets/img/my-img.png">
+  *     <img src="img/my-img.png">
   *   </ion-avatar>
   *   <ion-label>Default</ion-label>
   * </ion-chip>

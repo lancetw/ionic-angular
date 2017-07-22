@@ -100,11 +100,11 @@ html {
 }
 
 body {
-  @include margin(0);
-  @include padding(0);
-
   position: fixed;
   overflow: hidden;
+
+  margin: 0;
+  padding: 0;
 
   width: 100%;
   max-width: 100%;
@@ -145,7 +145,8 @@ h3,
 h4,
 h5,
 h6 {
-  @include margin(1.6rem, null, 1rem, null);
+  margin-top: 1.6rem;
+  margin-bottom: 1rem;
 
   font-weight: $headings-font-weight;
   line-height: $headings-line-height;
@@ -159,7 +160,7 @@ h6 {
   h5,
   h6 {
     &:first-child {
-      @include margin(-.3rem, null, null, null);
+      margin-top: -.3rem;
     }
   }
 }
@@ -167,17 +168,17 @@ h6 {
 h1 + h2,
 h1 + h3,
 h2 + h3 {
-  @include margin(-.3rem, null, null, null);
+  margin-top: -.3rem;
 }
 
 h1 {
-  @include margin(2rem, null, null, null);
+  margin-top: 2rem;
 
   font-size: $h1-font-size;
 }
 
 h2 {
-  @include margin(1.8rem, null, null, null);
+  margin-top: 1.8rem;
 
   font-size: $h2-font-size;
 }
@@ -228,9 +229,9 @@ ion-nav,
 ion-tab,
 ion-tabs,
 .app-root {
-  @include position(0, null, null, 0);
-
   position: absolute;
+  top: 0;
+  left: 0;
   z-index: $z-index-page-container;
   display: block;
 
@@ -266,9 +267,9 @@ ion-tabs,
 // --------------------------------------------------
 
 .ion-page {
-  @include position(0, null, null, 0);
-
   position: absolute;
+  top: 0;
+  left: 0;
   display: block;
 
   width: 100%;
@@ -288,9 +289,9 @@ ion-tabs,
 // --------------------------------------------------
 
 ion-header {
-  @include position(0, null, null, 0);
-
   position: absolute;
+  top: 0;
+  left: 0;
   z-index: $z-index-toolbar;
   display: block;
 
@@ -298,9 +299,9 @@ ion-header {
 }
 
 ion-footer {
-  @include position(null, null, 0, 0);
-
   position: absolute;
+  bottom: 0;
+  left: 0;
   z-index: $z-index-toolbar;
   display: block;
 
@@ -411,19 +412,33 @@ ion-footer {
       // Provide `[float-{bp}]` attributes for floating the element based
       // on the breakpoint
       [float#{$infix}-left] {
-        @include float(left, !important);
+        // scss-lint:disable ImportantRule
+        float: left !important;
       }
 
       [float#{$infix}-right] {
-        @include float(right, !important);
+        // scss-lint:disable ImportantRule
+        float: right !important;
       }
 
       [float#{$infix}-start] {
-        @include float(start, !important);
+        // scss-lint:disable ImportantRule
+        float: left !important;
       }
 
       [float#{$infix}-end] {
-        @include float(end, !important);
+        // scss-lint:disable ImportantRule
+        float: right !important;
+      }
+
+      [dir="rtl"] [float#{$infix}-start] {
+        // scss-lint:disable ImportantRule
+        float: right !important;
+      }
+
+      [dir="rtl"] [float#{$infix}-end] {
+        // scss-lint:disable ImportantRule
+        float: left !important;
       }
     }
   }

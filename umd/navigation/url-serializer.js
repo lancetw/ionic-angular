@@ -72,7 +72,7 @@
          * @return {?}
          */
         UrlSerializer.prototype.serialize = function (path) {
-            return '/' + path.map(function (segment) { return segment.id; }).join('/');
+            return '/' + path.map(function (segment) { return segment.id.replace(/\/\:.*/, ''); }).join('/');
         };
         /**
          * Serializes a component and its data into a NavSegment.

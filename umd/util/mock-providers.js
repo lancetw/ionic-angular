@@ -14,7 +14,7 @@ var __extends = (this && this.__extends) || (function () {
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "@angular/core", "../components/app/app", "../config/config", "../components/content/content", "../navigation/deep-linker", "../platform/dom-controller", "../gestures/gesture-controller", "../tap-click/haptic", "../components/app/app-root", "../components/menu/menu", "../navigation/nav-controller-base", "../components/app/overlay-portal", "../transitions/page-transition", "../platform/platform", "../platform/query-params", "../components/tabs/tab", "../components/tabs/tabs", "../transitions/transition-controller", "../navigation/url-serializer", "../navigation/view-controller", "./module-loader", "./ng-module-loader", "../navigation/nav-util", "../components/ion", "../components/item/item", "./form"], factory);
+        define(["require", "exports", "@angular/core", "../components/app/app", "../config/config", "../components/content/content", "../navigation/deep-linker", "../platform/dom-controller", "../gestures/gesture-controller", "../tap-click/haptic", "../components/app/app-root", "../platform/keyboard", "../components/menu/menu", "../navigation/nav-controller-base", "../components/app/overlay-portal", "../transitions/page-transition", "../platform/platform", "../platform/query-params", "../components/tabs/tab", "../components/tabs/tabs", "../transitions/transition-controller", "../navigation/url-serializer", "../navigation/view-controller", "./module-loader", "./ng-module-loader", "../navigation/nav-util", "../components/ion", "../components/item/item", "./form"], factory);
     }
 })(function (require, exports) {
     "use strict";
@@ -28,6 +28,7 @@ var __extends = (this && this.__extends) || (function () {
     var gesture_controller_1 = require("../gestures/gesture-controller");
     var haptic_1 = require("../tap-click/haptic");
     var app_root_1 = require("../components/app/app-root");
+    var keyboard_1 = require("../platform/keyboard");
     var menu_1 = require("../components/menu/menu");
     var nav_controller_base_1 = require("../navigation/nav-controller-base");
     var overlay_portal_1 = require("../components/app/overlay-portal");
@@ -664,13 +665,14 @@ var __extends = (this && this.__extends) || (function () {
         var /** @type {?} */ app = mockApp(config, platform);
         var /** @type {?} */ zone = mockZone();
         var /** @type {?} */ dom = mockDomController(platform);
+        var /** @type {?} */ keyboard = new keyboard_1.Keyboard(config, platform, zone, dom);
         var /** @type {?} */ elementRef = mockElementRef();
         var /** @type {?} */ renderer = mockRenderer();
         var /** @type {?} */ componentFactoryResolver = null;
         var /** @type {?} */ gestureCtrl = new gesture_controller_1.GestureController(app);
         var /** @type {?} */ linker = mockDeepLinker(null, app);
         var /** @type {?} */ trnsCtrl = exports.mockTrasitionController(config);
-        var /** @type {?} */ nav = new nav_controller_base_1.NavControllerBase(null, app, config, platform, elementRef, zone, renderer, componentFactoryResolver, gestureCtrl, trnsCtrl, linker, dom, null);
+        var /** @type {?} */ nav = new nav_controller_base_1.NavControllerBase(null, app, config, platform, keyboard, elementRef, zone, renderer, componentFactoryResolver, gestureCtrl, trnsCtrl, linker, dom, null);
         nav._viewInit = function (enteringView) {
             enteringView.init(mockComponentRef());
             enteringView._state = nav_util_1.STATE_INITIALIZED;
@@ -694,6 +696,7 @@ var __extends = (this && this.__extends) || (function () {
     function mockOverlayPortal(app, config, plt) {
         var /** @type {?} */ zone = mockZone();
         var /** @type {?} */ dom = mockDomController(plt);
+        var /** @type {?} */ keyboard = new keyboard_1.Keyboard(config, plt, zone, dom);
         var /** @type {?} */ elementRef = mockElementRef();
         var /** @type {?} */ renderer = mockRenderer();
         var /** @type {?} */ componentFactoryResolver = null;
@@ -701,7 +704,7 @@ var __extends = (this && this.__extends) || (function () {
         var /** @type {?} */ serializer = new url_serializer_1.UrlSerializer(null);
         var /** @type {?} */ location = mockLocation();
         var /** @type {?} */ deepLinker = new deep_linker_1.DeepLinker(app, serializer, location, null, null);
-        return new overlay_portal_1.OverlayPortal(app, config, plt, elementRef, zone, renderer, componentFactoryResolver, gestureCtrl, null, deepLinker, null, dom, null);
+        return new overlay_portal_1.OverlayPortal(app, config, plt, keyboard, elementRef, zone, renderer, componentFactoryResolver, gestureCtrl, null, deepLinker, null, dom, null);
     }
     exports.mockOverlayPortal = mockOverlayPortal;
     /**
@@ -714,13 +717,14 @@ var __extends = (this && this.__extends) || (function () {
         var /** @type {?} */ app = ((parentTabs))._app || mockApp(config, platform);
         var /** @type {?} */ zone = mockZone();
         var /** @type {?} */ dom = mockDomController(platform);
+        var /** @type {?} */ keyboard = new keyboard_1.Keyboard(config, platform, zone, dom);
         var /** @type {?} */ elementRef = mockElementRef();
         var /** @type {?} */ renderer = mockRenderer();
         var /** @type {?} */ changeDetectorRef = mockChangeDetectorRef();
         var /** @type {?} */ compiler = null;
         var /** @type {?} */ gestureCtrl = new gesture_controller_1.GestureController(app);
         var /** @type {?} */ linker = mockDeepLinker(null, app);
-        var /** @type {?} */ tab = new tab_1.Tab(parentTabs, app, config, platform, elementRef, zone, renderer, compiler, changeDetectorRef, gestureCtrl, null, linker, dom, null);
+        var /** @type {?} */ tab = new tab_1.Tab(parentTabs, app, config, platform, keyboard, elementRef, zone, renderer, compiler, changeDetectorRef, gestureCtrl, null, linker, dom, null);
         tab.load = function (opts, cb) {
             cb();
         };

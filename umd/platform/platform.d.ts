@@ -1,5 +1,4 @@
 import { EventEmitter, NgZone } from '@angular/core';
-export declare type DocumentDirection = 'ltr' | 'rtl';
 /**
  * @name Platform
  * @description
@@ -104,7 +103,7 @@ export declare class Platform {
      *   constructor(public plt: Platform) {
      *     if (this.plt.is('ios')) {
      *       // This will only print when on iOS
-     *       console.log('I am an iOS device!');
+     *       console.log("I'm an iOS device!");
      *     }
      *   }
      * }
@@ -226,18 +225,18 @@ export declare class Platform {
      * `<html dir="ltr">` or `<html dir="rtl">`. This method is useful if the
      * direction needs to be dynamically changed per user/session.
      * [W3C: Structural markup and right-to-left text in HTML](http://www.w3.org/International/questions/qa-html-dir)
-     * @param {DocumentDirection} dir  Examples: `rtl`, `ltr`
+     * @param {string} dir  Examples: `rtl`, `ltr`
      * @param {boolean} updateDocument
      */
-    setDir(dir: DocumentDirection, updateDocument: boolean): void;
+    setDir(dir: string, updateDocument: boolean): void;
     /**
      * Returns app's language direction.
      * We recommend the app's `index.html` file already has the correct `dir`
      * attribute value set, such as `<html dir="ltr">` or `<html dir="rtl">`.
      * [W3C: Structural markup and right-to-left text in HTML](http://www.w3.org/International/questions/qa-html-dir)
-     * @returns {DocumentDirection}
+     * @returns {string}
      */
-    dir(): DocumentDirection;
+    dir(): string;
     /**
      * Returns if this app is using right-to-left language direction or not.
      * We recommend the app's `index.html` file already has the correct `dir`

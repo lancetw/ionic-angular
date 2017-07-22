@@ -45,28 +45,8 @@ export function commonInputTest(input, config) {
     // TODO test disable
     var /** @type {?} */ zone = new NgZone(true);
     zone.run(function () {
-        if (config.testItem === true && !input._item) {
-            (void 0) /* assert */;
-        }
-        if (config.testForm === true && !input._form) {
-            (void 0) /* assert */;
-        }
-        // Run tests before initialization
         testInput(input, config, false);
         input.ngAfterContentInit();
-        ((input)).ngAfterViewInit && ((input)).ngAfterViewInit();
-        // Run tests after initialization
-        testInput(input, config, true);
-        // Run tests without item
-        if (config.testItem === true && !input._item) {
-            input._item = undefined;
-            testInput(input, config, true);
-        }
-        // Run tests without item
-        if (config.testForm === true && !input._form) {
-            input._form = undefined;
-            testInput(input, config, true);
-        }
         testInput(input, config, true);
         input.ngOnDestroy();
         (void 0) /* assert */;
@@ -102,16 +82,10 @@ function testState(input, config, isInit) {
         var /** @type {?} */ subBlur = input.ionBlur.subscribe(function (ev) {
             assertEqual(ev, input, 'ionBlur argument is wrong');
             blurCount_1++;
-            if (config.onFocusChange && config.onFocusChange(false) !== true) {
-                (void 0) /* assert */;
-            }
         });
         var /** @type {?} */ subFocus = input.ionFocus.subscribe(function (ev) {
             assertEqual(ev, input, 'ionFocus argument is wrong');
             focusCount_1++;
-            if (config.onFocusChange && config.onFocusChange(true) !== true) {
-                (void 0) /* assert */;
-            }
         });
         input._fireFocus();
         assertEqual(input._isFocus, true, 'should be focus');
@@ -169,9 +143,6 @@ function testWriteValue(input, config, isInit) {
         assertEqual(input.value, test[1], 'loop: input/output does not match');
         if (isInit) {
             assertEqual(ionChangeCalled, 1, 'loop: ionChange error');
-            if (config.onValueChange && config.onValueChange(test[1]) !== true) {
-                (void 0) /* assert */;
-            }
         }
         else {
             assertEqual(ionChangeCalled, 0, 'loop: ionChange error');
@@ -237,9 +208,6 @@ function testNgModelChange(input, config, isInit) {
         assertEqual(input.value, test[1], 'input/output does not match');
         if (isInit) {
             assertEqual(ionChangeCalled, 1, 'ionChange error');
-            if (config.onValueChange && config.onValueChange(test[1]) !== true) {
-                (void 0) /* assert */;
-            }
         }
         else {
             assertEqual(ionChangeCalled, 0, 'ionChange error');

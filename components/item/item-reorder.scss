@@ -1,13 +1,9 @@
 @import "../../themes/ionic.globals";
 
-$reorder-initial-transform: 160% !default;
-
 // Item reorder
 // --------------------------------------------------
 
 ion-reorder {
-  @include transform(translate3d($reorder-initial-transform, 0, 0));
-
   display: none;
 
   flex: 1;
@@ -20,16 +16,12 @@ ion-reorder {
   font-size: 1.7em;
   opacity: .25;
 
+  transform: translate3d(160%, 0, 0);
+
   transition: transform 140ms ease-in;
 
   pointer-events: all;
   touch-action: manipulation;
-}
-
-.reorder-side-start ion-reorder {
-  @include transform(translate3d(-$reorder-initial-transform, 0, 0));
-
-  order: -1;
 }
 
 ion-reorder ion-icon {
@@ -41,7 +33,7 @@ ion-reorder ion-icon {
 }
 
 .reorder-visible ion-reorder {
-  @include transform(translate3d(0, 0, 0));
+  transform: translate3d(0, 0, 0);
 }
 
 .reorder-list-active .item,

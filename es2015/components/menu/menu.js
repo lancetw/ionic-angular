@@ -21,7 +21,7 @@ import { RootNode } from '../split-pane/split-pane';
  * will be displayed differently based on the mode, however the display type can be changed
  * to any of the available [menu types](#menu-types). The menu element should be a sibling
  * to the app's content element. There can be any number of menus attached to the content.
- * These can be controlled from the templates, or programmatically using the [MenuController](../app/MenuController).
+ * These can be controlled from the templates, or programmatically using the [MenuController](../MenuController).
  *
  * \@usage
  *
@@ -166,14 +166,14 @@ import { RootNode } from '../split-pane/split-pane';
  * }
  * ```
  *
- * See the [MenuController](../../app/MenuController) API docs for all of the methods
+ * See the [MenuController](../MenuController) API docs for all of the methods
  * and usage information.
  *
  *
  * \@demo /docs/demos/src/menu/
  *
  * @see {\@link /docs/components#menus Menu Component Docs}
- * @see {\@link ../../app/MenuController MenuController API Docs}
+ * @see {\@link ../MenuController MenuController API Docs}
  * @see {\@link ../../nav/Nav Nav API Docs}
  * @see {\@link ../../nav/NavController NavController API Docs}
  */
@@ -447,11 +447,10 @@ export class Menu {
         }
         // user has finished dragging the menu
         const /** @type {?} */ isRightSide = this.isRightSide;
-        const /** @type {?} */ isRTL = this._plt.isRTL;
         const /** @type {?} */ opening = !this.isOpen;
         const /** @type {?} */ shouldComplete = (opening)
-            ? (isRightSide !== isRTL) ? shouldCompleteLeft : shouldCompleteRight
-            : (isRightSide !== isRTL) ? shouldCompleteRight : shouldCompleteLeft;
+            ? isRightSide ? shouldCompleteLeft : shouldCompleteRight
+            : isRightSide ? shouldCompleteRight : shouldCompleteLeft;
         this._getType().setProgressEnd(shouldComplete, stepValue, velocity, (isOpen) => {
             (void 0) /* console.debug */;
             this._after(isOpen);

@@ -894,10 +894,8 @@ function cleanupStyles(s) {
         return;
     }
     // Container
-    if (s.container) {
-        removeClass(s.container, s._classNames);
-        s.container.removeAttribute('style');
-    }
+    removeClass(s.container, s._classNames);
+    s.container.removeAttribute('style');
     // Wrapper
     s._wrapper.removeAttribute('style');
     // Slides

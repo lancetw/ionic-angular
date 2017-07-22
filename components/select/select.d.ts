@@ -118,31 +118,6 @@ import { Option } from '../option/option';
  * };
  * ```
  *
- * ### Object Value References
- *
- * When using objects for select values, it is possible for the identities of these objects to
- * change if they are coming from a server or database, while the selected value's identity
- * remains the same. For example, this can occur when an existing record with the desired object value
- * is loaded into the select, but the newly retrieved select options now have different identities. This will
- * result in the select appearing to have no value at all, even though the original selection in still intact.
- *
- * Using the `compareWith` `Input` is the solution to this problem
- *
- * ```html
- * <ion-item>
- *   <ion-label>Employee</ion-label>
- *   <ion-select [(ngModel)]="employee" [compareWith]="compareFn">
- *     <ion-option *ngFor="let employee of employees" [value]="employee">{{employee.name}}</ion-option>
- *   </ion-select>
- * </ion-item>
- * ```
- *
- * ```ts
- * compareFn(e1: Employee, e2: Employee): boolean {
- *   return e1 && e2 ? e1.id === e2.id : e1 === e2;
- * }
- * ```
- *
  * @demo /docs/demos/src/select/
  */
 export declare class Select extends BaseInput<any> implements OnDestroy {
@@ -154,7 +129,6 @@ export declare class Select extends BaseInput<any> implements OnDestroy {
     _overlay: ActionSheet | Alert | Popover;
     _texts: string[];
     _text: string;
-    _compareWith: (o1: any, o2: any) => boolean;
     /**
      * @input {string} The text to display on the cancel button. Default: `Cancel`.
      */
@@ -182,10 +156,6 @@ export declare class Select extends BaseInput<any> implements OnDestroy {
      * @input {string} The text to display instead of the selected option's value.
      */
     selectedText: string;
-    /**
-     * @input {Function} The function that will be called to compare object values
-     */
-    compareWith: (o1: any, o2: any) => boolean;
     /**
      * @output {any} Emitted when the selection was cancelled.
      */

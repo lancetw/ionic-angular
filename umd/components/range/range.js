@@ -147,7 +147,6 @@ var __extends = (this && this.__extends) || (function () {
                 val = Math.round(val);
                 if (!isNaN(val)) {
                     this._min = val;
-                    this._inputUpdated();
                 }
             },
             enumerable: true,
@@ -169,7 +168,6 @@ var __extends = (this && this.__extends) || (function () {
                 val = Math.round(val);
                 if (!isNaN(val)) {
                     this._max = val;
-                    this._inputUpdated();
                 }
             },
             enumerable: true,

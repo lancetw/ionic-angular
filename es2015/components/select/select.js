@@ -121,31 +121,6 @@ import { SelectPopover } from './select-popover-component';
  * };
  * ```
  *
- * ### Object Value References
- *
- * When using objects for select values, it is possible for the identities of these objects to
- * change if they are coming from a server or database, while the selected value's identity
- * remains the same. For example, this can occur when an existing record with the desired object value
- * is loaded into the select, but the newly retrieved select options now have different identities. This will
- * result in the select appearing to have no value at all, even though the original selection in still intact.
- *
- * Using the `compareWith` `Input` is the solution to this problem
- *
- * ```html
- * <ion-item>
- *   <ion-label>Employee</ion-label>
- *   <ion-select [(ngModel)]="employee" [compareWith]="compareFn">
- *     <ion-option *ngFor="let employee of employees" [value]="employee">{{employee.name}}</ion-option>
- *   </ion-select>
- * </ion-item>
- * ```
- *
- * ```ts
- * compareFn(e1: Employee, e2: Employee): boolean {
- *   return e1 && e2 ? e1.id === e2.id : e1 === e2;
- * }
- * ```
- *
  * \@demo /docs/demos/src/select/
  */
 export class Select extends BaseInput {
@@ -166,7 +141,6 @@ export class Select extends BaseInput {
         this._multi = false;
         this._texts = [];
         this._text = '';
-        this._compareWith = isCheckedProperty;
         /**
          * \@input {string} The text to display on the cancel button. Default: `Cancel`.
          */
@@ -196,21 +170,14 @@ export class Select extends BaseInput {
         this.ionCancel = new EventEmitter();
     }
     /**
-     * \@input {Function} The function that will be called to compare object values
-     * @param {?} fn
-     * @return {?}
-     */
-    set compareWith(fn) {
-        if (typeof fn !== 'function') {
-            throw new Error(`compareWith must be a function, but received ${JSON.stringify(fn)}`);
-        }
-        this._compareWith = fn;
-    }
-    /**
      * @param {?} ev
      * @return {?}
      */
     _click(ev) {
+        if (ev.detail === 0) {
+            // do not continue if the click event came from a form submit
+            return;
+        }
         ev.preventDefault();
         ev.stopPropagation();
         this.open(ev);
@@ -297,13 +264,10 @@ export class Select extends BaseInput {
                     input.ionSelect.emit(input.value);
                 }
             }));
-            var /** @type {?} */ popoverCssClass = 'select-popover';
-            // If the user passed a cssClass for the select, add it
-            popoverCssClass += selectOptions.cssClass ? ' ' + selectOptions.cssClass : '';
             overlay = new Popover(this._app, SelectPopover, {
                 options: popoverOptions
             }, {
-                cssClass: popoverCssClass
+                cssClass: 'select-popover'
             }, this.config, this.deepLinker);
             // ev.target is readonly.
             // place popover regarding to ion-select instead of .button-inner
@@ -431,7 +395,7 @@ export class Select extends BaseInput {
             this._options.forEach(option => {
                 // check this option if the option's value is in the values array
                 option.selected = this.getValues().some(selectValue => {
-                    return this._compareWith(selectValue, option.value);
+                    return isCheckedProperty(selectValue, option.value);
                 });
                 if (option.selected) {
                     this._texts.push(option.text);
@@ -482,7 +446,6 @@ Select.propDecorators = {
     'selectOptions': [{ type: Input },],
     'interface': [{ type: Input },],
     'selectedText': [{ type: Input },],
-    'compareWith': [{ type: Input },],
     'ionCancel': [{ type: Output },],
     '_click': [{ type: HostListener, args: ['click', ['$event'],] },],
     '_keyup': [{ type: HostListener, args: ['keyup.space',] },],
@@ -509,8 +472,6 @@ function Select_tsickle_Closure_declarations() {
     Select.prototype._texts;
     /** @type {?} */
     Select.prototype._text;
-    /** @type {?} */
-    Select.prototype._compareWith;
     /**
      * \@input {string} The text to display on the cancel button. Default: `Cancel`.
      * @type {?}

@@ -16,7 +16,7 @@ import { ToggleGesture } from './toggle-gesture';
  * Toggles can also have colors assigned to them, by adding any color
  * attribute.
  *
- * See the [Angular Docs](https://angular.io/docs/ts/latest/guide/forms.html)
+ * See the [Angular 2 Docs](https://angular.io/docs/ts/latest/guide/forms.html)
  * for more info on forms and inputs.
  *
  * @usage
@@ -66,7 +66,7 @@ export declare class Toggle extends BaseInput<boolean> implements IonicTapInput,
     /**
      * @hidden
      */
-    _inputUpdated(): void;
+    _inputCheckHasValue(): void;
     /**
      * @hidden
      */
@@ -86,11 +86,11 @@ export declare class Toggle extends BaseInput<boolean> implements IonicTapInput,
     /**
      * @hidden
      */
-    _shouldToggle(currentX: number, margin: number): boolean;
+    _keyup(ev: KeyboardEvent): void;
     /**
      * @hidden
      */
-    _keyup(ev: KeyboardEvent): void;
+    initFocus(): void;
     /**
      * @hidden
      */

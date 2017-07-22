@@ -61,7 +61,7 @@ export class UrlSerializer {
      * @return {?}
      */
     serialize(path) {
-        return '/' + path.map(segment => segment.id).join('/');
+        return '/' + path.map(segment => segment.id.replace(/\/\:.*/, '')).join('/');
     }
     /**
      * Serializes a component and its data into a NavSegment.

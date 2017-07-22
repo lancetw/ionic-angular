@@ -94,12 +94,12 @@ var __extends = (this && this.__extends) || (function () {
             var /** @type {?} */ coord = (dom_1.pointerCoord(ev));
             var /** @type {?} */ newPos = coord[this.direction];
             var /** @type {?} */ newTimestamp = Date.now();
-            var /** @type {?} */ velocity = (this.plt.isRTL ? (slide.pos - newPos) : (newPos - slide.pos)) / (newTimestamp - slide.timestamp);
+            var /** @type {?} */ velocity = (newPos - slide.pos) / (newTimestamp - slide.timestamp);
             slide.pos = newPos;
             slide.timestamp = newTimestamp;
-            slide.distance = util_1.clamp(slide.min, (this.plt.isRTL ? slide.pointerStartPos - newPos : newPos - slide.pointerStartPos) + slide.elementStartPos, slide.max);
+            slide.distance = util_1.clamp(slide.min, newPos - slide.pointerStartPos + slide.elementStartPos, slide.max);
             slide.velocity = velocity;
-            slide.delta = (this.plt.isRTL ? slide.pointerStartPos - newPos : newPos - slide.pointerStartPos);
+            slide.delta = newPos - slide.pointerStartPos;
             this.onSlide(slide, ev);
         };
         /**

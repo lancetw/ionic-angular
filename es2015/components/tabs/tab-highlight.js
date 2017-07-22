@@ -17,12 +17,9 @@ export class TabHighlight {
      * @return {?}
      */
     select(tab) {
-        if (!tab) {
-            return;
-        }
         const /** @type {?} */ dom = this._dom;
         dom.read(() => {
-            const /** @type {?} */ btnEle = tab.btn.getNativeElement();
+            const /** @type {?} */ btnEle = tab.btn.getElementRef().nativeElement;
             const /** @type {?} */ transform = `translate3d(${btnEle.offsetLeft}px,0,0) scaleX(${btnEle.offsetWidth})`;
             dom.write(() => {
                 const /** @type {?} */ ele = this._elementRef.nativeElement;

@@ -19,7 +19,7 @@ import { ToggleGesture } from './toggle-gesture';
  * Toggles can also have colors assigned to them, by adding any color
  * attribute.
  *
- * See the [Angular Docs](https://angular.io/docs/ts/latest/guide/forms.html)
+ * See the [Angular 2 Docs](https://angular.io/docs/ts/latest/guide/forms.html)
  * for more info on forms and inputs.
  *
  * \@usage
@@ -97,7 +97,7 @@ export class Toggle extends BaseInput {
      * @hidden
      * @return {?}
      */
-    _inputUpdated() { }
+    _inputCheckHasValue() { }
     /**
      * @hidden
      * @param {?} val
@@ -130,10 +130,26 @@ export class Toggle extends BaseInput {
             (void 0) /* assert */;
             return;
         }
-        if (this._shouldToggle(currentX, -15)) {
+        let /** @type {?} */ dirty = false;
+        let /** @type {?} */ value;
+        let /** @type {?} */ activated;
+        if (this._value) {
+            if (currentX + 15 < this._startX) {
+                dirty = true;
+                value = false;
+                activated = true;
+            }
+        }
+        else if (currentX - 15 > this._startX) {
+            dirty = true;
+            value = true;
+            activated = (currentX < this._startX + 5);
+        }
+        if (dirty) {
             this._zone.run(() => {
-                this.value = !this.value;
+                this.value = value;
                 this._startX = currentX;
+                this._activated = activated;
                 this._haptic.selection();
             });
         }
@@ -150,32 +166,20 @@ export class Toggle extends BaseInput {
         }
         (void 0) /* console.debug */;
         this._zone.run(() => {
-            if (this._shouldToggle(endX, 4)) {
-                this.value = !this.value;
+            if (this._value) {
+                if (this._startX + 4 > endX) {
+                    this.value = false;
+                    this._haptic.selection();
+                }
+            }
+            else if (this._startX - 4 < endX) {
+                this.value = true;
                 this._haptic.selection();
             }
             this._activated = false;
             this._fireBlur();
             this._startX = null;
         });
-    }
-    /**
-     * @hidden
-     * @param {?} currentX
-     * @param {?} margin
-     * @return {?}
-     */
-    _shouldToggle(currentX, margin) {
-        const /** @type {?} */ isLTR = !this._plt.isRTL;
-        const /** @type {?} */ startX = this._startX;
-        if (this._value) {
-            return (isLTR && (startX + margin > currentX)) ||
-                (!isLTR && (startX - margin < currentX));
-        }
-        else {
-            return (isLTR && (startX - margin < currentX)) ||
-                (!isLTR && (startX + margin > currentX));
-        }
     }
     /**
      * @hidden
@@ -189,6 +193,13 @@ export class Toggle extends BaseInput {
             ev.stopPropagation();
             this.value = !this.value;
         }
+    }
+    /**
+     * @hidden
+     * @return {?}
+     */
+    initFocus() {
+        this._elementRef.nativeElement.querySelector('button').focus();
     }
     /**
      * @hidden
