@@ -7,6 +7,8 @@ export interface AlertOptions {
     inputs?: AlertInputOptions[];
     buttons?: (AlertButton | string)[];
     enableBackdropDismiss?: boolean;
+    enableEnter?: boolean;
+    enableEsc?: boolean;
 }
 export interface AlertInputOptions {
     type?: string;

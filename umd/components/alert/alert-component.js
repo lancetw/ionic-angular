@@ -160,7 +160,7 @@
          */
         AlertCmp.prototype.keyUp = function (ev) {
             if (this.enabled && this._viewCtrl.isLast()) {
-                if (ev.keyCode === key_1.KEY_ENTER) {
+                if (this.d.enableEnter && ev.keyCode === key_1.KEY_ENTER) {
                     if (this.lastClick + 1000 < Date.now()) {
                         // do not fire this click if there recently was already a click
                         // this can happen when the button has focus and used the enter
@@ -171,7 +171,7 @@
                         this.btnClick(button);
                     }
                 }
-                else if (ev.keyCode === key_1.KEY_ESCAPE) {
+                else if (this.d.enableEsc && ev.keyCode === key_1.KEY_ESCAPE) {
                     (void 0) /* console.debug */;
                     this.bdClick();
                 }
